@@ -1024,12 +1024,12 @@ body {
   margin-right: 16px;
   min-width: 100px;
   color: #666;
-  font-size: 14px;
+  font-size: 30px;
 }
 @media (min-width: 480px) {
   .post-list .post-item {
     display: flex;
-    margin-bottom: 14px;
+    margin-bottom: 5px;
   }
   .post-list .post-item .meta {
     text-align: left;
@@ -1040,7 +1040,7 @@ body {
   list-style: none;
 }
 .project-list .project-item {
-  margin-bottom: 14px;
+  margin-bottom: 5px;
 }
 .project-list .project-item p {
   display: inline;
