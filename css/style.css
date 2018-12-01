@@ -423,7 +423,7 @@ body th {
   border-bottom: 1px dashed $color-code-border;
   color: #eee;
   font-weight: bold;
-  font-size: 4px;
+  font-size: 2px;
 }
 body td {
   padding: 9px 8px 0;
@@ -744,7 +744,7 @@ body {
   letter-spacing: 0.01em;
   font-weight: 200;
   font-style: normal;
-  font-size: 2rem;
+  font-size: 0.8rem;
 }
 #header-post #nav ul {
   line-height: 15px;
@@ -811,7 +811,7 @@ body {
 }
 #header-post #toc .toc-level-2 {
   color: #c9cacc;
-  font-size: 0.8rem;
+  font-size: 2rem;
 }
 #header-post #toc .toc-level-2:before {
   color: #2bbc8a;
@@ -819,11 +819,11 @@ body {
 }
 #header-post #toc .toc-level-3 {
   color: #666;
-  font-size: 0.7rem;
+  font-size: 1.5rem;
 }
 #header-post #toc .toc-level-4 {
   color: #525252;
-  font-size: 0.4rem;
+  font-size: 1rem;
 }
 #header-post #toc .toc-level-5 {
   display: none;
