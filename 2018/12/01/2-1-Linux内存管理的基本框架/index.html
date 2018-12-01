@@ -108,24 +108,27 @@
 
 
 
-  <meta name="description" content="这里是root1iu的学习记录博客以前觉得学习记录在本地影响也不大。后来发现写成博客更能促进自己学习，有更多机会和别人交流，所以创建了博客，希望可以和大家多交流交流。共勉 :) 交流联系方式 :) QQ: 757835110 github: https://github.com/root1iu/root1iu.github.io">
-<meta property="og:type" content="website">
-<meta property="og:title" content="about">
-<meta property="og:url" content="https://root1iu.github.io/about/index.html">
+  <meta name="description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
+<meta name="keywords" content="Linux内核情景分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.1 Linux内存管理的基本框架">
+<meta property="og:url" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
-<meta property="og:description" content="这里是root1iu的学习记录博客以前觉得学习记录在本地影响也不大。后来发现写成博客更能促进自己学习，有更多机会和别人交流，所以创建了博客，希望可以和大家多交流交流。共勉 :) 交流联系方式 :) QQ: 757835110 github: https://github.com/root1iu/root1iu.github.io">
+<meta property="og:description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-12-01T07:46:58.038Z">
+<meta property="og:image" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png">
+<meta property="og:updated_time" content="2018-12-01T08:21:38.114Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="about">
-<meta name="twitter:description" content="这里是root1iu的学习记录博客以前觉得学习记录在本地影响也不大。后来发现写成博客更能促进自己学习，有更多机会和别人交流，所以创建了博客，希望可以和大家多交流交流。共勉 :) 交流联系方式 :) QQ: 757835110 github: https://github.com/root1iu/root1iu.github.io">
+<meta name="twitter:title" content="2.1 Linux内存管理的基本框架">
+<meta name="twitter:description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
+<meta name="twitter:image" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/about/">
+  <link rel="canonical" href="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/">
 
 
 
@@ -135,7 +138,7 @@
   };
 </script>
 
-  <title>about | Root1iu Home Page</title>
+  <title>2.1 Linux内存管理的基本框架 | Root1iu Home Page</title>
   
 
 
@@ -238,7 +241,7 @@
         
         
           
-          <li class="menu-item menu-item-about menu-item-active">
+          <li class="menu-item menu-item-about">
 
     
     
@@ -311,28 +314,6 @@
   
     
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
-
   
 
   
@@ -359,47 +340,196 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-<h1 class="post-title" itemprop="name headline">about</h1>
-
-<div class="post-meta">
-  
-  
-
-
-
-</div>
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <h1 id="这里是root1iu的学习记录博客"><a href="#这里是root1iu的学习记录博客" class="headerlink" title="这里是root1iu的学习记录博客"></a>这里是root1iu的学习记录博客</h1><p>以前觉得学习记录在本地影响也不大。后来发现写成博客更能促进自己学习，有更多机会和别人交流，所以创建了博客，希望可以和大家多交流交流。共勉 :)</p>
-<p>交流联系方式 :)</p>
-<p>QQ: 757835110</p>
-<p>github: <a href="https://github.com/root1iu/root1iu.github.io" target="_blank" rel="noopener">https://github.com/root1iu/root1iu.github.io</a></p>
-
+          <h1 class="post-title" itemprop="name headline">2.1 Linux内存管理的基本框架
+              
+            
+          </h1>
         
-      </div>
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-01 16:15:07 / 修改时间：16:21:38" itemprop="dateCreated datePublished" datetime="2018-12-01T16:15:07+08:00">2018-12-01</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Linux内核情景分析/" itemprop="url" rel="index"><span itemprop="name">Linux内核情景分析</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <h2 id="2-1-Linux内存管理的基本框架"><a href="#2-1-Linux内存管理的基本框架" class="headerlink" title="2.1 Linux内存管理的基本框架"></a>2.1 Linux内存管理的基本框架</h2><h5 id="Linux内核的内存映射模型"><a href="#Linux内核的内存映射模型" class="headerlink" title="Linux内核的内存映射模型"></a>Linux内核的内存映射模型</h5><p>Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。</p>
+<ul>
+<li>PGD（页目录表）</li>
+<li>PMD（中间目录）</li>
+<li>PT（页表）</li>
+</ul>
+<p>三层地址映射如图：</p>
+<p><img src="/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png" alt=""></p>
+<p>在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。</p>
+<p><strong>系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0000000</strong></p>
+<p>根据这个性质，在需要时，可以直接从虚拟地址转换为物理地址。比如在任务切换时，需要更新CR3的值，使其指向新进程的PGD，而页目录表的起始地址是虚拟地址，CR3需要的是物理地址。</p>
+<h5 id="GDT和LDT"><a href="#GDT和LDT" class="headerlink" title="GDT和LDT"></a>GDT和LDT</h5><p><strong>每个进程的局部段描述符LDT都作为一个独立的段存在，在全局段描述符表中GDT要有一个表项指向LDT这个段的起始地址，并说明该段的长度以及其他参数</strong></p>
+<p>GDT的第一项永远为0，第2、 3项用于内核的代码段和数据段；第5、 6项用于当前进程的代码段和数据段等(5个+？)，还剩下8180个项，所以理论上系统最大的进程数为4090。</p>
+<h5 id="为什么GDT第一项永远为0？"><a href="#为什么GDT第一项永远为0？" class="headerlink" title="为什么GDT第一项永远为0？"></a>为什么GDT第一项永远为0？</h5><p>为了防止未初始化的数据加载到选择子中，Linux采取这种方式来避免严重却不容易发现的错误(未初始化选择子)</p>
+
       
     </div>
-    
-
-
 
     
+
     
     
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux内核情景分析/" rel="tag"># Linux内核情景分析</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/01/1-预备知识/" rel="next" title="1. 预备知识">
+                <i class="fa fa-chevron-left"></i> 1. 预备知识
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/01/2-2-Linux地址映射权过程/" rel="prev" title="2.2 Linux地址映射权过程">
+                2.2 Linux地址映射权过程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
   </div>
 
 
@@ -529,7 +659,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#这里是root1iu的学习记录博客"><span class="nav-number">1.</span> <span class="nav-text">这里是root1iu的学习记录博客</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Linux内存管理的基本框架"><span class="nav-number">1.</span> <span class="nav-text">2.1 Linux内存管理的基本框架</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux内核的内存映射模型"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">Linux内核的内存映射模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GDT和LDT"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">GDT和LDT</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么GDT第一项永远为0？"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">为什么GDT第一项永远为0？</span></a></li></ol></li></ol></div>
             
 
           </div>
