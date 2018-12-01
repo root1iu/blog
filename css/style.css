@@ -325,7 +325,7 @@ body .h1 {
   letter-spacing: 0.01em;
   font-weight: 700;
   font-style: normal;
-  font-size: 10px;
+  font-size: 3em;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
 }
@@ -339,13 +339,13 @@ body .h2 {
   text-transform: none;
   letter-spacing: normal;
   font-weight: bold;
-  font-size: 8px;
+  font-size: 2.5rem;
 }
 body h3 {
   color: #eee;
   text-decoration: underline;
   font-weight: bold;
-  font-size: 6px;
+  font-size: 2rem;
 }
 body h4,
 body h5,
@@ -355,7 +355,7 @@ body h6 {
   color: #ccc;
   text-decoration: none;
   font-weight: normal;
-  font-size: 4px;
+  font-size: 1.5rem;
 }
 body h3,
 body h4,
@@ -1429,7 +1429,7 @@ pre {
   padding-bottom: 0;
   border: 1px dotted #666;
   border-radius: 4px;
-  font-size: 20px;
+  font-size: 13px;
   font-family: "Menlo", "Meslo LG", monospace;
   line-height: 22px;
   -webkit-border-radius: 4px;
