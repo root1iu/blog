@@ -325,7 +325,7 @@ body .h1 {
   letter-spacing: 0.01em;
   font-weight: 700;
   font-style: normal;
-  font-size: 1.5em;
+  font-size: 10px;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
 }
@@ -339,13 +339,13 @@ body .h2 {
   text-transform: none;
   letter-spacing: normal;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 8px;
 }
 body h3 {
   color: #eee;
   text-decoration: underline;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 6px;
 }
 body h4,
 body h5,
@@ -355,7 +355,7 @@ body h6 {
   color: #ccc;
   text-decoration: none;
   font-weight: normal;
-  font-size: 0.9rem;
+  font-size: 4px;
 }
 body h3,
 body h4,
@@ -416,7 +416,7 @@ body table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 0px;
+  font-size: 12px;
 }
 body th {
   padding: 8px;
