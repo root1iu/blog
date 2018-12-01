@@ -416,14 +416,14 @@ body table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 2px;
+  font-size: 17px;
 }
 body th {
   padding: 8px;
   border-bottom: 1px dashed $color-code-border;
   color: #eee;
   font-weight: bold;
-  font-size: 2px;
+  font-size: 17px;
 }
 body td {
   padding: 9px 8px 0;
