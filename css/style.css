@@ -416,7 +416,7 @@ body table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 12px;
+  font-size: 0px;
 }
 body th {
   padding: 8px;
