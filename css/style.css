@@ -1029,7 +1029,7 @@ body {
 @media (min-width: 480px) {
   .post-list .post-item {
     display: flex;
-    margin-bottom: 5px;
+    margin-bottom: 14px;
   }
   .post-list .post-item .meta {
     text-align: left;
