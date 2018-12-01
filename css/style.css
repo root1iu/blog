@@ -416,14 +416,14 @@ body table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 10px;
+  font-size: 0px;
 }
 body th {
   padding: 8px;
   border-bottom: 1px dashed $color-code-border;
   color: #eee;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 0px;
 }
 body td {
   padding: 9px 8px 0;
@@ -1024,7 +1024,7 @@ body {
   margin-right: 16px;
   min-width: 100px;
   color: #666;
-  font-size: 20px;
+  font-size: 14px;
 }
 @media (min-width: 480px) {
   .post-list .post-item {
@@ -1192,7 +1192,7 @@ article .content .caption {
   margin-right: 16px;
   min-width: 100px;
   color: #666;
-  font-size: 1.5rem;
+  font-size: 14px;
 }
 @media (min-width: 480px) {
   #archive .post-list .post-item {
