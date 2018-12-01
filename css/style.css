@@ -378,7 +378,7 @@ body sup,
 body sub {
   position: relative;
   vertical-align: baseline;
-  font-size: 0.75em;
+  font-size: 1em;
   line-height: 0;
 }
 body sup {
@@ -388,7 +388,7 @@ body sub {
   bottom: -0.2em;
 }
 body small {
-  font-size: 0.85em;
+  font-size: 1em;
 }
 body acronym,
 body abbr {
@@ -416,7 +416,7 @@ body table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 12px;
+  font-size: 10px;
 }
 body th {
   padding: 8px;
