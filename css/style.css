@@ -811,7 +811,7 @@ body {
 }
 #header-post #toc .toc-level-2 {
   color: #c9cacc;
-  font-size: 10px;
+  font-size: 0.8rem;
 }
 #header-post #toc .toc-level-2:before {
   color: #2bbc8a;
@@ -819,11 +819,11 @@ body {
 }
 #header-post #toc .toc-level-3 {
   color: #666;
-  font-size: 8px;
+  font-size: 0.7rem;
 }
 #header-post #toc .toc-level-4 {
   color: #525252;
-  font-size: 6px;
+  font-size: 0.4rem;
 }
 #header-post #toc .toc-level-5 {
   display: none;
