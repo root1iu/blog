@@ -108,20 +108,31 @@
 
 
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Root1iu Home Page">
-<meta property="og:url" content="https://root1iu.github.io/index.html">
+  <meta name="description" content="1.2 Intel X86 CPU系列的寻址方式访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？ 根据指令性质决定使用哪个寄存器（如转移指令在代码段） 根据段寄存器的内容，找到段描述符 从段描述符中得到基地址 将指令中发出的地址作为位移，根据段描述符中的段界限，判断是否越界 根据指令性质和段描述符中的访问权限判断是否越权 将指令中发出的地址作为位移，与基地址相加得出实际的“物">
+<meta name="keywords" content="疑问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1. 预备知识">
+<meta property="og:url" content="https://root1iu.github.io/2018/12/01/1-预备知识/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="1.2 Intel X86 CPU系列的寻址方式访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？ 根据指令性质决定使用哪个寄存器（如转移指令在代码段） 根据段寄存器的内容，找到段描述符 从段描述符中得到基地址 将指令中发出的地址作为位移，根据段描述符中的段界限，判断是否越界 根据指令性质和段描述符中的访问权限判断是否越权 将指令中发出的地址作为位移，与基地址相加得出实际的“物">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://root1iu.github.io/2018/12/01/1-预备知识/%E5%9B%BE1.1%E9%80%89%E6%8B%A9%E5%AD%90.png">
+<meta property="og:image" content="https://root1iu.github.io/2018/12/01/1-预备知识/%E5%9B%BE1.2%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8%E9%A1%B9.png">
+<meta property="og:image" content="https://root1iu.github.io/2018/12/01/1-预备知识/home/root1iu/github/blog/source/_posts/1-预备知识/图2.4段描述符定义.png">
+<meta property="og:image" content="https://root1iu.github.io/2018/12/01/1-预备知识/%E4%BA%8C%E7%BA%A7%E9%A1%B5%E8%A1%A8%E8%BD%AC%E6%8D%A2%E8%BF%87%E7%A8%8B.png">
+<meta property="og:image" content="https://root1iu.github.io/2018/12/01/1-预备知识/%E9%A1%B5%E7%9B%AE%E5%BD%95%E9%A1%B9%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="og:updated_time" content="2018-12-01T07:57:53.556Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Root1iu Home Page">
+<meta name="twitter:title" content="1. 预备知识">
+<meta name="twitter:description" content="1.2 Intel X86 CPU系列的寻址方式访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？ 根据指令性质决定使用哪个寄存器（如转移指令在代码段） 根据段寄存器的内容，找到段描述符 从段描述符中得到基地址 将指令中发出的地址作为位移，根据段描述符中的段界限，判断是否越界 根据指令性质和段描述符中的访问权限判断是否越权 将指令中发出的地址作为位移，与基地址相加得出实际的“物">
+<meta name="twitter:image" content="https://root1iu.github.io/2018/12/01/1-预备知识/%E5%9B%BE1.1%E9%80%89%E6%8B%A9%E5%AD%90.png">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/">
+  <link rel="canonical" href="https://root1iu.github.io/2018/12/01/1-预备知识/">
 
 
 
@@ -131,7 +142,7 @@
   };
 </script>
 
-  <title>Root1iu Home Page</title>
+  <title>1. 预备知识 | Root1iu Home Page</title>
   
 
 
@@ -180,8 +191,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -218,7 +228,7 @@
         
         
           
-          <li class="menu-item menu-item-home menu-item-active">
+          <li class="menu-item menu-item-home">
 
     
     
@@ -331,9 +341,9 @@
           
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -365,10 +375,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/01/1-预备知识/" class="post-title-link" itemprop="https://root1iu.github.io/index.html">1. 预备知识</a>
+          <h1 class="post-title" itemprop="name headline">1. 预备知识
               
             
           </h1>
@@ -449,9 +456,7 @@
       
 
       
-        
-          
-            <h2 id="1-2-Intel-X86-CPU系列的寻址方式"><a href="#1-2-Intel-X86-CPU系列的寻址方式" class="headerlink" title="1.2 Intel X86 CPU系列的寻址方式"></a>1.2 Intel X86 CPU系列的寻址方式</h2><h5 id="访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？"><a href="#访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？" class="headerlink" title="访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？"></a>访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？</h5><ul>
+        <h2 id="1-2-Intel-X86-CPU系列的寻址方式"><a href="#1-2-Intel-X86-CPU系列的寻址方式" class="headerlink" title="1.2 Intel X86 CPU系列的寻址方式"></a>1.2 Intel X86 CPU系列的寻址方式</h2><h5 id="访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？"><a href="#访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？" class="headerlink" title="访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？"></a>访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？</h5><ul>
 <li>根据指令性质决定使用哪个寄存器（如转移指令在代码段）</li>
 <li>根据段寄存器的内容，找到段描述符</li>
 <li>从段描述符中得到基地址</li>
@@ -513,8 +518,6 @@
 <p>即:GCC会先使用输出值对被修饰符&amp;修饰的Output操作表达式进行填充,然后,才对Input操作表达式进行输入;</p>
 <p>这样的话,如果不使用修饰符&amp;对Output操作表达式进行修饰,一旦后面的Input操作表达式使用了与Output操作表达式相同的寄存器,就会产生输入输出数据混乱的情况;相反,如果没有用修饰符&amp;修饰输出操作表达式,那么,就意味着GCC会先把Input操作表达式的值输入到选定的寄存器中,然后经过处理,最后才用输出值填充对应的Output操作表达式;</p>
 
-          
-        
       
     </div>
 
@@ -535,235 +538,36 @@
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/11/30/hello-world/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Root1iu Home Page">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/11/30/hello-world/" class="post-title-link" itemprop="https://root1iu.github.io/index.html">Ubuntu16.04 使用hexo搭建博客</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-11-30 22:44:15" itemprop="dateCreated datePublished" datetime="2018-11-30T22:44:15+08:00">2018-11-30</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-01 15:32:11" itemprop="dateModified" datetime="2018-12-01T15:32:11+08:00">2018-12-01</time>
-              
-            
-          </span>
-
+        <div class="post-tags">
           
-
+            <a href="/tags/疑问/" rel="tag"># 疑问</a>
           
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="初始化hexo"><a href="#初始化hexo" class="headerlink" title="初始化hexo"></a>初始化hexo</h4><p>进入博客目录（自己创建，本例的本地目录为blog/）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init</span><br></pre></td></tr></table></figure>
-<p>测试hexo是否运行正常</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server </span><br><span class="line">#INFO  Start processing</span><br><span class="line">#INFO  Hexo is running at http://localhost:4000 . Press Ctrl+C to stop.</span><br></pre></td></tr></table></figure>
-<p>C^左键进入<a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a> 页面，即可看到hexo界面。</p>
-<h4 id="将hexo和github关联起来"><a href="#将hexo和github关联起来" class="headerlink" title="将hexo和github关联起来"></a>将hexo和github关联起来</h4><ol>
-<li><h5 id="下载插件"><a href="#下载插件" class="headerlink" title="下载插件"></a>下载插件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-</li>
-<li><h5 id="在github创建新仓库"><a href="#在github创建新仓库" class="headerlink" title="在github创建新仓库"></a>在github创建新仓库</h5><ul>
-<li><p><img src="/2018/11/30/hello-world/Screenshot from 2018-11-30 20-33-54.png" alt=""></p>
-</li>
-<li><p>在setting里修改GitHub Pages选项，在Source中选中”master branch”并点save，如图</p>
-<p><img src="/2018/11/30/hello-world/githubpages.png" alt=""></p>
-<p>然后会刷新页面，重新来到Github Pages选项这，会出现如上图所示的**.github.io/blog/，点击即可看到blog页面，此页面称为页面A。</p>
-</li>
-</ul>
-</li>
-</ol>
-<ol start="3">
-<li><h5 id="修改blog-config-yml"><a href="#修改blog-config-yml" class="headerlink" title="修改blog/_config.yml"></a>修改blog/_config.yml</h5><ul>
-<li><p>打开并修改blog/_config.yml</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type:</span><br></pre></td></tr></table></figure>
-<p>修改为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  #本地址为第2部创建的blog的github地址，通过点击右上角的clone可获得。</span><br><span class="line">  repo: https://github.com/yourname/blog.git </span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-<p><img src="/2018/11/30/hello-world/cloneblog.png" alt=""></p>
-</li>
-<li><p>修改URL</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># URL</span><br><span class="line">## If your site is put in a subdirectory, set url as &apos;http://yoursite.com/child&apos; and root as &apos;/child/&apos;</span><br><span class="line">url: http://yoursite.com</span><br><span class="line">root: /</span><br><span class="line">permalink: :year/:month/:day/:title/</span><br><span class="line">permalink_defaults:</span><br></pre></td></tr></table></figure>
-<p>  修改为</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># URL</span><br><span class="line">## If your site is put in a subdirectory, set url as</span><br><span class="line">&apos;http://yoursite.com/child&apos; and root as &apos;/child/&apos;</span><br><span class="line">url: 地址A #修改这里</span><br><span class="line">root: /</span><br><span class="line">permalink: :year/:month/:day/:title/</span><br><span class="line">permalink_defaults:</span><br></pre></td></tr></table></figure>
-</li>
-<li><h5 id="生成、部署hexo"><a href="#生成、部署hexo" class="headerlink" title="生成、部署hexo"></a>生成、部署hexo</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate #生成</span><br><span class="line">$ hexo deploy   #部署</span><br></pre></td></tr></table></figure>
-<p>其中，生成后会在blog/目录下产生一个public文件夹。部署时，需要输入github账号密码，上传至github仓库。</p>
-</li>
-<li><h5 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h5><p>在<a href="https://hexo.io/themes/index.html找到合适的主题，并把它克隆到blog/themes/中，然后修改blog/_config.yml文件，找到主题项，将landscape修改为你下载的主题名。（以cactus为例）" target="_blank" rel="noopener">https://hexo.io/themes/index.html找到合适的主题，并把它克隆到blog/themes/中，然后修改blog/_config.yml文件，找到主题项，将landscape修改为你下载的主题名。（以cactus为例）</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: cactus</span><br></pre></td></tr></table></figure>
-<p>然后重新生成和部署。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean    #清空内容</span><br><span class="line">$ hexo generate #生成</span><br><span class="line">$ hexo deploy   #部署</span><br></pre></td></tr></table></figure>
-<p>在更换主题时会出现问题，导致用<a href="https://root1iu.github.io/blog/">https://root1iu.github.io/blog/</a> 访问blog会出现css无法加载的情况，查阅资料可知原来是repo名字的问题。在github page中，要想使用username.github.io作为域名访问blog，需要repo名字也为username.github.io。然后用<a href="https://root1iu.github.io/">https://root1iu.github.io/</a> 来访问blog。</p>
-<p>( <a href="https://github.com/hexojs/hexo/issues/2244" target="_blank" rel="noopener">https://github.com/hexojs/hexo/issues/2244</a> )</p>
-<p>所以在setting中改名，改为username.github.io</p>
-<p><img src="/2018/11/30/hello-world/reporename.png" alt=""></p>
-<p>然后修改blog/_config.yml文件，将地址后面的blog去掉</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># URL</span><br><span class="line">## If your site is put in a subdirectory, set url as &apos;http://yoursite.com/child&apos; and root as &apos;/child/&apos;</span><br><span class="line">url: https://username.github.io/ #第一处修改</span><br><span class="line">root: /</span><br><span class="line">permalink: :year/:month/:day/:title/</span><br><span class="line">permalink_defaults:</span><br><span class="line"></span><br><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/username/username.github.io.git #第二处修改</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-<p>接下来重新生成和部署。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean    #清空内容</span><br><span class="line">$ hexo generate #生成</span><br><span class="line">$ hexo deploy   #部署</span><br></pre></td></tr></table></figure>
-<p>然后在访问<a href="https://root1iu.github.io/">https://root1iu.github.io/</a> ，一切正常。</p>
-</li>
-</ol>
-<h4 id="发布第一篇blog"><a href="#发布第一篇blog" class="headerlink" title="发布第一篇blog"></a>发布第一篇blog</h4><ol>
-<li><p>新建blog草稿</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new hello</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>编辑生成的.md文件</p>
-</li>
-<li><p>推送</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo publish hello.md</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>博客md文件中有图片</p>
-<p> (<a href="https://blog.csdn.net/Sugar_Rainbow/article/details/57415705" target="_blank" rel="noopener">https://blog.csdn.net/Sugar_Rainbow/article/details/57415705</a>)</p>
-<p> 首先把主页配置文件<code>_config.yml</code> 里的<code>post_asset_folder:</code>这个选项设置为<code>true</code></p>
-<p> 然后下载插件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-asset-image --save</span><br></pre></td></tr></table></figure>
-<p>之后发布的博客会自带一个同名文件夹，把图片放入文件夹，然后在md函数中引用即可。</p>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
       
 
       
       
-        <div class="post-eof"></div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/30/hello-world/" rel="next" title="Ubuntu16.04 使用hexo搭建博客">
+                <i class="fa fa-chevron-left"></i> Ubuntu16.04 使用hexo搭建博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
       
     </footer>
   </div>
@@ -773,14 +577,19 @@
   </article>
 
 
-    
-  </section>
-
-  
+  </div>
 
 
           </div>
           
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
 
         </div>
         
@@ -801,8 +610,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -874,6 +692,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-Intel-X86-CPU系列的寻址方式"><span class="nav-number">1.</span> <span class="nav-text">1.2 Intel X86 CPU系列的寻址方式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#选择子-段寄存器"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">选择子(段寄存器)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#段描述符表项"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">段描述符表项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#段描述符定义"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">段描述符定义</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DPL"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">DPL</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RPL"><span class="nav-number">1.0.0.6.</span> <span class="nav-text">RPL</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-i386的页式内存管理机制"><span class="nav-number">2.</span> <span class="nav-text">1.3 i386的页式内存管理机制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#从线性地址到物理地址的映射过程"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">从线性地址到物理地址的映射过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么使用二级页表不使用一级页表"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">为什么使用二级页表不使用一级页表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#页目录项"><span class="nav-number">2.0.0.3.</span> <span class="nav-text">页目录项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#更新CR3前后语句页目录表地址不一样，会不会导致执行不连续？"><span class="nav-number">2.0.0.4.</span> <span class="nav-text">更新CR3前后语句页目录表地址不一样，会不会导致执行不连续？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#缺页异常"><span class="nav-number">2.0.0.5.</span> <span class="nav-text">缺页异常</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#页式虚存"><span class="nav-number">2.0.0.6.</span> <span class="nav-text">页式虚存</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PS位-Page-Size，在第7位"><span class="nav-number">2.0.0.7.</span> <span class="nav-text">PS位(Page Size，在第7位)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#开启页式管理"><span class="nav-number">2.0.0.8.</span> <span class="nav-text">开启页式管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-Linux内核源代码中的C语言代码"><span class="nav-number">3.</span> <span class="nav-text">1.4 Linux内核源代码中的C语言代码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux内核比较-4-15-0的list相关操作比2-4-0多了WRITE-ONCE-READ-ONCE"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">[Linux内核比较]4.15.0的list相关操作比2.4.0多了WRITE_ONCE/READ_ONCE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-Linux内核源代码中的汇编语言代码"><span class="nav-number">4.</span> <span class="nav-text">1.5 Linux内核源代码中的汇编语言代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-2-嵌入C代码中的386汇编语言程序段（内联汇编）"><span class="nav-number">4.1.</span> <span class="nav-text">1.5.2 嵌入C代码中的386汇编语言程序段（内联汇编）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#LOCK"><span class="nav-number">4.1.0.1.</span> <span class="nav-text">LOCK</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#约束"><span class="nav-number">4.1.0.2.</span> <span class="nav-text">约束</span></a></li></ol></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -1002,6 +836,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
 
   
 
@@ -1024,6 +862,32 @@
 
 
 
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
 
   
 
