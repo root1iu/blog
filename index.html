@@ -348,7 +348,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/01/2-2-Linux地址映射权过程/">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/01/2-3-几个重要的数据结构和函数/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -368,7 +368,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/12/01/2-2-Linux地址映射权过程/" class="post-title-link" itemprop="https://root1iu.github.io/index.html">2.2 Linux地址映射权过程</a>
+                <a href="/2018/12/01/2-3-几个重要的数据结构和函数/" class="post-title-link" itemprop="https://root1iu.github.io/index.html">2.3 几个重要的数据结构和函数</a>
               
             
           </h1>
@@ -393,7 +393,7 @@
                 
               
 
-              <time title="创建时间：2018-12-01 16:22:20 / 修改时间：16:25:19" itemprop="dateCreated datePublished" datetime="2018-12-01T16:22:20+08:00">2018-12-01</time>
+              <time title="创建时间：2018-12-01 17:03:48 / 修改时间：17:04:25" itemprop="dateCreated datePublished" datetime="2018-12-01T17:03:48+08:00">2018-12-01</time>
             
 
             
@@ -415,7 +415,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Linux内核情景分析/" itemprop="url" rel="index"><span itemprop="name">Linux内核情景分析</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/《Linux内核情景分析》读书笔记/" itemprop="url" rel="index"><span itemprop="name">《Linux内核情景分析》读书笔记</span></a></span>
 
                 
                 
@@ -451,11 +451,186 @@
       
         
           
-            <h2 id="Linux地址映射的全过程"><a href="#Linux地址映射的全过程" class="headerlink" title="Linux地址映射的全过程"></a>Linux地址映射的全过程</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">408</span><br><span class="line">#define start_thread(regs, new_eip, new_esp) do &#123;\</span><br><span class="line"> __asm__(&quot;movl %0,%%fs ; movl %0,%%gs&quot;: :&quot;r&quot; (0));\</span><br><span class="line"> set_fs(USER_DS);\</span><br><span class="line"> regs-&gt;xds = __USER_DS;\</span><br><span class="line"> regs-&gt;xes = __USER_DS;\</span><br><span class="line"> regs-&gt;xss = __USER_DS;\</span><br><span class="line"> regs-&gt;xcs = __USER_CS;\</span><br><span class="line"> regs-&gt;eip = new_eip;\</span><br><span class="line"> regs-&gt;esp = new_esp;\</span><br><span class="line">&#125; while (0</span><br></pre></td></tr></table></figure>
+            
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/01/2-2-Linux地址映射全过程/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/01/2-2-Linux地址映射全过程/" class="post-title-link" itemprop="https://root1iu.github.io/index.html">2.2 Linux地址映射权过程</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-01 16:22:20" itemprop="dateCreated datePublished" datetime="2018-12-01T16:22:20+08:00">2018-12-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-02 10:38:44" itemprop="dateModified" datetime="2018-12-02T10:38:44+08:00">2018-12-02</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/《Linux内核情景分析》读书笔记/" itemprop="url" rel="index"><span itemprop="name">《Linux内核情景分析》读书笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Linux地址映射的全过程"><a href="#Linux地址映射的全过程" class="headerlink" title="Linux地址映射的全过程"></a>Linux地址映射的全过程</h2><p>虚拟地址——&gt;线性地址——&gt;物理地址</p>
+<p>虚拟地址经过段式映射后变成线性地址，如何段式映射？通过加载选择子进段选择子中，然后从段描述符表中获取对应的段描述符，段起始地址加上段偏移获得线性地址。选择哪个段描述符表？先从CS内容看起：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">408</span><br><span class="line">#define start_thread(regs, new_eip, new_esp) do &#123;\</span><br><span class="line"> __asm__(&quot;movl %0,%%fs ; movl %0,%%gs&quot;: :&quot;r&quot; (0));\</span><br><span class="line"> set_fs(USER_DS);\</span><br><span class="line"> regs-&gt;xds = __USER_DS;\</span><br><span class="line"> regs-&gt;xes = __USER_DS;\</span><br><span class="line"> regs-&gt;xss = __USER_DS;\</span><br><span class="line"> regs-&gt;xcs = __USER_CS;\</span><br><span class="line"> regs-&gt;eip = new_eip;\</span><br><span class="line"> regs-&gt;esp = new_esp;\</span><br><span class="line">&#125; while (0)</span><br></pre></td></tr></table></figure>
 <p>从xds （段寄存器DS的映像）和 xss的赋值来看，Linux内核中堆栈段和数据段是不区分的。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">==================== include/asm-i386/segment.h 4 8 ====================</span><br><span class="line"> #define __KERNEL_CS 0x10  	//index = 2 TI = 0 RPL = 0</span><br><span class="line"> #define __KERNEL_DS 0x18	//index = 3 TI = 0 RPL = 0</span><br><span class="line"></span><br><span class="line"> #define __USER_CS 0x23		//index = 4 TI = 0 RPL = 3</span><br><span class="line"> #define __USER_DS 0x2B		//index = 5 TI = 0 RPL = 3</span><br></pre></td></tr></table></figure>
-<p>无论是内核段还是用户段，都没有用LDT，Linux内核基本上不使用LDT。只在VM86模式（虚拟86）中运行wine以及其他Linux模拟运行Windows或DOS软件时才会用到。</p>
+<p>无论是内核段还是用户段，TI都是0，也就是全部使用GDT，都没有用LDT，Linux内核基本上不使用LDT。只在VM86模式（虚拟86）中运行wine以及其他Linux模拟运行Windows或DOS软件时才会用到。</p>
 <p>见《Linux内核情景分析》1.2 1.3节</p>
+<p>线性地址再通过页式映射获得物理地址。如何页式映射？首先页目录表的起始地址是记录在CR3控制寄存器中的。线性地址有32位（32CPU为例），高10位作为页目录表的下标索引，获得页目录表中对应下标的页目录项，页目录项指向页表地址；中间10位作为页表的下标索引，获得页表中对应下标的页表项，页表项指向物理页地址；低12位作业物理页的索引直接索引到物理地址。其中页目录项的低12位，页表项的低12位作为标识位，有各种标识。</p>
+<p>整个页式映射需要访问三次内存才能访问到真正的物理内存——页目录表、页表、物理页。这需要依赖cache高速缓存才能高效的实现页式映射。</p>
 <h3 id="2-2-1-Linux内核上提供的与段式存储管理相关的系统调用"><a href="#2-2-1-Linux内核上提供的与段式存储管理相关的系统调用" class="headerlink" title="2.2.1 Linux内核上提供的与段式存储管理相关的系统调用"></a>2.2.1 Linux内核上提供的与段式存储管理相关的系统调用</h3><p>为了模拟Windows和DOS在Linux上运行(wine)，（为什么需要局部段描述符表？）</p>
 <h4 id="modify-ldt-int-func-void-ptr-unsigned-long-bytecount"><a href="#modify-ldt-int-func-void-ptr-unsigned-long-bytecount" class="headerlink" title="modify_ldt(int func, void* ptr, unsigned long bytecount)"></a>modify_ldt(int func, void* ptr, unsigned long bytecount)</h4><p>可以改变当前进程的局部段描述符表。</p>
 <h4 id="vm86-struct-vm86-struct-info"><a href="#vm86-struct-vm86-struct-info" class="headerlink" title="vm86(struct vm86_struct* info)"></a>vm86(struct vm86_struct* info)</h4><p>为了兼容保护模式和实模式，i386 CPU提供了vm86寻址模式，此系统调用用来在Linux上模拟运行DOS软件。</p>
@@ -560,7 +735,7 @@
                 
               
 
-              <time title="创建时间：2018-12-01 16:15:07 / 修改时间：16:21:38" itemprop="dateCreated datePublished" datetime="2018-12-01T16:15:07+08:00">2018-12-01</time>
+              <time title="创建时间：2018-12-01 16:15:07 / 修改时间：17:02:51" itemprop="dateCreated datePublished" datetime="2018-12-01T16:15:07+08:00">2018-12-01</time>
             
 
             
@@ -582,7 +757,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Linux内核情景分析/" itemprop="url" rel="index"><span itemprop="name">Linux内核情景分析</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/《Linux内核情景分析》读书笔记/" itemprop="url" rel="index"><span itemprop="name">《Linux内核情景分析》读书笔记</span></a></span>
 
                 
                 
@@ -733,7 +908,7 @@
                 
               
 
-              <time title="创建时间：2018-12-01 15:52:54 / 修改时间：16:10:13" itemprop="dateCreated datePublished" datetime="2018-12-01T15:52:54+08:00">2018-12-01</time>
+              <time title="创建时间：2018-12-01 15:52:54 / 修改时间：17:03:13" itemprop="dateCreated datePublished" datetime="2018-12-01T15:52:54+08:00">2018-12-01</time>
             
 
             
@@ -755,7 +930,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Linux内核情景分析/" itemprop="url" rel="index"><span itemprop="name">Linux内核情景分析</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/《Linux内核情景分析》读书笔记/" itemprop="url" rel="index"><span itemprop="name">《Linux内核情景分析》读书笔记</span></a></span>
 
                 
                 
@@ -1175,7 +1350,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
