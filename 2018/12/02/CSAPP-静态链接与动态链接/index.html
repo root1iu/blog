@@ -120,7 +120,7 @@
 <meta property="og:image" content="https://root1iu.github.io/2018/12/02/CSAPP-静态链接与动态链接/7-15.png">
 <meta property="og:image" content="https://root1iu.github.io/2018/12/02/CSAPP-静态链接与动态链接/动态链接.png">
 <meta property="og:image" content="https://root1iu.github.io/2018/12/02/CSAPP-静态链接与动态链接/GOTPLT.png">
-<meta property="og:updated_time" content="2018-12-04T14:37:20.516Z">
+<meta property="og:updated_time" content="2018-12-04T14:43:49.430Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP - 静态链接与动态链接">
 <meta name="twitter:description" content="本文参考资料为《深入理解计算机系统》第七章。 本文所有代码在 https://github.com/root1iu/CSAPP-3e/tree/master/ch7 可以找到。 符号解析与静态库链接静态库以一种称为存档(archive)的特殊文件格式存放在内存中。 静态库是一个把相关目标模块打包成一个整体的文件。 链接时，连接器只赋值被程序引用的目标模块，减少了目标文件在磁盘中的内存大小。 123">
@@ -416,7 +416,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-12-04 22:37:20" itemprop="dateModified" datetime="2018-12-04T22:37:20+08:00">2018-12-04</time>
+                <time title="修改时间：2018-12-04 22:43:49" itemprop="dateModified" datetime="2018-12-04T22:43:49+08:00">2018-12-04</time>
               
             
           </span>
@@ -497,6 +497,7 @@
 <p>当链接器运行时，它判断输入文件引用的符号，maina.o引用了FirstC.o的FirstFunc和SecondC.o的SecondFunc，所以将FirstC.o和SecondC.o复制到可执行文件；然后在后面的目标文件中寻找，发现在libfunc.a中的FirstC.o和SecondC.o使用了printf，所以会赋值libc.a中的printf.o模块以及其他必要的模块到可执行文件中，最后生成proc。</p>
 </li>
 </ul>
+<p>x</p>
 <h3 id="加载可执行目标文件"><a href="#加载可执行目标文件" class="headerlink" title="加载可执行目标文件"></a>加载可执行目标文件</h3><h5 id="Linux-x86-64运行时内存映像"><a href="#Linux-x86-64运行时内存映像" class="headerlink" title="Linux x86-64运行时内存映像"></a>Linux x86-64运行时内存映像</h5><p>代码段从地址0x400000开始（加载后就不是，因为ASLR地址空间布局随机化），然后是数据段，数据段后是堆，堆和栈相接，堆向高处走，栈往低处走。栈往上是内核区域。</p>
 <p><img src="/2018/12/02/CSAPP-静态链接与动态链接/7-15.png" alt=""></p>
 <h5 id="加载器工作步骤"><a href="#加载器工作步骤" class="headerlink" title="加载器工作步骤"></a>加载器工作步骤</h5><p>首先Shell意识到本次输入不是内置命令，会由父进程Shell生成一个子进程，在子进程中调用系统调用execve启动加载器，加载器删除子进程的现有的虚拟内存段，并创建一组新的代码、数据、堆和栈。新的堆栈被初始化为0，新的代码段和数据段被初始化为本程序的代码和数据，然后加载器跳到_start地址，最后调用main来执行本程序。</p>
