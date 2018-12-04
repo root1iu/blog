@@ -410,7 +410,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-12-04 22:43:49" itemprop="dateModified" datetime="2018-12-04T22:43:49+08:00">2018-12-04</time>
+                <time title="修改时间：2018-12-04 23:10:43" itemprop="dateModified" datetime="2018-12-04T23:10:43+08:00">2018-12-04</time>
               
             
           </span>
@@ -463,144 +463,20 @@
       
         
           
-            <p>本文参考资料为《深入理解计算机系统》第七章。</p>
-<p>本文所有代码在 <a href="https://github.com/root1iu/CSAPP-3e/tree/master/ch7" target="_blank" rel="noopener">https://github.com/root1iu/CSAPP-3e/tree/master/ch7</a> 可以找到。</p>
-<h3 id="符号解析"><a href="#符号解析" class="headerlink" title="符号解析"></a>符号解析</h3><h5 id="与静态库链接"><a href="#与静态库链接" class="headerlink" title="与静态库链接"></a>与静态库链接</h5><p>静态库以一种称为存档(archive)的特殊文件格式存放在内存中。</p>
-<p>静态库是一个把相关目标模块打包成一个整体的文件。</p>
-<p>链接时，连接器只赋值被程序引用的目标模块，减少了目标文件在磁盘中的内存大小。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/*FirstC.c*/</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">void FirstFunc(void) &#123;</span><br><span class="line">    printf(&quot;first func\n&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/*SecondC.c*/</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">void SecondFunc(void) &#123;</span><br><span class="line">    printf(&quot;Second func\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>首先编译，用下面的命令进行编译</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -c FirstC.c </span><br><span class="line">$ gcc -c SecondC.c</span><br></pre></td></tr></table></figure>
-<p>-c是什么意思？man一下！</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ man gcc</span><br><span class="line"> -c </span><br><span class="line">Compile or assemble the source files, but do not link.  The linking stage simply is not done.  The ultimate output is in the form of an object file for each source file.</span><br><span class="line">By default, the object file name for a source file is made by replacing the suffix .c, .i, .s, etc., with .o. Unrecognized input files, not requiring compilation or assembly,are ignored.</span><br></pre></td></tr></table></figure>
-<p>也就是说选项-c告诉编译器不要链接，生成目标文件(.o)。所以到现在，我们获得了两个文件— FirstC.o、SecondC.o</p>
-</li>
-<li><p>接下来创建成静态库（存档）</p>
-<p>从man得知，ar是一个可以创建、修改库，以及从库中提取模块的程序。</p>
-<p>rcs的意思分别是将模块插入存档、创建存档、为存档加上索引。(man)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ar rcs libfunc.a FirstC.o SecondC.o</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>编写测试程序</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/*func.h*/</span><br><span class="line">#ifndef FUNC_H</span><br><span class="line">#define FUNC_H </span><br><span class="line">void FirstFunc(void);</span><br><span class="line">void SecondFunc(void);</span><br><span class="line">#endif /* ifndef FUNC_H */</span><br><span class="line"></span><br><span class="line">/*maina.c*/</span><br><span class="line">#include &quot;func.h&quot;</span><br><span class="line">int main(int argc, char *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    FirstFunc();</span><br><span class="line">    SecondFunc();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将测试程序和静态库链接起来</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -c maina.c # 将测试程序编译成目标文件</span><br><span class="line">$ gcc -static -o proc maina.o libfunc.a #使用静态库 </span><br><span class="line">或者使用</span><br><span class="line">$ gcc -c maina.c # 将测试程序编译成目标文件</span><br><span class="line">$ gcc -static -o proc maina.o -L. -lfunc #这里注意-L后面有一个点</span><br></pre></td></tr></table></figure>
-<p>-L. 是指在当前路径下查找静态库；-lfunc 是指链接libfunc.a，gcc会在静态库名前加上前缀lib，然后追加扩展名.a得到的静态库文件名来查找静态库文件。</p>
-<p><img src="/2018/12/02/CSAPP-静态链接与动态链接/静态链接.png" alt=""></p>
-</li>
-<li><p>链接过程</p>
-<p>当链接器运行时，它判断输入文件引用的符号，maina.o引用了FirstC.o的FirstFunc和SecondC.o的SecondFunc，所以将FirstC.o和SecondC.o复制到可执行文件；然后在后面的目标文件中寻找，发现在libfunc.a中的FirstC.o和SecondC.o使用了printf，所以会赋值libc.a中的printf.o模块以及其他必要的模块到可执行文件中，最后生成proc。</p>
-</li>
-</ul>
-<p>x</p>
-<h3 id="加载可执行目标文件"><a href="#加载可执行目标文件" class="headerlink" title="加载可执行目标文件"></a>加载可执行目标文件</h3><h5 id="Linux-x86-64运行时内存映像"><a href="#Linux-x86-64运行时内存映像" class="headerlink" title="Linux x86-64运行时内存映像"></a>Linux x86-64运行时内存映像</h5><p>代码段从地址0x400000开始（加载后就不是，因为ASLR地址空间布局随机化），然后是数据段，数据段后是堆，堆和栈相接，堆向高处走，栈往低处走。栈往上是内核区域。</p>
-<p><img src="/2018/12/02/CSAPP-静态链接与动态链接/7-15.png" alt=""></p>
-<h5 id="加载器工作步骤"><a href="#加载器工作步骤" class="headerlink" title="加载器工作步骤"></a>加载器工作步骤</h5><p>首先Shell意识到本次输入不是内置命令，会由父进程Shell生成一个子进程，在子进程中调用系统调用execve启动加载器，加载器删除子进程的现有的虚拟内存段，并创建一组新的代码、数据、堆和栈。新的堆栈被初始化为0，新的代码段和数据段被初始化为本程序的代码和数据，然后加载器跳到_start地址，最后调用main来执行本程序。</p>
-<h5 id="？"><a href="#？" class="headerlink" title="？"></a>？</h5><p>？书上写了“除了一些头部信息，在加载过程中没有任何从磁盘到内存的数据复制，直到CPU引用一个被映射的虚拟页时才会进行复制”为什么？加载器难道不是将代码等信息复制到内存然后运行吗？</p>
-<p>初步的想法加载器在加载的时候不会运行程序，加载完成后，运行程序，CPU访问代码段，出现页错误，再将页表送入内存。</p>
-<h3 id="动态链接共享库"><a href="#动态链接共享库" class="headerlink" title="动态链接共享库"></a>动态链接共享库</h3><h5 id="静态库有什么缺点"><a href="#静态库有什么缺点" class="headerlink" title="静态库有什么缺点"></a>静态库有什么缺点</h5><ul>
-<li>静态库需要定期维护和更新。</li>
-<li>很多程序都需要输入输出，而静态库会使这些函数代码被复制到每个进程的内存中，浪费了内存。</li>
-</ul>
-<p>共享库是一个目标模块，可以在程序运行或加载时，加载到任意的内存地址，并和一个在内存中的程序链接起来。</p>
-<ul>
-<li>共享库在一个文件系统只有一个文件，不像静态库一样要复制嵌入到目标文件。</li>
-<li>在内存中，一个共享库的.text节只有一个副本，所有程序共享共享库的代码和数据。</li>
-</ul>
-<h5 id="共享库例子"><a href="#共享库例子" class="headerlink" title="共享库例子"></a>共享库例子</h5><ul>
-<li><p>代码和静态库的一致，不过将两个部件编译成共享库</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -shared -fpic -o libfunc.so FirstC.c SecondC.c</span><br></pre></td></tr></table></figure>
-<p>-fpic是指示编译器编译成位置无关的代码，-shared指示链接器创建一个共享的目标文件</p>
-</li>
-<li><p>编译测试文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -o proc2 maina.c libfunc.so</span><br><span class="line">$ ldd proc2 #查看文件依赖的共享文件</span><br><span class="line">linux-vdso.so.1 =&gt;  (0x00007ffc7dffd000)</span><br><span class="line">/usr/local/lib/libusb-driver.so (0x00007fa3743d1000)</span><br><span class="line">libfunc.so =&gt; not found   #在这里</span><br><span class="line">libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007fa374007000)</span><br><span class="line">libdl.so.2 =&gt; /lib/x86_64-linux-gnu/libdl.so.2 (0x00007fa373e03000)</span><br><span class="line">libusb-0.1.so.4 =&gt; /lib/x86_64-linux-gnu/libusb-0.1.so.4 (0x00007fa373bfa000)</span><br><span class="line">libpthread.so.0 =&gt; /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007fa3739dd000)</span><br><span class="line">/lib64/ld-linux-x86-64.so.2 (0x00007fa3745d9000)</span><br><span class="line">$ ./proc2</span><br><span class="line">./proc2: error while loading shared libraries: libfunc.so: cannot open shared object file: No such file or directory</span><br></pre></td></tr></table></figure>
-<p>not found表示在系统ld路径中（本机为/lib/x86_64-linux-gnu/，不同机器可能不同）没有找到”libfunc.so”，这是当然的，因为我们放在了当前路径下。</p>
-<p>所以编译时，需要特别指定共享库的路径</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -o proc2 maina.c ./libfunc.so </span><br><span class="line">$ ldd proc2</span><br><span class="line">linux-vdso.so.1 =&gt;  (0x00007fff65bc9000)</span><br><span class="line">/usr/local/lib/libusb-driver.so (0x00007f08dfade000)</span><br><span class="line">./libfunc.so (0x00007f08df8dc000)</span><br><span class="line">libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f08df512000)</span><br><span class="line">libdl.so.2 =&gt; /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f08df30e000)</span><br><span class="line">libusb-0.1.so.4 =&gt; /lib/x86_64-linux-gnu/libusb-0.1.so.4 (0x00007f08df105000)</span><br><span class="line">libpthread.so.0 =&gt; /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f08deee8000)</span><br><span class="line">/lib64/ld-linux-x86-64.so.2 (0x00007f08dfce6000)</span><br><span class="line">$ ./proc2</span><br><span class="line">first func</span><br><span class="line">Second func</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>动态链接共享库过程</p>
-<p><img src="/2018/12/02/CSAPP-静态链接与动态链接/动态链接.png" alt=""></p>
-</li>
-</ul>
-<p>由上图可知，在链接时，需要共享库提供重定位和符号表的信息，在运行时，才能解析对动态链接库函数的引用。</p>
-<p>重定位类似共享内存（自己的体会），把函数重定位到进程的某个虚拟内存那，然后重定位进程对这些函数的引用，这样就可以在进程中调用这些库中的函数。</p>
-<h5 id="gcc-编译共享库——位置无关代码解决了什么问题"><a href="#gcc-编译共享库——位置无关代码解决了什么问题" class="headerlink" title="gcc 编译共享库——位置无关代码解决了什么问题"></a>gcc 编译共享库——位置无关代码解决了什么问题</h5><p>-fpic 告诉编译器编译和位置无关的代码。</p>
-<h3 id="从应用程序中加载和链接共享库-dlfcn-h系列函数"><a href="#从应用程序中加载和链接共享库-dlfcn-h系列函数" class="headerlink" title="从应用程序中加载和链接共享库(dlfcn.h系列函数)"></a>从应用程序中加载和链接共享库(dlfcn.h系列函数)</h3><p>应用程序可以在运行过程中要求动态连接器加载和链接某个共享库。</p>
-<p>Linux为动态连接器提供了接口，允许应用程序在运行时，加载和链接共享库</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//加载和链接共享库filename</span><br><span class="line">#include &lt;dlfcn.h&gt;</span><br><span class="line">void* dlopen(const  char* filename, ing flag);</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//参数是打开了的共享库的handle和一个symbol名字</span><br><span class="line">//存在则返回符号的地址</span><br><span class="line">#include &lt;dlfcn.h&gt;</span><br><span class="line">void* dlsym(void* handle, char* symbol);</span><br></pre></td></tr></table></figure>
-<p>整个编码流程是</p>
-<ul>
-<li>dlopen打开共享库文件</li>
-<li>要使用的符号（函数名或其他[待测试内容]），通过dlsym来获得符号的地址</li>
-<li>使用符号</li>
-</ul>
-<p>注意编译时，要加上-ldl，链接动态链接器。</p>
-<h5 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void* handle = dlopen(&quot;./libfunc.so&quot;, RTLD_LAZY); //RTLD_LAZY表示推迟符号解析直到执行库中代码</span><br><span class="line">if(handle == NULL) &#123;</span><br><span class="line">    fprintf(stderr, &quot;%s\n&quot;, dlerror());</span><br><span class="line">    exit(1);</span><br><span class="line">&#125;</span><br><span class="line">void (* func)(void);</span><br><span class="line">func = dlsym(handle, &quot;FirstFunc&quot;);</span><br><span class="line">char* error;</span><br><span class="line">if((error = dlerror()) != NULL) &#123;</span><br><span class="line">    fprintf(stderr, &quot;%s\n&quot;, error);</span><br><span class="line">    exit(1);</span><br><span class="line">&#125;</span><br><span class="line">func();</span><br></pre></td></tr></table></figure>
-<p>编译运行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -rdynamic -o proc2r dll.c -ldl </span><br><span class="line">$ ./proc2r</span><br><span class="line">first func</span><br></pre></td></tr></table></figure>
-<h3 id="位置无关代码-PIC"><a href="#位置无关代码-PIC" class="headerlink" title="位置无关代码(PIC)"></a>位置无关代码(PIC)</h3><p>位置无关代码可以让连接器加载到进程地址空间的任何地方（不固定），这样的好处是不用在内存中预留某块内存给共享库以及避免这种方式带来的糟糕后果。</p>
-<p>程序如何找到共享库中想要的数据和代码？</p>
-<h4 id="PIC数据引用"><a href="#PIC数据引用" class="headerlink" title="PIC数据引用"></a>PIC数据引用</h4><p>内存中，数据段和代码段之间距离保持不变，因此代码段中任何指令和数据段中的变量之间的距离是一个运行时常量。编译器利用这个特性，生成对全局变量的PIC的引用。编译器在数段开始的地方创建了全局偏移量表GOT(Global Offset Table)，GOT是数据段的一部分。在GOT中，每个被目标模块引用的全局数据目标（过程或全局变量）都有一个8字节的条目，装着重定位记录。在加载时，动态链接器会重定位GDT中的每个条目，使它包含目标的正确绝对地址。每个引用全局目标的目标模块都有自己的GOT。接下来跟踪一下数据重定位的过程</p>
-<ul>
-<li><p>查看GOT表</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ readelf -r libfunc.so</span><br><span class="line">...</span><br><span class="line">000000200fd8  000a00000006 R_X86_64_GLOB_DAT 0000000000201030 firsta + 0</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>获取FirstFunc在libfunc.so中的偏移</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ nm libfunc.so | grep FirstFunc</span><br><span class="line">0000000000000750 T FirstFunc</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>获得FIrstFunc的反汇编代码，取对firsta引用的部分</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000000754 &lt;+4&gt;:	mov    rax,QWORD PTR [rip+0x20087d]        # 0x200fd8</span><br><span class="line">0x000000000000075b &lt;+11&gt;:	mov    eax,DWORD PTR [rax]</span><br><span class="line">0x000000000000075d &lt;+13&gt;:	lea    edx,[rax+0x1]</span><br><span class="line">0x0000000000000760 &lt;+16&gt;:	mov    rax,QWORD PTR [rip+0x200871]        # 0x200fd8</span><br><span class="line">0x0000000000000767 &lt;+23&gt;:	mov    DWORD PTR [rax],edx</span><br></pre></td></tr></table></figure>
-<p>代码从GOT[4]中获得firsta的地址，取值+1后再放回。在这个过程中，要想取得firsta的地址，需要知道GOT[4]和PC之间的相对偏移量，这里的思想是这个偏移量是一个运行时常量（利用了代码段和数据段之间不变的距离），所以取得引用总会去GOT[4]中获得firsta的地址。</p>
-</li>
-</ul>
-<h5 id="PIC数据引用——外部变量"><a href="#PIC数据引用——外部变量" class="headerlink" title="PIC数据引用——外部变量"></a>PIC数据引用——外部变量</h5><p>外部变量分为两种</p>
-<ol>
-<li><p>在动态库中不同模块之间的全局变量</p>
-<p>在SecondFunc中引用firsta，在汇编层面上，引用这个外部变量和FirstFunc中的代码是一样的，都是通过GOT表间接访问。</p>
-</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0x000000000000072c &lt;+4&gt;:	mov    rax,QWORD PTR [rip+0x2008a5]        # 0x200fd8</span><br><span class="line">0x0000000000000733 &lt;+11&gt;:	mov    eax,DWORD PTR [rax]</span><br><span class="line">0x0000000000000735 &lt;+13&gt;:	lea    edx,[rax+0x1]</span><br><span class="line">0x0000000000000738 &lt;+16&gt;:	mov    rax,QWORD PTR [rip+0x200899]        # 0x200fd8</span><br><span class="line">0x000000000000073f &lt;+23&gt;:	mov    DWORD PTR [rax],edx</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>调用模块使用动态库中的全局变量和普通的全局变量一样，内容在.bss中。</li>
-</ol>
-<h4 id="PIC函数调用"><a href="#PIC函数调用" class="headerlink" title="PIC函数调用"></a>PIC函数调用</h4><p>由于程序调用共享库定义的函数，编译器无法预测这个函数的运行时地址，因为共享模块在运行时可以加载到任意位置。有两种方法</p>
-<ol>
-<li>为该引用生成一条重定位记录，然后动态链接器在程序加载时再解析它。（？书上说这种方法不是PIC，因为修改了调用模块的代码段，为什么重定位记录会修改代码段，是直接改代码吗？这一点不明白。）</li>
-<li>GNU有一种技术叫延迟绑定(lazy binding)，将函数地址板顶延迟到第一次调用该函数时。</li>
-</ol>
-<p>本文讨论第二种，<strong>延迟绑定</strong>。</p>
-<ul>
-<li>延迟绑定的好处是：避免动态链接器在加载时进行成千上百个并不需要的重定位。（？不明白，重定位是怎么做的？扫描共享库？）</li>
-<li>延迟绑定第一次开销大，之后的开销只有一条指令和一个间接内存引用。</li>
-</ul>
-<h5 id="PLT-Procedure-Linkage-Table-过程链接表"><a href="#PLT-Procedure-Linkage-Table-过程链接表" class="headerlink" title="PLT(Procedure Linkage Table)过程链接表"></a>PLT(Procedure Linkage Table)过程链接表</h5><p>PLT是一个数组，每个条目装有16 byte的代码。PLT和GOT协作，解析函数地址。</p>
-<ul>
-<li><p>首先查看proc2 GOT表内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ readelf -r proc2</span><br><span class="line">Relocation section &apos;.rela.dyn&apos; at offset 0x538 contains 1 entries:</span><br><span class="line">  Offset          Info           Type           Sym. Value    Sym. Name + Addend</span><br><span class="line">000000600ff8  000400000006 R_X86_64_GLOB_DAT 0000000000000000 __gmon_start__ + 0</span><br><span class="line"></span><br><span class="line">Relocation section &apos;.rela.plt&apos; at offset 0x550 contains 3 entries:</span><br><span class="line">  Offset          Info           Type           Sym. Value    Sym. Name + Addend</span><br><span class="line">000000601018  000200000007 R_X86_64_JUMP_SLO 0000000000000000 __libc_start_main@GLIBC_2.2.5 + 0</span><br><span class="line">000000601020  000300000007 R_X86_64_JUMP_SLO 0000000000000000 FirstFunc + 0</span><br><span class="line">000000601028  000600000007 R_X86_64_JUMP_SLO 0000000000000000 SecondFunc + 0</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查看PLT表地址</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ readelf -S proc2</span><br><span class="line">  [12] .plt              PROGBITS         00000000004005c0  000005c0</span><br><span class="line">       0000000000000040  0000000000000010  AX       0     0     16</span><br></pre></td></tr></table></figure>
-<p>即0x4005c0</p>
-</li>
-<li><p>调试proc2，在FirstFunc处停下，可以看到</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x400715 &lt;main+15&gt;              call   FirstFunc@plt &lt;0x4005e0&gt; #FirstFunc的plt地址为0x4005e0</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>获得FirstFunc的PLT的代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gdb&gt; disass 0x4005e0</span><br><span class="line">Dump of assembler code for function FirstFunc@plt:</span><br><span class="line">   0x00000000004005e0 &lt;+0&gt;:	jmp    QWORD PTR [rip+0x200a3a]        # 0x601020</span><br><span class="line">   0x00000000004005e6 &lt;+6&gt;:	push   0x1</span><br><span class="line">   0x00000000004005eb &lt;+11&gt;:	jmp    0x4005c0</span><br><span class="line">End of assembler dump.</span><br></pre></td></tr></table></figure>
-<p>在这里可以看到，FirstFunc的PLT代码中，首先跳转到0x601020地址中的值处执行，也就是GOT[5]存储的内容。在第一次执行时，GOT[5]存储的是0x0000 0000 0040 05e6    即FirstFunc的PLT代码中的下一行。换句话说，第一次执行时，PLT和GOT之间的配合，只是PLT简单的执行下一步。根据代码，push 1后跳到PLT[0]处</p>
-<p>PLT[0]的代码是</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">► 0x4005c0             push   qword ptr [rip + 0x200a42] &lt;0x601008&gt;</span><br><span class="line">  0x4005c6             jmp    qword ptr [rip + 0x200a44] &lt;0x7ffff7dee870&gt;</span><br></pre></td></tr></table></figure>
-<p>将GOT[2]压入栈中，跳到<em>GOT[3]处执行。进入&lt;_dl_runtime_resolve_avx&gt;最后经过一系列的操作，从 &lt; _dl_fixup&gt;跳出，获得FIrstFunc运行时地址，写入GOT[5]，跳到\</em>GOT[5]处，即FirstFunc处运行。</p>
-</li>
-<li><p>第二次调用，直接跳转到*GOT[5]处运行了，代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">► 0x4005e0     &lt;FirstFunc@plt&gt;    jmp    qword ptr [rip + 0x200a3a] &lt;0x7ffff79cd750&gt;</span><br></pre></td></tr></table></figure>
-<p><img src="/2018/12/02/CSAPP-静态链接与动态链接/GOTPLT.png" alt=""></p>
-</li>
-</ul>
-
+          本文参考资料为《深入理解计算机系统》第七章。
+本文所有代码在 https://github.com/root1iu/CSAPP-3e/tree/master/ch7 可以找到。
+符号解析与静态库链接静态库以一种称为存档(archive)的特殊文件格式存放在内存中。
+静态库是一个把相关目标模块打包成一
+          ...
+          <!--noindex-->
           
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/12/02/CSAPP-静态链接与动态链接/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
@@ -758,8 +634,17 @@
       
         
           
-            
           
+          
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/12/01/2-3-几个重要的数据结构和函数/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
@@ -929,20 +814,19 @@
       
         
           
-            <h2 id="Linux地址映射的全过程"><a href="#Linux地址映射的全过程" class="headerlink" title="Linux地址映射的全过程"></a>Linux地址映射的全过程</h2><p>虚拟地址——&gt;线性地址——&gt;物理地址</p>
-<p>虚拟地址经过段式映射后变成线性地址，如何段式映射？通过加载选择子进段选择子中，然后从段描述符表中获取对应的段描述符，段起始地址加上段偏移获得线性地址。选择哪个段描述符表？先从CS内容看起：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">408</span><br><span class="line">#define start_thread(regs, new_eip, new_esp) do &#123;\</span><br><span class="line"> __asm__(&quot;movl %0,%%fs ; movl %0,%%gs&quot;: :&quot;r&quot; (0));\</span><br><span class="line"> set_fs(USER_DS);\</span><br><span class="line"> regs-&gt;xds = __USER_DS;\</span><br><span class="line"> regs-&gt;xes = __USER_DS;\</span><br><span class="line"> regs-&gt;xss = __USER_DS;\</span><br><span class="line"> regs-&gt;xcs = __USER_CS;\</span><br><span class="line"> regs-&gt;eip = new_eip;\</span><br><span class="line"> regs-&gt;esp = new_esp;\</span><br><span class="line">&#125; while (0)</span><br></pre></td></tr></table></figure>
-<p>从xds （段寄存器DS的映像）和 xss的赋值来看，Linux内核中堆栈段和数据段是不区分的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">==================== include/asm-i386/segment.h 4 8 ====================</span><br><span class="line"> #define __KERNEL_CS 0x10  	//index = 2 TI = 0 RPL = 0</span><br><span class="line"> #define __KERNEL_DS 0x18	//index = 3 TI = 0 RPL = 0</span><br><span class="line"></span><br><span class="line"> #define __USER_CS 0x23		//index = 4 TI = 0 RPL = 3</span><br><span class="line"> #define __USER_DS 0x2B		//index = 5 TI = 0 RPL = 3</span><br></pre></td></tr></table></figure>
-<p>无论是内核段还是用户段，TI都是0，也就是全部使用GDT，都没有用LDT，Linux内核基本上不使用LDT。只在VM86模式（虚拟86）中运行wine以及其他Linux模拟运行Windows或DOS软件时才会用到。</p>
-<p>见《Linux内核情景分析》1.2 1.3节</p>
-<p>线性地址再通过页式映射获得物理地址。如何页式映射？首先页目录表的起始地址是记录在CR3控制寄存器中的。线性地址有32位（32CPU为例），高10位作为页目录表的下标索引，获得页目录表中对应下标的页目录项，页目录项指向页表地址；中间10位作为页表的下标索引，获得页表中对应下标的页表项，页表项指向物理页地址；低12位作业物理页的索引直接索引到物理地址。其中页目录项的低12位，页表项的低12位作为标识位，有各种标识。</p>
-<p>整个页式映射需要访问三次内存才能访问到真正的物理内存——页目录表、页表、物理页。这需要依赖cache高速缓存才能高效的实现页式映射。</p>
-<h3 id="2-2-1-Linux内核上提供的与段式存储管理相关的系统调用"><a href="#2-2-1-Linux内核上提供的与段式存储管理相关的系统调用" class="headerlink" title="2.2.1 Linux内核上提供的与段式存储管理相关的系统调用"></a>2.2.1 Linux内核上提供的与段式存储管理相关的系统调用</h3><p>为了模拟Windows和DOS在Linux上运行(wine)，（为什么需要局部段描述符表？）</p>
-<h4 id="modify-ldt-int-func-void-ptr-unsigned-long-bytecount"><a href="#modify-ldt-int-func-void-ptr-unsigned-long-bytecount" class="headerlink" title="modify_ldt(int func, void* ptr, unsigned long bytecount)"></a>modify_ldt(int func, void* ptr, unsigned long bytecount)</h4><p>可以改变当前进程的局部段描述符表。</p>
-<h4 id="vm86-struct-vm86-struct-info"><a href="#vm86-struct-vm86-struct-info" class="headerlink" title="vm86(struct vm86_struct* info)"></a>vm86(struct vm86_struct* info)</h4><p>为了兼容保护模式和实模式，i386 CPU提供了vm86寻址模式，此系统调用用来在Linux上模拟运行DOS软件。</p>
-
+          Linux地址映射的全过程虚拟地址——&gt;线性地址——&gt;物理地址
+虚拟地址经过段式映射后变成线性地址，如何段式映射？通过加载选择子进段选择子中，然后从段描述符表中获取对应的段描述符，段起始地址加上段偏移获得线性地址。选择哪个段描述符表？先从CS内容看起：
+1234567891011408#
+          ...
+          <!--noindex-->
           
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/12/01/2-2-Linux地址映射全过程/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
@@ -1100,22 +984,25 @@
       
         
           
-            <h2 id="2-1-Linux内存管理的基本框架"><a href="#2-1-Linux内存管理的基本框架" class="headerlink" title="2.1 Linux内存管理的基本框架"></a>2.1 Linux内存管理的基本框架</h2><h5 id="Linux内核的内存映射模型"><a href="#Linux内核的内存映射模型" class="headerlink" title="Linux内核的内存映射模型"></a>Linux内核的内存映射模型</h5><p>Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。</p>
-<ul>
-<li>PGD（页目录表）</li>
-<li>PMD（中间目录）</li>
-<li>PT（页表）</li>
-</ul>
-<p>三层地址映射如图：</p>
-<p><img src="/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png" alt=""></p>
-<p>在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。</p>
-<p><strong>系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0000000</strong></p>
-<p>根据这个性质，在需要时，可以直接从虚拟地址转换为物理地址。比如在任务切换时，需要更新CR3的值，使其指向新进程的PGD，而页目录表的起始地址是虚拟地址，CR3需要的是物理地址。</p>
-<h5 id="GDT和LDT"><a href="#GDT和LDT" class="headerlink" title="GDT和LDT"></a>GDT和LDT</h5><p><strong>每个进程的局部段描述符LDT都作为一个独立的段存在，在全局段描述符表中GDT要有一个表项指向LDT这个段的起始地址，并说明该段的长度以及其他参数</strong></p>
-<p>GDT的第一项永远为0，第2、 3项用于内核的代码段和数据段；第5、 6项用于当前进程的代码段和数据段等(5个+？)，还剩下8180个项，所以理论上系统最大的进程数为4090。</p>
-<h5 id="为什么GDT第一项永远为0？"><a href="#为什么GDT第一项永远为0？" class="headerlink" title="为什么GDT第一项永远为0？"></a>为什么GDT第一项永远为0？</h5><p>为了防止未初始化的数据加载到选择子中，Linux采取这种方式来避免严重却不容易发现的错误(未初始化选择子)</p>
+          2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。
 
+PGD（页目录表）
+PMD（中间目录）
+PT（页表）
+
+三层地址映射如图：
+
+在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即
+          ...
+          <!--noindex-->
           
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/12/01/2-1-Linux内存管理的基本框架/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
@@ -1273,69 +1160,18 @@
       
         
           
-            <h2 id="本系列是root1iu学习Linux内核情景分析一书的学习记录，初学Linux内核，希望借此能够提升自己的知识水平，离Linux-kernel更近一步。"><a href="#本系列是root1iu学习Linux内核情景分析一书的学习记录，初学Linux内核，希望借此能够提升自己的知识水平，离Linux-kernel更近一步。" class="headerlink" title="本系列是root1iu学习Linux内核情景分析一书的学习记录，初学Linux内核，希望借此能够提升自己的知识水平，离Linux kernel更近一步。 :)"></a>本系列是root1iu学习Linux内核情景分析一书的学习记录，初学Linux内核，希望借此能够提升自己的知识水平，离Linux kernel更近一步。 :)</h2><h3 id="1-2-Intel-X86-CPU系列的寻址方式"><a href="#1-2-Intel-X86-CPU系列的寻址方式" class="headerlink" title="1.2 Intel X86 CPU系列的寻址方式"></a>1.2 Intel X86 CPU系列的寻址方式</h3><h5 id="访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？"><a href="#访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？" class="headerlink" title="访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？"></a>访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？</h5><ul>
-<li>根据指令性质决定使用哪个寄存器（如转移指令在代码段）</li>
-<li>根据段寄存器的内容，找到段描述符</li>
-<li>从段描述符中得到基地址</li>
-<li>将指令中发出的地址作为位移，根据段描述符中的段界限，判断是否越界</li>
-<li>根据指令性质和段描述符中的访问权限判断是否越权</li>
-<li>将指令中发出的地址作为位移，与基地址相加得出实际的“物理地址”（称为物理地址是因为这是真正放入地址总线上的，用来访问存在着的具体内存单位，其实是线性地址【逻辑地址—(段)—线性地址—(页)—物理地址】）</li>
-</ul>
-<h5 id="选择子-段寄存器"><a href="#选择子-段寄存器" class="headerlink" title="选择子(段寄存器)"></a>选择子(段寄存器)</h5><p>选择子结构如图所示</p>
-<p><img src="/2018/12/01/1-预备知识/%E5%9B%BE1.1%E9%80%89%E6%8B%A9%E5%AD%90.png" alt=""></p>
-<p>书中说，通过GDTR和选择子下标来决定段描述符表项在什么地方，所以起到保护作用。</p>
-<p>意思可能是，因为访问GDTR的指令是特权指令，所以你是不知道描述符表中内容是什么，在哪里，也无法访问其所在内存，所以无法修改段描述符表项，从而起到保护作用。</p>
-<h5 id="段描述符表项"><a href="#段描述符表项" class="headerlink" title="段描述符表项"></a>段描述符表项</h5><p><img src="/2018/12/01/1-预备知识/%E5%9B%BE1.2%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8%E9%A1%B9.png" alt=""></p>
-<h5 id="段描述符定义"><a href="#段描述符定义" class="headerlink" title="段描述符定义"></a>段描述符定义</h5><p><img src="/2018/12/01/1-预备知识/home/root1iu/github/blog/source/_posts/1-预备知识/图2.4段描述符定义.png" alt=""></p>
-<p>内核和用户的段描述符表项的区别</p>
-<ul>
-<li>内核DPL为0，用户DPL为3.</li>
-<li>段的类型，或为代码或为数据。</li>
-</ul>
-<p>这两项是CPU在映射过程中要核对权限的，比如cs的DPL为3（CPU的当前运行级别），不允许访问DPl为0的段描述符所指向的地方。</p>
-<h5 id="DPL"><a href="#DPL" class="headerlink" title="DPL"></a>DPL</h5><p>一般程序的当前运行级别由其代码段CS指向的局部段描述符项的DPL字段决定。</p>
-<p>全局段描述符的DPL字段，表示所需的级别。</p>
-<h5 id="RPL"><a href="#RPL" class="headerlink" title="RPL"></a>RPL</h5><p>选择子的低2位即为RPL，RPL表示所要求的权限。当改变段寄存器时，CPU会检查，确保当前执行的程序的执行权限(CS指向的LDT的段描述符项的DPL)和段寄存器所指定要求的权限(RPL)均不低于要访问的那一段内存的DPL。也就是说要修改段描述符，既要执行权限大于等于要访问的内存的权限，又要求被修改的段选择子的要求权限大于等于要访问的内存的权限。</p>
-<h3 id="1-3-i386的页式内存管理机制"><a href="#1-3-i386的页式内存管理机制" class="headerlink" title="1.3 i386的页式内存管理机制"></a>1.3 i386的页式内存管理机制</h3><h5 id="从线性地址到物理地址的映射过程"><a href="#从线性地址到物理地址的映射过程" class="headerlink" title="从线性地址到物理地址的映射过程"></a>从线性地址到物理地址的映射过程</h5><ul>
-<li>从CR3获得页目录表的地址</li>
-<li>根据页目录表的地址和线性地址的高10位获得页目录项的内容</li>
-<li>根据页目录项的内容（指向页表）和线性地址的中10位获得页表项的内容</li>
-<li>根据页表项的内容（指向物理页）和线性地址的低12位得到物理地址</li>
-</ul>
-<p>如图:</p>
-<p><img src="/2018/12/01/1-预备知识/%E4%BA%8C%E7%BA%A7%E9%A1%B5%E8%A1%A8%E8%BD%AC%E6%8D%A2%E8%BF%87%E7%A8%8B.png" alt=""></p>
-<h5 id="为什么使用二级页表不使用一级页表"><a href="#为什么使用二级页表不使用一级页表" class="headerlink" title="为什么使用二级页表不使用一级页表"></a>为什么使用二级页表不使用一级页表</h5><ol>
-<li>节省空间，如果使用一级页表，那么会占用4M的内存（一般用不了那么多），即使这个页表项指向的页不被使用。使用二级页表只需要固定占有1个页目录表的内存即4K，其他视情况而定。</li>
-</ol>
-<h5 id="页目录项"><a href="#页目录项" class="headerlink" title="页目录项"></a>页目录项</h5><p>页目录项示意图</p>
-<p><img src="/2018/12/01/1-预备知识/%E9%A1%B5%E7%9B%AE%E5%BD%95%E9%A1%B9%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt=""></p>
-<h5 id="更新CR3前后语句页目录表地址不一样，会不会导致执行不连续？"><a href="#更新CR3前后语句页目录表地址不一样，会不会导致执行不连续？" class="headerlink" title="更新CR3前后语句页目录表地址不一样，会不会导致执行不连续？"></a>更新CR3前后语句页目录表地址不一样，会不会导致执行不连续？</h5><p>不会，因为更新cr3的语句实在内核空间中执行的，而在内核空间中，地址映射都是一样的(0xC0000000 - 0xffffffff)所以不会有问题。</p>
-<h5 id="缺页异常"><a href="#缺页异常" class="headerlink" title="缺页异常"></a>缺页异常</h5><p>当页目录项或页表项的P位为0，即表示相应的页面或物理页不存在内存。</p>
-<h5 id="页式虚存"><a href="#页式虚存" class="headerlink" title="页式虚存"></a>页式虚存</h5><p>内存中暂时不使用的页面写入磁盘交换区，然后将相应的P位置0，这样就可以实现页式虚存。当P为0时，其他内容就无意义了，所以可以用来存储信息，比如换出的页面在磁盘上的位置等。</p>
-<h5 id="PS位-Page-Size，在第7位"><a href="#PS位-Page-Size，在第7位" class="headerlink" title="PS位(Page Size，在第7位)"></a>PS位(Page Size，在第7位)</h5><p>为0表示页面大小为4K，为1表示页面大小为4M（退化为一级页表）</p>
-<h5 id="开启页式管理"><a href="#开启页式管理" class="headerlink" title="开启页式管理"></a>开启页式管理</h5><p>CR0的最高位PG置1</p>
-<h3 id="1-4-Linux内核源代码中的C语言代码"><a href="#1-4-Linux内核源代码中的C语言代码" class="headerlink" title="1.4 Linux内核源代码中的C语言代码"></a>1.4 Linux内核源代码中的C语言代码</h3><h5 id="Linux内核比较-4-15-0的list相关操作比2-4-0多了WRITE-ONCE-READ-ONCE"><a href="#Linux内核比较-4-15-0的list相关操作比2-4-0多了WRITE-ONCE-READ-ONCE" class="headerlink" title="[Linux内核比较]4.15.0的list相关操作比2.4.0多了WRITE_ONCE/READ_ONCE"></a>[Linux内核比较]4.15.0的list相关操作比2.4.0多了WRITE_ONCE/READ_ONCE</h5><p>这里列出WRITE_ONCE源码[来源<a href="https://blog.csdn.net/cloudblaze/article/details/51676139]" target="_blank" rel="noopener">https://blog.csdn.net/cloudblaze/article/details/51676139]</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#define WRITE_ONCE(x, val) \</span><br><span class="line">(&#123; \ </span><br><span class="line">	union &#123; typeof(x) __val; char __c[1]; &#125; __u = \ </span><br><span class="line">	&#123; .__val = (__force typeof(x)) (val) &#125;; \</span><br><span class="line">    __write_once_size(&amp;(x), __u.__c,sizeof(x)); \</span><br><span class="line">    __u.__val; \ </span><br><span class="line"> &#125;) </span><br><span class="line">static __always_inline void __write_once_size(volatile void *p, void *res, int size) </span><br><span class="line">&#123; </span><br><span class="line">	switch (size) </span><br><span class="line">	&#123;</span><br><span class="line">    	case 1: *(volatile __u8 *)p = *(__u8 *)res; break;</span><br><span class="line">        case 2: *(volatile __u16 *)p = *(__u16 *)res; break; </span><br><span class="line">        case 4: *(volatile __u32 *)p = *(__u32 *)res; break; </span><br><span class="line">        case 8: *(volatile __u64 *)p = *(__u64 *)res; break; </span><br><span class="line">        default: </span><br><span class="line">        	barrier();</span><br><span class="line">            __builtin_memcpy((void *)p, (const void *)res, size);</span><br><span class="line">            barrier(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>博客里说：在某些情况下CPU对内存中变量读写并不是一次完成的，这可能会出现竞争。而READ_ONCE和WRITE_ONCE实现对变量一次性读取和一次性写入。</p>
-<p>什么是竞争？什么情况下发生？WRITE_ONCE这样定义可以实现对变量的一次性写入？</p>
-<h3 id="1-5-Linux内核源代码中的汇编语言代码"><a href="#1-5-Linux内核源代码中的汇编语言代码" class="headerlink" title="1.5 Linux内核源代码中的汇编语言代码"></a>1.5 Linux内核源代码中的汇编语言代码</h3><h3 id="1-5-2-嵌入C代码中的386汇编语言程序段（内联汇编）"><a href="#1-5-2-嵌入C代码中的386汇编语言程序段（内联汇编）" class="headerlink" title="1.5.2 嵌入C代码中的386汇编语言程序段（内联汇编）"></a>1.5.2 嵌入C代码中的386汇编语言程序段（内联汇编）</h3><h5 id="LOCK"><a href="#LOCK" class="headerlink" title="LOCK"></a>LOCK</h5><figure class="highlight plain"><figcaption><span>29 35</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static __inline__ void atomic_add(int i, atomic_t *v)</span><br><span class="line">&#123;</span><br><span class="line">__asm__ __volatile__(</span><br><span class="line">	LOCK &quot;addl %1,%0&quot;</span><br><span class="line">	:&quot;=m&quot; (v-&gt;counter)</span><br><span class="line">	:&quot;ir&quot; (i), &quot;m&quot; (v-&gt;counter));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>表示在执行addl指令时要把系统总线锁住，不让别的CPU打扰。</p>
-<h5 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h5><figure class="highlight plain"><figcaption><span>199 215</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">static inline void * __memcpy(void * to, const void * from, size_t n)</span><br><span class="line"> &#123;</span><br><span class="line">	 int d0, d1, d2;</span><br><span class="line">	 __asm__ __volatile__(</span><br><span class="line">	 &quot;rep ; movsl\n\t&quot;</span><br><span class="line"> 	 &quot;testb $2,%b4\n\t&quot;</span><br><span class="line"> 	 &quot;je 1f\n\t&quot;</span><br><span class="line">	 &quot;movsw\n&quot;</span><br><span class="line">	 &quot;1:\ttestb $1,%b4\n\t&quot;</span><br><span class="line">     &quot;je 2f\n\t&quot;</span><br><span class="line">	 &quot;movsb\n&quot;</span><br><span class="line">	 &quot;2:&quot;</span><br><span class="line">	 : &quot;=&amp;c&quot; (d0), &quot;=&amp;D&quot; (d1), &quot;=&amp;S&quot; (d2)</span><br><span class="line">	 :&quot;0&quot; (n/4), &quot;q&quot; (n),&quot;1&quot; ((long) to),&quot;2&quot; ((long) from)</span><br><span class="line">	 : &quot;memory&quot;);</span><br><span class="line">	 return (to);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这是一段memcpy的 底层实现</p>
-<ul>
-<li>将源地址、目标地址、数量/4分别传入寄存器esi、 edi、ecx中</li>
-<li>rep重复执行movsl(这里的分号是什么意思？不可能是注释啊)</li>
-</ul>
-<ol>
-<li>问题1 d0 d1 d2这些输出有什么用——初步猜测是保存原先的值。</li>
-</ol>
-<p>(<a href="http://www.cnblogs.com/taek/archive/2012/02/05/2338838.html" target="_blank" rel="noopener">http://www.cnblogs.com/taek/archive/2012/02/05/2338838.html</a>)</p>
-<p>用符号&amp;进行修饰时,等于向GCC声明:”GCC不得为任何Input操作表达式分配与此Output操作表达式相同的寄存器”;</p>
-<p>其原因是修饰符&amp;意味着被其修饰的Output操作表达式要在所有的Input操作表达式被输入之前输出;</p>
-<p>即:GCC会先使用输出值对被修饰符&amp;修饰的Output操作表达式进行填充,然后,才对Input操作表达式进行输入;</p>
-<p>这样的话,如果不使用修饰符&amp;对Output操作表达式进行修饰,一旦后面的Input操作表达式使用了与Output操作表达式相同的寄存器,就会产生输入输出数据混乱的情况;相反,如果没有用修饰符&amp;修饰输出操作表达式,那么,就意味着GCC会先把Input操作表达式的值输入到选定的寄存器中,然后经过处理,最后才用输出值填充对应的Output操作表达式;</p>
-
+          本系列是root1iu学习Linux内核情景分析一书的学习记录，初学Linux内核，希望借此能够提升自己的知识水平，离Linux kernel更近一步。 :)1.2 Intel X86 CPU系列的寻址方式访存指令发出内存地址时，CPU如何归纳出实际应该放上数据总线的地址的？
+根据指令性质决定使用哪
+          ...
+          <!--noindex-->
           
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/12/01/1-预备知识/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
@@ -1505,76 +1341,20 @@
       
         
           
-            <h4 id="初始化hexo"><a href="#初始化hexo" class="headerlink" title="初始化hexo"></a>初始化hexo</h4><p>进入博客目录（自己创建，本例的本地目录为blog/）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init</span><br></pre></td></tr></table></figure>
-<p>测试hexo是否运行正常</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server </span><br><span class="line">#INFO  Start processing</span><br><span class="line">#INFO  Hexo is running at http://localhost:4000 . Press Ctrl+C to stop.</span><br></pre></td></tr></table></figure>
-<p>C^左键进入<a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a> 页面，即可看到hexo界面。</p>
-<h4 id="将hexo和github关联起来"><a href="#将hexo和github关联起来" class="headerlink" title="将hexo和github关联起来"></a>将hexo和github关联起来</h4><ol>
-<li><h5 id="下载插件"><a href="#下载插件" class="headerlink" title="下载插件"></a>下载插件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-</li>
-<li><h5 id="在github创建新仓库"><a href="#在github创建新仓库" class="headerlink" title="在github创建新仓库"></a>在github创建新仓库</h5><ul>
-<li><p><img src="/2018/11/30/hello-world/Screenshot from 2018-11-30 20-33-54.png" alt=""></p>
-</li>
-<li><p>在setting里修改GitHub Pages选项，在Source中选中”master branch”并点save，如图</p>
-<p><img src="/2018/11/30/hello-world/githubpages.png" alt=""></p>
-<p>然后会刷新页面，重新来到Github Pages选项这，会出现如上图所示的**.github.io/blog/，点击即可看到blog页面，此页面称为页面A。</p>
-</li>
-</ul>
-</li>
-</ol>
-<ol start="3">
-<li><h5 id="修改blog-config-yml"><a href="#修改blog-config-yml" class="headerlink" title="修改blog/_config.yml"></a>修改blog/_config.yml</h5><ul>
-<li><p>打开并修改blog/_config.yml</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type:</span><br></pre></td></tr></table></figure>
-<p>修改为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  #本地址为第2部创建的blog的github地址，通过点击右上角的clone可获得。</span><br><span class="line">  repo: https://github.com/yourname/blog.git </span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-<p><img src="/2018/11/30/hello-world/cloneblog.png" alt=""></p>
-</li>
-<li><p>修改URL</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># URL</span><br><span class="line">## If your site is put in a subdirectory, set url as &apos;http://yoursite.com/child&apos; and root as &apos;/child/&apos;</span><br><span class="line">url: http://yoursite.com</span><br><span class="line">root: /</span><br><span class="line">permalink: :year/:month/:day/:title/</span><br><span class="line">permalink_defaults:</span><br></pre></td></tr></table></figure>
-<p>  修改为</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># URL</span><br><span class="line">## If your site is put in a subdirectory, set url as</span><br><span class="line">&apos;http://yoursite.com/child&apos; and root as &apos;/child/&apos;</span><br><span class="line">url: 地址A #修改这里</span><br><span class="line">root: /</span><br><span class="line">permalink: :year/:month/:day/:title/</span><br><span class="line">permalink_defaults:</span><br></pre></td></tr></table></figure>
-</li>
-<li><h5 id="生成、部署hexo"><a href="#生成、部署hexo" class="headerlink" title="生成、部署hexo"></a>生成、部署hexo</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate #生成</span><br><span class="line">$ hexo deploy   #部署</span><br></pre></td></tr></table></figure>
-<p>其中，生成后会在blog/目录下产生一个public文件夹。部署时，需要输入github账号密码，上传至github仓库。</p>
-</li>
-<li><h5 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h5><p>在<a href="https://hexo.io/themes/index.html找到合适的主题，并把它克隆到blog/themes/中，然后修改blog/_config.yml文件，找到主题项，将landscape修改为你下载的主题名。（以cactus为例）" target="_blank" rel="noopener">https://hexo.io/themes/index.html找到合适的主题，并把它克隆到blog/themes/中，然后修改blog/_config.yml文件，找到主题项，将landscape修改为你下载的主题名。（以cactus为例）</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: cactus</span><br></pre></td></tr></table></figure>
-<p>然后重新生成和部署。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean    #清空内容</span><br><span class="line">$ hexo generate #生成</span><br><span class="line">$ hexo deploy   #部署</span><br></pre></td></tr></table></figure>
-<p>在更换主题时会出现问题，导致用<a href="https://root1iu.github.io/blog/">https://root1iu.github.io/blog/</a> 访问blog会出现css无法加载的情况，查阅资料可知原来是repo名字的问题。在github page中，要想使用username.github.io作为域名访问blog，需要repo名字也为username.github.io。然后用<a href="https://root1iu.github.io/">https://root1iu.github.io/</a> 来访问blog。</p>
-<p>( <a href="https://github.com/hexojs/hexo/issues/2244" target="_blank" rel="noopener">https://github.com/hexojs/hexo/issues/2244</a> )</p>
-<p>所以在setting中改名，改为username.github.io</p>
-<p><img src="/2018/11/30/hello-world/reporename.png" alt=""></p>
-<p>然后修改blog/_config.yml文件，将地址后面的blog去掉</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># URL</span><br><span class="line">## If your site is put in a subdirectory, set url as &apos;http://yoursite.com/child&apos; and root as &apos;/child/&apos;</span><br><span class="line">url: https://username.github.io/ #第一处修改</span><br><span class="line">root: /</span><br><span class="line">permalink: :year/:month/:day/:title/</span><br><span class="line">permalink_defaults:</span><br><span class="line"></span><br><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/username/username.github.io.git #第二处修改</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-<p>接下来重新生成和部署。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean    #清空内容</span><br><span class="line">$ hexo generate #生成</span><br><span class="line">$ hexo deploy   #部署</span><br></pre></td></tr></table></figure>
-<p>然后在访问<a href="https://root1iu.github.io/">https://root1iu.github.io/</a> ，一切正常。</p>
-</li>
-</ol>
-<h4 id="发布第一篇blog"><a href="#发布第一篇blog" class="headerlink" title="发布第一篇blog"></a>发布第一篇blog</h4><ol>
-<li><p>新建blog草稿</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new hello</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>编辑生成的.md文件</p>
-</li>
-<li><p>推送</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo publish hello.md</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>博客md文件中有图片</p>
-<p> (<a href="https://blog.csdn.net/Sugar_Rainbow/article/details/57415705" target="_blank" rel="noopener">https://blog.csdn.net/Sugar_Rainbow/article/details/57415705</a>)</p>
-<p> 首先把主页配置文件<code>_config.yml</code> 里的<code>post_asset_folder:</code>这个选项设置为<code>true</code></p>
-<p> 然后下载插件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-asset-image --save</span><br></pre></td></tr></table></figure>
-<p>之后发布的博客会自带一个同名文件夹，把图片放入文件夹，然后在md函数中引用即可。</p>
-</li>
-</ol>
-
+          初始化hexo进入博客目录（自己创建，本例的本地目录为blog/）
+1$ hexo init
+测试hexo是否运行正常
+123$ hexo server #INFO  Start processing#INFO  Hexo is running at http://localhost:4000 . 
+          ...
+          <!--noindex-->
           
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/11/30/hello-world/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
