@@ -348,6 +348,316 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/02/CSAPP-静态链接与动态链接/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/02/CSAPP-静态链接与动态链接/" class="post-title-link" itemprop="https://root1iu.github.io/index.html">CSAPP - 静态链接与动态链接</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-02 20:26:55" itemprop="dateCreated datePublished" datetime="2018-12-02T20:26:55+08:00">2018-12-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-04 22:13:44" itemprop="dateModified" datetime="2018-12-04T22:13:44+08:00">2018-12-04</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/重读CSAPP/" itemprop="url" rel="index"><span itemprop="name">重读CSAPP</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>本文参考资料为《深入理解计算机系统》第七章。</p>
+<h3 id="符号解析"><a href="#符号解析" class="headerlink" title="符号解析"></a>符号解析</h3><h5 id="与静态库链接"><a href="#与静态库链接" class="headerlink" title="与静态库链接"></a>与静态库链接</h5><p>静态库以一种称为存档(archive)的特殊文件格式存放在内存中。</p>
+<p>静态库是一个把相关目标模块打包成一个整体的文件。</p>
+<p>链接时，连接器只赋值被程序引用的目标模块，减少了目标文件在磁盘中的内存大小。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/*FirstC.c*/</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">void FirstFunc(void) &#123;</span><br><span class="line">    printf(&quot;first func\n&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/*SecondC.c*/</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">void SecondFunc(void) &#123;</span><br><span class="line">    printf(&quot;Second func\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>首先编译，用下面的命令进行编译</p>
+<ul>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -c FirstC.c </span><br><span class="line">$ gcc -c SecondC.c</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>-c是什么意思？man一下！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ man gcc</span><br><span class="line"> -c </span><br><span class="line">Compile or assemble the source files, but do not link.  The linking stage simply is not done.  The ultimate output is in the form of an object file for each source file.</span><br><span class="line">By default, the object file name for a source file is made by replacing the suffix .c, .i, .s, etc., with .o. Unrecognized input files, not requiring compilation or assembly,are ignored.</span><br></pre></td></tr></table></figure>
+<p>也就是说选项-c告诉编译器不要链接，生成目标文件(.o)。所以到现在，我们获得了两个文件— FirstC.o、SecondC.o</p>
+</li>
+<li><p>接下来创建成静态库（存档）</p>
+<p>从man得知，ar是一个可以创建、修改库，以及从库中提取模块的程序。</p>
+<p>rcs的意思分别是将模块插入存档、创建存档、为存档加上索引。(man)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ar rcs libfunc.a FirstC.o SecondC.o</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编写测试程序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/*func.h*/</span><br><span class="line">#ifndef FUNC_H</span><br><span class="line">#define FUNC_H </span><br><span class="line">void FirstFunc(void);</span><br><span class="line">void SecondFunc(void);</span><br><span class="line">#endif /* ifndef FUNC_H */</span><br><span class="line"></span><br><span class="line">/*maina.c*/</span><br><span class="line">#include &quot;func.h&quot;</span><br><span class="line">int main(int argc, char *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    FirstFunc();</span><br><span class="line">    SecondFunc();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将测试程序和静态库链接起来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -c maina.c # 将测试程序编译成目标文件</span><br><span class="line">$ gcc -static -o proc maina.o libfunc.a #使用静态库 </span><br><span class="line">或者使用</span><br><span class="line">$ gcc -c maina.c # 将测试程序编译成目标文件</span><br><span class="line">$ gcc -static -o proc maina.o -L. -lfunc #这里注意-L后面有一个点</span><br></pre></td></tr></table></figure>
+<p>-L. 是指在当前路径下查找静态库；-lfunc 是指链接libfunc.a，gcc会在静态库名前加上前缀lib，然后追加扩展名.a得到的静态库文件名来查找静态库文件。</p>
+<p><img src="/2018/12/02/CSAPP-静态链接与动态链接/静态链接.png" alt=""></p>
+</li>
+<li><p>链接过程</p>
+<p>当链接器运行时，它判断输入文件引用的符号，maina.o引用了FirstC.o的FirstFunc和SecondC.o的SecondFunc，所以将FirstC.o和SecondC.o复制到可执行文件；然后在后面的目标文件中寻找，发现在libfunc.a中的FirstC.o和SecondC.o使用了printf，所以会赋值libc.a中的printf.o模块以及其他必要的模块到可执行文件中，最后生成proc。</p>
+</li>
+</ul>
+<h3 id="加载可执行目标文件"><a href="#加载可执行目标文件" class="headerlink" title="加载可执行目标文件"></a>加载可执行目标文件</h3><h5 id="Linux-x86-64运行时内存映像"><a href="#Linux-x86-64运行时内存映像" class="headerlink" title="Linux x86-64运行时内存映像"></a>Linux x86-64运行时内存映像</h5><p>代码段从地址0x400000开始（加载后就不是，因为ASLR地址空间布局随机化），然后是数据段，数据段后是堆，堆和栈相接，堆向高处走，栈往低处走。栈往上是内核区域。</p>
+<p><img src="/2018/12/02/CSAPP-静态链接与动态链接/7-15.png" alt=""></p>
+<h5 id="加载器工作步骤"><a href="#加载器工作步骤" class="headerlink" title="加载器工作步骤"></a>加载器工作步骤</h5><p>首先Shell意识到本次输入不是内置命令，会由父进程Shell生成一个子进程，在子进程中调用系统调用execve启动加载器，加载器删除子进程的现有的虚拟内存段，并创建一组新的代码、数据、堆和栈。新的堆栈被初始化为0，新的代码段和数据段被初始化为本程序的代码和数据，然后加载器跳到_start地址，最后调用main来执行本程序。</p>
+<p>#####？</p>
+<p>？书上写了“除了一些头部信息，在加载过程中没有任何从磁盘到内存的数据复制，直到CPU引用一个被映射的虚拟页时才会进行复制”为什么？加载器难道不是将代码等信息复制到内存然后运行吗？</p>
+<p>初步的想法加载器在加载的时候不会运行程序，加载完成后，运行程序，CPU访问代码段，出现页错误，再将页表送入内存。</p>
+<h3 id="动态链接共享库"><a href="#动态链接共享库" class="headerlink" title="动态链接共享库"></a>动态链接共享库</h3><p>#####静态库有什么缺点</p>
+<ul>
+<li>静态库需要定期维护和更新。</li>
+<li>很多程序都需要输入输出，而静态库会使这些函数代码被复制到每个进程的内存中，浪费了内存。</li>
+</ul>
+<p>共享库是一个目标模块，可以在程序运行或加载时，加载到任意的内存地址，并和一个在内存中的程序链接起来。</p>
+<ul>
+<li>共享库在一个文件系统只有一个文件，不像静态库一样要复制嵌入到目标文件。</li>
+<li>在内存中，一个共享库的.text节只有一个副本，所有程序共享共享库的代码和数据。</li>
+</ul>
+<h5 id="共享库例子"><a href="#共享库例子" class="headerlink" title="共享库例子"></a>共享库例子</h5><ul>
+<li><p>代码和静态库的一致，不过将两个部件编译成共享库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -shared -fpic -o libfunc.so FirstC.c SecondC.c</span><br></pre></td></tr></table></figure>
+<p>-fpic是指示编译器编译成位置无关的代码，-shared指示链接器创建一个共享的目标文件</p>
+</li>
+<li><p>编译测试文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -o proc2 maina.c libfunc.so</span><br><span class="line">$ ldd proc2 #查看文件依赖的共享文件</span><br><span class="line">linux-vdso.so.1 =&gt;  (0x00007ffc7dffd000)</span><br><span class="line">/usr/local/lib/libusb-driver.so (0x00007fa3743d1000)</span><br><span class="line">libfunc.so =&gt; not found   #在这里</span><br><span class="line">libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007fa374007000)</span><br><span class="line">libdl.so.2 =&gt; /lib/x86_64-linux-gnu/libdl.so.2 (0x00007fa373e03000)</span><br><span class="line">libusb-0.1.so.4 =&gt; /lib/x86_64-linux-gnu/libusb-0.1.so.4 (0x00007fa373bfa000)</span><br><span class="line">libpthread.so.0 =&gt; /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007fa3739dd000)</span><br><span class="line">/lib64/ld-linux-x86-64.so.2 (0x00007fa3745d9000)</span><br><span class="line">$ ./proc2</span><br><span class="line">./proc2: error while loading shared libraries: libfunc.so: cannot open shared object file: No such file or directory</span><br></pre></td></tr></table></figure>
+<p>not found表示在系统ld路径中（本机为/lib/x86_64-linux-gnu/，不同机器可能不同）没有找到”libfunc.so”，这是当然的，因为我们放在了当前路径下。</p>
+<p>所以编译时，需要特别指定共享库的路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -o proc2 maina.c ./libfunc.so </span><br><span class="line">$ ldd proc2</span><br><span class="line">linux-vdso.so.1 =&gt;  (0x00007fff65bc9000)</span><br><span class="line">/usr/local/lib/libusb-driver.so (0x00007f08dfade000)</span><br><span class="line">./libfunc.so (0x00007f08df8dc000)</span><br><span class="line">libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f08df512000)</span><br><span class="line">libdl.so.2 =&gt; /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f08df30e000)</span><br><span class="line">libusb-0.1.so.4 =&gt; /lib/x86_64-linux-gnu/libusb-0.1.so.4 (0x00007f08df105000)</span><br><span class="line">libpthread.so.0 =&gt; /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f08deee8000)</span><br><span class="line">/lib64/ld-linux-x86-64.so.2 (0x00007f08dfce6000)</span><br><span class="line">$ ./proc2</span><br><span class="line">first func</span><br><span class="line">Second func</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>动态链接共享库过程</p>
+<p><img src="/2018/12/02/CSAPP-静态链接与动态链接/动态链接.png" alt=""></p>
+</li>
+</ul>
+<p>由上图可知，在链接时，需要共享库提供重定位和符号表的信息，在运行时，才能解析对动态链接库函数的引用。</p>
+<p>重定位类似共享内存（自己的体会），把函数重定位到进程的某个虚拟内存那，然后重定位进程对这些函数的引用，这样就可以在进程中调用这些库中的函数。</p>
+<h5 id="gcc-编译共享库——位置无关代码解决了什么问题"><a href="#gcc-编译共享库——位置无关代码解决了什么问题" class="headerlink" title="gcc 编译共享库——位置无关代码解决了什么问题"></a>gcc 编译共享库——位置无关代码解决了什么问题</h5><p>-fpic 告诉编译器编译和位置无关的代码。</p>
+<h3 id="从应用程序中加载和链接共享库-dlfcn-h系列函数"><a href="#从应用程序中加载和链接共享库-dlfcn-h系列函数" class="headerlink" title="从应用程序中加载和链接共享库(dlfcn.h系列函数)"></a>从应用程序中加载和链接共享库(dlfcn.h系列函数)</h3><p>应用程序可以在运行过程中要求动态连接器加载和链接某个共享库。</p>
+<p>Linux为动态连接器提供了接口，允许应用程序在运行时，加载和链接共享库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//加载和链接共享库filename</span><br><span class="line">#include &lt;dlfcn.h&gt;</span><br><span class="line">void* dlopen(const  char* filename, ing flag);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//参数是打开了的共享库的handle和一个symbol名字</span><br><span class="line">//存在则返回符号的地址</span><br><span class="line">#include &lt;dlfcn.h&gt;</span><br><span class="line">void* dlsym(void* handle, char* symbol);</span><br></pre></td></tr></table></figure>
+<p>整个编码流程是</p>
+<ul>
+<li>dlopen打开共享库文件</li>
+<li>要使用的符号（函数名或其他[待测试内容]），通过dlsym来获得符号的地址</li>
+<li>使用符号</li>
+</ul>
+<p>注意编译时，要加上-ldl，链接动态链接器。</p>
+<h5 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void* handle = dlopen(&quot;./libfunc.so&quot;, RTLD_LAZY); //RTLD_LAZY表示推迟符号解析直到执行库中代码</span><br><span class="line">if(handle == NULL) &#123;</span><br><span class="line">    fprintf(stderr, &quot;%s\n&quot;, dlerror());</span><br><span class="line">    exit(1);</span><br><span class="line">&#125;</span><br><span class="line">void (* func)(void);</span><br><span class="line">func = dlsym(handle, &quot;FirstFunc&quot;);</span><br><span class="line">char* error;</span><br><span class="line">if((error = dlerror()) != NULL) &#123;</span><br><span class="line">    fprintf(stderr, &quot;%s\n&quot;, error);</span><br><span class="line">    exit(1);</span><br><span class="line">&#125;</span><br><span class="line">func();</span><br></pre></td></tr></table></figure>
+<p>编译运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -rdynamic -o proc2r dll.c -ldl </span><br><span class="line">$ ./proc2r</span><br><span class="line">first func</span><br></pre></td></tr></table></figure>
+<h3 id="位置无关代码-PIC"><a href="#位置无关代码-PIC" class="headerlink" title="位置无关代码(PIC)"></a>位置无关代码(PIC)</h3><p>位置无关代码可以让连接器加载到进程地址空间的任何地方（不固定），这样的好处是不用在内存中预留某块内存给共享库以及避免这种方式带来的糟糕后果。</p>
+<p>程序如何找到共享库中想要的数据和代码？</p>
+<h4 id="PIC数据引用"><a href="#PIC数据引用" class="headerlink" title="PIC数据引用"></a>PIC数据引用</h4><p>内存中，数据段和代码段之间距离保持不变，因此代码段中任何指令和数据段中的变量之间的距离是一个运行时常量。编译器利用这个特性，生成对全局变量的PIC的引用。编译器在数段开始的地方创建了全局偏移量表GOT(Global Offset Table)，GOT是数据段的一部分。在GOT中，每个被目标模块引用的全局数据目标（过程或全局变量）都有一个8字节的条目，装着重定位记录。在加载时，动态链接器会重定位GDT中的每个条目，使它包含目标的正确绝对地址。每个引用全局目标的目标模块都有自己的GOT。接下来跟踪一下数据重定位的过程</p>
+<ul>
+<li><p>查看GOT表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ readelf -r libfunc.so</span><br><span class="line">...</span><br><span class="line">000000200fd8  000a00000006 R_X86_64_GLOB_DAT 0000000000201030 firsta + 0</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取FirstFunc在libfunc.so中的偏移</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ nm libfunc.so | grep FirstFunc</span><br><span class="line">0000000000000750 T FirstFunc</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获得FIrstFunc的反汇编代码，取对firsta引用的部分</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000000754 &lt;+4&gt;:	mov    rax,QWORD PTR [rip+0x20087d]        # 0x200fd8</span><br><span class="line">0x000000000000075b &lt;+11&gt;:	mov    eax,DWORD PTR [rax]</span><br><span class="line">0x000000000000075d &lt;+13&gt;:	lea    edx,[rax+0x1]</span><br><span class="line">0x0000000000000760 &lt;+16&gt;:	mov    rax,QWORD PTR [rip+0x200871]        # 0x200fd8</span><br><span class="line">0x0000000000000767 &lt;+23&gt;:	mov    DWORD PTR [rax],edx</span><br></pre></td></tr></table></figure>
+<p>代码从GOT[4]中获得firsta的地址，取值+1后再放回。在这个过程中，要想取得firsta的地址，需要知道GOT[4]和PC之间的相对偏移量，这里的思想是这个偏移量是一个运行时常量（利用了代码段和数据段之间不变的距离），所以取得引用总会去GOT[4]中获得firsta的地址。</p>
+</li>
+</ul>
+<h5 id="PIC数据引用——外部变量"><a href="#PIC数据引用——外部变量" class="headerlink" title="PIC数据引用——外部变量"></a>PIC数据引用——外部变量</h5><p>外部变量分为两种</p>
+<ol>
+<li><p>在动态库中不同模块之间的全局变量</p>
+<p>在SecondFunc中引用firsta，在汇编层面上，引用这个外部变量和FirstFunc中的代码是一样的，都是通过GOT表间接访问。</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0x000000000000072c &lt;+4&gt;:	mov    rax,QWORD PTR [rip+0x2008a5]        # 0x200fd8</span><br><span class="line">0x0000000000000733 &lt;+11&gt;:	mov    eax,DWORD PTR [rax]</span><br><span class="line">0x0000000000000735 &lt;+13&gt;:	lea    edx,[rax+0x1]</span><br><span class="line">0x0000000000000738 &lt;+16&gt;:	mov    rax,QWORD PTR [rip+0x200899]        # 0x200fd8</span><br><span class="line">0x000000000000073f &lt;+23&gt;:	mov    DWORD PTR [rax],edx</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>调用模块使用动态库中的全局变量和普通的全局变量一样，内容在.bss中。</li>
+</ol>
+<h4 id="PIC函数调用"><a href="#PIC函数调用" class="headerlink" title="PIC函数调用"></a>PIC函数调用</h4><p>由于程序调用共享库定义的函数，编译器无法预测这个函数的运行时地址，因为共享模块在运行时可以加载到任意位置。有两种方法</p>
+<ol>
+<li>为该引用生成一条重定位记录，然后动态链接器在程序加载时再解析它。（？书上说这种方法不是PIC，因为修改了调用模块的代码段，为什么重定位记录会修改代码段，是直接改代码吗？这一点不明白。）</li>
+<li>GNU有一种技术叫延迟绑定(lazy binding)，将函数地址板顶延迟到第一次调用该函数时。</li>
+</ol>
+<p>本文讨论第二种，<strong>延迟绑定</strong>。</p>
+<ul>
+<li>延迟绑定的好处是：避免动态链接器在加载时进行成千上百个并不需要的重定位。（？不明白，重定位是怎么做的？扫描共享库？）</li>
+<li>延迟绑定第一次开销大，之后的开销只有一条指令和一个间接内存引用。</li>
+</ul>
+<h5 id="PLT-Procedure-Linkage-Table-过程链接表"><a href="#PLT-Procedure-Linkage-Table-过程链接表" class="headerlink" title="PLT(Procedure Linkage Table)过程链接表"></a>PLT(Procedure Linkage Table)过程链接表</h5><p>PLT是一个数组，每个条目装有16 byte的代码。PLT和GOT协作，解析函数地址。</p>
+<ul>
+<li><p>首先查看proc2 GOT表内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ readelf -r proc2</span><br><span class="line">Relocation section &apos;.rela.dyn&apos; at offset 0x538 contains 1 entries:</span><br><span class="line">  Offset          Info           Type           Sym. Value    Sym. Name + Addend</span><br><span class="line">000000600ff8  000400000006 R_X86_64_GLOB_DAT 0000000000000000 __gmon_start__ + 0</span><br><span class="line"></span><br><span class="line">Relocation section &apos;.rela.plt&apos; at offset 0x550 contains 3 entries:</span><br><span class="line">  Offset          Info           Type           Sym. Value    Sym. Name + Addend</span><br><span class="line">000000601018  000200000007 R_X86_64_JUMP_SLO 0000000000000000 __libc_start_main@GLIBC_2.2.5 + 0</span><br><span class="line">000000601020  000300000007 R_X86_64_JUMP_SLO 0000000000000000 FirstFunc + 0</span><br><span class="line">000000601028  000600000007 R_X86_64_JUMP_SLO 0000000000000000 SecondFunc + 0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看PLT表地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ readelf -S proc2</span><br><span class="line">  [12] .plt              PROGBITS         00000000004005c0  000005c0</span><br><span class="line">       0000000000000040  0000000000000010  AX       0     0     16</span><br></pre></td></tr></table></figure>
+<p>即0x4005c0</p>
+</li>
+<li><p>调试proc2，在FirstFunc处停下，可以看到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x400715 &lt;main+15&gt;              call   FirstFunc@plt &lt;0x4005e0&gt; #FirstFunc的plt地址为0x4005e0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获得FirstFunc的PLT的代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gdb&gt; disass 0x4005e0</span><br><span class="line">Dump of assembler code for function FirstFunc@plt:</span><br><span class="line">   0x00000000004005e0 &lt;+0&gt;:	jmp    QWORD PTR [rip+0x200a3a]        # 0x601020</span><br><span class="line">   0x00000000004005e6 &lt;+6&gt;:	push   0x1</span><br><span class="line">   0x00000000004005eb &lt;+11&gt;:	jmp    0x4005c0</span><br><span class="line">End of assembler dump.</span><br></pre></td></tr></table></figure>
+<p>在这里可以看到，FirstFunc的PLT代码中，首先跳转到0x601020地址中的值处执行，也就是GOT[5]存储的内容。在第一次执行时，GOT[5]存储的是0x0000 0000 0040 05e6    即FirstFunc的PLT代码中的下一行。换句话说，第一次执行时，PLT和GOT之间的配合，只是PLT简单的执行下一步。根据代码，push 1后跳到PLT[0]处</p>
+<p>PLT[0]的代码是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">► 0x4005c0             push   qword ptr [rip + 0x200a42] &lt;0x601008&gt;</span><br><span class="line">  0x4005c6             jmp    qword ptr [rip + 0x200a44] &lt;0x7ffff7dee870&gt;</span><br></pre></td></tr></table></figure>
+<p>将GOT[2]压入栈中，跳到<em>GOT[3]处执行。进入&lt;_dl_runtime_resolve_avx&gt;最后经过一系列的操作，从 &lt; _dl_fixup&gt;跳出，获得FIrstFunc运行时地址，写入GOT[5]，跳到\</em>GOT[5]处，即FirstFunc处运行。</p>
+</li>
+<li><p>第二次调用，直接跳转到*GOT[5]处运行了，代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">► 0x4005e0     &lt;FirstFunc@plt&gt;    jmp    qword ptr [rip + 0x200a3a] &lt;0x7ffff79cd750&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="/2018/12/02/CSAPP-静态链接与动态链接/GOTPLT.png" alt=""></p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/01/2-3-几个重要的数据结构和函数/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1350,7 +1660,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1367,7 +1677,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">2</span>
+                      
+                    
+                    <span class="site-state-item-count">3</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -1386,7 +1698,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">3</span>
+                      
+                    
+                    <span class="site-state-item-count">4</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
