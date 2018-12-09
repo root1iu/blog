@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="进程4要素要素1 : 程序即代码 要素2 : 系统堆栈空间存放进程切换时的寄存器副本。 进程系统堆栈的的内存布局低1KB是task_struct的内存，剩下7KB是进程的系统空间堆栈。如图：  要素3 : task_structtask_struct 内容即PCB，进程在OS中的身份证。task_struct的定义如下： 12345678910111213141516171819202122232">
+<meta name="keywords" content="《Linux内核情景分析》读书笔记,待补充">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4-1进程和进程的创建、执行与消亡">
+<meta property="og:url" content="https://root1iu.github.io/2018/12/09/4-1进程和进程的创建、执行与消亡/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="进程4要素要素1 : 程序即代码 要素2 : 系统堆栈空间存放进程切换时的寄存器副本。 进程系统堆栈的的内存布局低1KB是task_struct的内存，剩下7KB是进程的系统空间堆栈。如图：  要素3 : task_structtask_struct 内容即PCB，进程在OS中的身份证。task_struct的定义如下： 12345678910111213141516171819202122232">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://root1iu.github.io/2018/12/09/4-1进程和进程的创建、执行与消亡/home/root1iu/github/blog/source/_posts/4-1%E8%BF%9B%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%88%9B%E5%BB%BA%E3%80%81%E6%89%A7%E8%A1%8C%E4%B8%8E%E6%B6%88%E4%BA%A1/4-1%E8%BF%9B%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%A0%86%E6%A0%88.png">
+<meta property="og:image" content="https://root1iu.github.io/2018/12/09/4-1进程和进程的创建、执行与消亡/home/root1iu/github/blog/source/_posts/4-1%E8%BF%9B%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%88%9B%E5%BB%BA%E3%80%81%E6%89%A7%E8%A1%8C%E4%B8%8E%E6%B6%88%E4%BA%A1/4-2%E8%BF%9B%E7%A8%8B%E5%AE%B6%E8%B0%B1.png">
+<meta property="og:updated_time" content="2018-12-09T10:04:15.871Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="4-1进程和进程的创建、执行与消亡">
+<meta name="twitter:description" content="进程4要素要素1 : 程序即代码 要素2 : 系统堆栈空间存放进程切换时的寄存器副本。 进程系统堆栈的的内存布局低1KB是task_struct的内存，剩下7KB是进程的系统空间堆栈。如图：  要素3 : task_structtask_struct 内容即PCB，进程在OS中的身份证。task_struct的定义如下： 12345678910111213141516171819202122232">
+<meta name="twitter:image" content="https://root1iu.github.io/2018/12/09/4-1进程和进程的创建、执行与消亡/home/root1iu/github/blog/source/_posts/4-1%E8%BF%9B%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%88%9B%E5%BB%BA%E3%80%81%E6%89%A7%E8%A1%8C%E4%B8%8E%E6%B6%88%E4%BA%A1/4-1%E8%BF%9B%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%A0%86%E6%A0%88.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2018/12/09/4-1进程和进程的创建、执行与消亡/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>4-1进程和进程的创建、执行与消亡 | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/09/4-1进程和进程的创建、执行与消亡/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">4-1进程和进程的创建、执行与消亡
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-09 18:02:29 / 修改时间：18:04:15" itemprop="dateCreated datePublished" datetime="2018-12-09T18:02:29+08:00">2018-12-09</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/《Linux内核情景分析》读书笔记/" itemprop="url" rel="index"><span itemprop="name">《Linux内核情景分析》读书笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="进程4要素"><a href="#进程4要素" class="headerlink" title="进程4要素"></a>进程4要素</h1><h2 id="要素1-程序"><a href="#要素1-程序" class="headerlink" title="要素1 : 程序"></a>要素1 : 程序</h2><p>即代码</p>
+<h2 id="要素2-系统堆栈空间"><a href="#要素2-系统堆栈空间" class="headerlink" title="要素2 : 系统堆栈空间"></a>要素2 : 系统堆栈空间</h2><p>存放进程切换时的寄存器副本。</p>
+<h3 id="进程系统堆栈的的内存布局"><a href="#进程系统堆栈的的内存布局" class="headerlink" title="进程系统堆栈的的内存布局"></a>进程系统堆栈的的内存布局</h3><p>低1KB是task_struct的内存，剩下7KB是进程的系统空间堆栈。如图：</p>
+<p><img src="/2018/12/09/4-1进程和进程的创建、执行与消亡/home/root1iu/github/blog/source/_posts/4-1%E8%BF%9B%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%88%9B%E5%BB%BA%E3%80%81%E6%89%A7%E8%A1%8C%E4%B8%8E%E6%B6%88%E4%BA%A1/4-1%E8%BF%9B%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%A0%86%E6%A0%88.png" alt=""></p>
+<h2 id="要素3-task-struct"><a href="#要素3-task-struct" class="headerlink" title="要素3 : task_struct"></a>要素3 : task_struct</h2><h3 id="task-struct-内容"><a href="#task-struct-内容" class="headerlink" title="task_struct 内容"></a>task_struct 内容</h3><p>即PCB，进程在OS中的身份证。task_struct的定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line">struct task_struct &#123;</span><br><span class="line">	/*</span><br><span class="line">	 * offsets of these are hardcoded elsewhere - touch with care</span><br><span class="line">	 */</span><br><span class="line">	volatile long state;	/* -1 unrunnable, 0 runnable, &gt;0 stopped */</span><br><span class="line">	unsigned long flags;	/* per process flags, defined below */</span><br><span class="line">	int sigpending;</span><br><span class="line">	mm_segment_t addr_limit;	/* thread address space:</span><br><span class="line">					 	0-0xBFFFFFFF for user-thead</span><br><span class="line">						0-0xFFFFFFFF for kernel-thread</span><br><span class="line">					 */</span><br><span class="line">	struct exec_domain *exec_domain;</span><br><span class="line">...</span><br><span class="line">/*</span><br><span class="line"> * offset 32 begins here on 32-bit platforms. We keep</span><br><span class="line"> * all fields in a single cacheline that are needed for</span><br><span class="line"> * the goodness() loop in schedule().</span><br><span class="line"> */</span><br><span class="line">	long counter;</span><br><span class="line">	long nice;</span><br><span class="line">	unsigned long policy;</span><br><span class="line">	struct mm_struct *mm;</span><br><span class="line">	int has_cpu, processor;</span><br><span class="line">	unsigned long cpus_allowed;</span><br><span class="line">	/*</span><br><span class="line">	 * (only the &apos;next&apos; pointer fits into the cacheline, but</span><br><span class="line">	 * that&apos;s just fine.)</span><br><span class="line">	 */</span><br><span class="line">	struct list_head run_list;</span><br><span class="line">	unsigned long sleep_time;</span><br><span class="line"></span><br><span class="line">	struct task_struct *next_task, *prev_task;</span><br><span class="line">	struct mm_struct *active_mm;</span><br><span class="line"></span><br><span class="line">/* task state */</span><br><span class="line">	struct linux_binfmt *binfmt;</span><br><span class="line">	int exit_code, exit_signal;</span><br><span class="line">	int pdeath_signal;  /*  The signal sent when the parent dies  */</span><br><span class="line">	/* ??? */</span><br><span class="line">	unsigned long personality;</span><br><span class="line">	int dumpable:1;</span><br><span class="line">	int did_exec:1;</span><br><span class="line">	pid_t pid;</span><br><span class="line">	pid_t pgrp;</span><br><span class="line">	pid_t tty_old_pgrp;</span><br><span class="line">	pid_t session;</span><br><span class="line">	pid_t tgid;</span><br><span class="line">	/* boolean value for session group leader */</span><br><span class="line">	int leader;</span><br><span class="line">	/* </span><br><span class="line">	 * pointers to (original) parent process, youngest child, younger sibling,</span><br><span class="line">	 * older sibling, respectively.  (p-&gt;father can be replaced with </span><br><span class="line">	 * p-&gt;p_pptr-&gt;pid)</span><br><span class="line">	 */</span><br><span class="line">	struct task_struct *p_opptr, *p_pptr, *p_cptr, *p_ysptr, *p_osptr;</span><br><span class="line">	struct list_head thread_group;</span><br><span class="line"></span><br><span class="line">	/* PID hash table linkage. */</span><br><span class="line">	struct task_struct *pidhash_next;</span><br><span class="line">	struct task_struct **pidhash_pprev;</span><br><span class="line"></span><br><span class="line">	wait_queue_head_t wait_chldexit;	/* for wait4() */</span><br><span class="line">	struct semaphore *vfork_sem;		/* for vfork() */</span><br><span class="line">	unsigned long rt_priority;</span><br><span class="line">	unsigned long it_real_value, it_prof_value, it_virt_value;</span><br><span class="line">	unsigned long it_real_incr, it_prof_incr, it_virt_incr;</span><br><span class="line">	struct timer_list real_timer;</span><br><span class="line">	struct tms times;</span><br><span class="line">	unsigned long start_time;</span><br><span class="line">	long per_cpu_utime[NR_CPUS], per_cpu_stime[NR_CPUS];</span><br><span class="line">/* mm fault and swap info: this can arguably be seen as either mm-specific or thread-specific */</span><br><span class="line">	unsigned long min_flt, maj_flt, nswap, cmin_flt, cmaj_flt, cnswap;</span><br><span class="line">	int swappable:1;</span><br><span class="line">/* process credentials */</span><br><span class="line">	uid_t uid,euid,suid,fsuid;</span><br><span class="line">	gid_t gid,egid,sgid,fsgid;</span><br><span class="line">	int ngroups;</span><br><span class="line">	gid_t	groups[NGROUPS];</span><br><span class="line">	kernel_cap_t   cap_effective, cap_inheritable, cap_permitted;</span><br><span class="line">	int keep_capabilities:1;</span><br><span class="line">	struct user_struct *user;</span><br><span class="line">/* limits */</span><br><span class="line">	struct rlimit rlim[RLIM_NLIMITS];</span><br><span class="line">	unsigned short used_math;</span><br><span class="line">	char comm[16];</span><br><span class="line">/* file system info */</span><br><span class="line">	int link_count;</span><br><span class="line">	struct tty_struct *tty; /* NULL if no tty */</span><br><span class="line">	unsigned int locks; /* How many file locks are being held */</span><br><span class="line">/* ipc stuff */</span><br><span class="line">	struct sem_undo *semundo;</span><br><span class="line">	struct sem_queue *semsleeping;</span><br><span class="line">/* CPU-specific state of this task */</span><br><span class="line">	struct thread_struct thread;</span><br><span class="line">/* filesystem information */</span><br><span class="line">	struct fs_struct *fs;</span><br><span class="line">/* open file information */</span><br><span class="line">	struct files_struct *files;</span><br><span class="line">/* signal handlers */</span><br><span class="line">	spinlock_t sigmask_lock;	/* Protects signal and blocked */</span><br><span class="line">	struct signal_struct *sig;</span><br><span class="line"></span><br><span class="line">	sigset_t blocked;</span><br><span class="line">	struct sigpending pending;</span><br><span class="line"></span><br><span class="line">	unsigned long sas_ss_sp;</span><br><span class="line">	size_t sas_ss_size;</span><br><span class="line">	int (*notifier)(void *priv);</span><br><span class="line">	void *notifier_data;</span><br><span class="line">	sigset_t *notifier_mask;</span><br><span class="line">	</span><br><span class="line">/* Thread group tracking */</span><br><span class="line">   	u32 parent_exec_id;</span><br><span class="line">   	u32 self_exec_id;</span><br><span class="line">/* Protection of (de-)allocation: mm, files, fs, tty */</span><br><span class="line">	spinlock_t alloc_lock;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="volatile-long-state"><a href="#volatile-long-state" class="headerlink" title="volatile long state"></a>volatile long state</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// include/linux/sched.h </span><br><span class="line">#define TASK_RUNNING			0   	//可被调度状态，即就绪态</span><br><span class="line">#define TASK_INTERRUPTIBLE		1		//睡眠，可被信号唤醒</span><br><span class="line">#define TASK_UNINTERRUPTIBLE	2		//深度睡眠，不被信号打扰</span><br><span class="line">#define TASK_ZOMBIE				4		//僵死状态，父进程没有wait，子进程exit，子进程成僵死进程，因为PCB无法回收，会占进程表项，pid。</span><br><span class="line">#define TASK_STOPPED			8		//挂起状态</span><br></pre></td></tr></table></figure>
+<h4 id="int-sigpending"><a href="#int-sigpending" class="headerlink" title="int sigpending"></a>int sigpending</h4><p>表示进程收到了信号但尚未处理。【待补充】</p>
+<h4 id="int-counter"><a href="#int-counter" class="headerlink" title="int counter"></a>int counter</h4><p>与调度有关。 【待补充】</p>
+<h4 id="volatile-long-need-resched"><a href="#volatile-long-need-resched" class="headerlink" title="volatile long need_resched;"></a>volatile long need_resched;</h4><p>与调度有关，表示CPU从系统空间返回用户空间前夕需要进行一次调度。</p>
+<h4 id="mm-segment-t-addr-limit"><a href="#mm-segment-t-addr-limit" class="headerlink" title="mm_segment_t addr_limit"></a>mm_segment_t addr_limit</h4><p>虚存地址空间的上限。对进城而言是用户空间的上限，即0xbfff ffff；对内核而言是系统空间的上限，即0xffff ffff。</p>
+<h4 id="struct-exec-domain-exec-domain"><a href="#struct-exec-domain-exec-domain" class="headerlink" title="struct exec_domain *exec_domain;"></a>struct exec_domain *exec_domain;</h4><p>应用程序有版本间的差异，从而形成了不同的执行域。exec_domain</p>
+<h4 id="struct-linux-binfmt-binfmt"><a href="#struct-linux-binfmt-binfmt" class="headerlink" title="struct linux_binfmt *binfmt"></a>struct linux_binfmt *binfmt</h4><p>应用程序的文件格式。</p>
+<h4 id="kernel-cap-t-cap-effective-cap-inheritable-cap-permitted"><a href="#kernel-cap-t-cap-effective-cap-inheritable-cap-permitted" class="headerlink" title="kernel_cap_t   cap_effective, cap_inheritable, cap_permitted"></a>kernel_cap_t   cap_effective, cap_inheritable, cap_permitted</h4><p>操作权限。内核有一个函数capable()，可以用来检验进程是否具有某种权限。</p>
+<h4 id="struct-user-struct-user"><a href="#struct-user-struct-user" class="headerlink" title="struct user_struct *user"></a>struct user_struct *user</h4><p>user_struct代表进程所属的用户。</p>
+<h3 id="如何获得task-struct"><a href="#如何获得task-struct" class="headerlink" title="如何获得task_struct"></a>如何获得task_struct</h3><p>根据系统堆栈的内存布局，只需要将当前的esp的后10位置0即可找到task_struct。Linux内核代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// include/asm-i386/current.h</span><br><span class="line">static inline struct task_struct * get_current(void)</span><br><span class="line">&#123;</span><br><span class="line">	struct task_struct *current;</span><br><span class="line">	__asm__(&quot;andl %%esp,%0; &quot;:&quot;=r&quot; (current) : &quot;0&quot; (~8191UL));</span><br><span class="line">	return current;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">#define current get_current()</span><br></pre></td></tr></table></figure>
+<h2 id="要素4-独立的存储空间"><a href="#要素4-独立的存储空间" class="headerlink" title="要素4 : 独立的存储空间"></a>要素4 : 独立的存储空间</h2><p>拥有用户空间。用于虚存管理的mm_struct等。</p>
+<h2 id="进程的三个不同组织"><a href="#进程的三个不同组织" class="headerlink" title="进程的三个不同组织"></a>进程的三个不同组织</h2><h3 id="每个进程的家庭与社会关系形成的“宗谱”"><a href="#每个进程的家庭与社会关系形成的“宗谱”" class="headerlink" title="每个进程的家庭与社会关系形成的“宗谱”"></a>每个进程的家庭与社会关系形成的“宗谱”</h3><p>这是一种树型结构，p_ysptr和p_osptr分别指向进程的“哥哥”和“弟弟”，结构如图：</p>
+<p><img src="/2018/12/09/4-1进程和进程的创建、执行与消亡/home/root1iu/github/blog/source/_posts/4-1%E8%BF%9B%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%88%9B%E5%BB%BA%E3%80%81%E6%89%A7%E8%A1%8C%E4%B8%8E%E6%B6%88%E4%BA%A1/4-2%E8%BF%9B%E7%A8%8B%E5%AE%B6%E8%B0%B1.png" alt=""></p>
+<h3 id="进程队列-struct-task-struct-pidhash-PIDHASH-SZ"><a href="#进程队列-struct-task-struct-pidhash-PIDHASH-SZ" class="headerlink" title="进程队列 struct task_struct *pidhash[PIDHASH_SZ]"></a>进程队列 struct task_struct *pidhash[PIDHASH_SZ]</h3><p>有了这个Hash表，就可以通过pid来找到对应的PCB。</p>
+<h3 id="所有进程组成的队列"><a href="#所有进程组成的队列" class="headerlink" title="所有进程组成的队列"></a>所有进程组成的队列</h3><p>内核有时需要对每个进程都进行某个操作，这时候就可以用这个队列来遍历。</p>
+<h2 id="TSS"><a href="#TSS" class="headerlink" title="TSS"></a>TSS</h2><p>Intel提供了TSS作为进程调度的硬件支持，但Linux并没有使用，因为使用TSS来调度进程开销会很大，使用 jmp 或者 call 指令进行任务切换需要300多个CPU时钟周期（《Linux内核情景分析》的数据）。所以Linux内核中，每个CPU只用一个TSS来满足硬件要求，但不使用任务门。</p>
+<p>对Linux内核来说，TSS有用的只有0级栈指针。</p>
+<h3 id="0-级栈指针在什么时候有用，怎么用？"><a href="#0-级栈指针在什么时候有用，怎么用？" class="headerlink" title="0 级栈指针在什么时候有用，怎么用？"></a>0 级栈指针在什么时候有用，怎么用？</h3><p>待补充。</p>
+<h2 id="线程和进程"><a href="#线程和进程" class="headerlink" title="线程和进程"></a>线程和进程</h2><p>如果缺少第4要素，即独立的存储空间，则称为线程。如果完全没有用户空间，则成为内核线程； 如果共享用户空间则称为用户线程。这里的线程是对操作系统而言的，和平常所用的在进程中实现的线程不一样，这里我的理解是平常所说的线程是依附于进程，使用进程的内存空间。（未经考证）</p>
+<h1 id="进程三部曲：创建、执行和消亡"><a href="#进程三部曲：创建、执行和消亡" class="headerlink" title="进程三部曲：创建、执行和消亡"></a>进程三部曲：创建、执行和消亡</h1><h2 id="进程如何创建"><a href="#进程如何创建" class="headerlink" title="进程如何创建"></a>进程如何创建</h2><p>从父进程复制一个子进程出来，作为一个新进程。第一个父进程就是内核的init进程，这是所有进程的始祖。这里，复制有两种方式，Linux提供了两种系统调用，分别为fork和clone。还有一种vfork，不过vfork出来的是线程不是进程。</p>
+<h3 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h3><p>fork是全部复制。父进程的所有资源子进程都有一份副本。</p>
+<h3 id="clone"><a href="#clone" class="headerlink" title="clone"></a>clone</h3><p>clone是部分复制，拥有父进程的资源的部分副本，其他通过复制指针共享。</p>
+<h3 id="vfork"><a href="#vfork" class="headerlink" title="vfork"></a>vfork</h3><p>除了task_struct结构和系统空间堆栈是数据结构复制外，其他资源都通过复制指针共享。</p>
+<h2 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h2><h3 id="子进程的执行路径"><a href="#子进程的执行路径" class="headerlink" title="子进程的执行路径"></a>子进程的执行路径</h3><ul>
+<li>离开父进程——execve()</li>
+<li>走父进程接下来的路（fork出来的子进程不执行execve()）</li>
+</ul>
+<h3 id="父进程的执行路径"><a href="#父进程的执行路径" class="headerlink" title="父进程的执行路径"></a>父进程的执行路径</h3><p>进程不受阻 —— 异步</p>
+<ul>
+<li>继续走自己的路</li>
+<li>退出——exit()</li>
+</ul>
+<p>进程受阻 —— 同步</p>
+<ul>
+<li>停下来等待子进程返回<ul>
+<li>wait4() —— 等待某个特定的子进程返回</li>
+<li>wait3() —— 等待任何一个子进程返回</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/《Linux内核情景分析》读书笔记/" rel="tag"># 《Linux内核情景分析》读书笔记</a>
+          
+            <a href="/tags/待补充/" rel="tag"># 待补充</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/02/CSAPP-静态链接与动态链接/" rel="next" title="CSAPP - 静态链接与动态链接">
+                <i class="fa fa-chevron-left"></i> CSAPP - 静态链接与动态链接
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进程4要素"><span class="nav-number">1.</span> <span class="nav-text">进程4要素</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#要素1-程序"><span class="nav-number">1.1.</span> <span class="nav-text">要素1 : 程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要素2-系统堆栈空间"><span class="nav-number">1.2.</span> <span class="nav-text">要素2 : 系统堆栈空间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程系统堆栈的的内存布局"><span class="nav-number">1.2.1.</span> <span class="nav-text">进程系统堆栈的的内存布局</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要素3-task-struct"><span class="nav-number">1.3.</span> <span class="nav-text">要素3 : task_struct</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#task-struct-内容"><span class="nav-number">1.3.1.</span> <span class="nav-text">task_struct 内容</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#volatile-long-state"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">volatile long state</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#int-sigpending"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">int sigpending</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#int-counter"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">int counter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#volatile-long-need-resched"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">volatile long need_resched;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mm-segment-t-addr-limit"><span class="nav-number">1.3.1.5.</span> <span class="nav-text">mm_segment_t addr_limit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#struct-exec-domain-exec-domain"><span class="nav-number">1.3.1.6.</span> <span class="nav-text">struct exec_domain *exec_domain;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#struct-linux-binfmt-binfmt"><span class="nav-number">1.3.1.7.</span> <span class="nav-text">struct linux_binfmt *binfmt</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kernel-cap-t-cap-effective-cap-inheritable-cap-permitted"><span class="nav-number">1.3.1.8.</span> <span class="nav-text">kernel_cap_t   cap_effective, cap_inheritable, cap_permitted</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#struct-user-struct-user"><span class="nav-number">1.3.1.9.</span> <span class="nav-text">struct user_struct *user</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何获得task-struct"><span class="nav-number">1.3.2.</span> <span class="nav-text">如何获得task_struct</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#要素4-独立的存储空间"><span class="nav-number">1.4.</span> <span class="nav-text">要素4 : 独立的存储空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程的三个不同组织"><span class="nav-number">1.5.</span> <span class="nav-text">进程的三个不同组织</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#每个进程的家庭与社会关系形成的“宗谱”"><span class="nav-number">1.5.1.</span> <span class="nav-text">每个进程的家庭与社会关系形成的“宗谱”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程队列-struct-task-struct-pidhash-PIDHASH-SZ"><span class="nav-number">1.5.2.</span> <span class="nav-text">进程队列 struct task_struct *pidhash[PIDHASH_SZ]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#所有进程组成的队列"><span class="nav-number">1.5.3.</span> <span class="nav-text">所有进程组成的队列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TSS"><span class="nav-number">1.6.</span> <span class="nav-text">TSS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0-级栈指针在什么时候有用，怎么用？"><span class="nav-number">1.6.1.</span> <span class="nav-text">0 级栈指针在什么时候有用，怎么用？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程和进程"><span class="nav-number">1.7.</span> <span class="nav-text">线程和进程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#进程三部曲：创建、执行和消亡"><span class="nav-number">2.</span> <span class="nav-text">进程三部曲：创建、执行和消亡</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#进程如何创建"><span class="nav-number">2.1.</span> <span class="nav-text">进程如何创建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fork"><span class="nav-number">2.1.1.</span> <span class="nav-text">fork</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clone"><span class="nav-number">2.1.2.</span> <span class="nav-text">clone</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vfork"><span class="nav-number">2.1.3.</span> <span class="nav-text">vfork</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行"><span class="nav-number">2.2.</span> <span class="nav-text">执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#子进程的执行路径"><span class="nav-number">2.2.1.</span> <span class="nav-text">子进程的执行路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#父进程的执行路径"><span class="nav-number">2.2.2.</span> <span class="nav-text">父进程的执行路径</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
