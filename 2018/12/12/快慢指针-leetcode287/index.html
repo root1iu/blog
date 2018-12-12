@@ -109,27 +109,25 @@
 
 
 
-  <meta name="description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
-<meta name="keywords" content="《Linux内核情景分析》读书笔记">
+  <meta name="description" content="LeetCode 287快慢指针解法Leetcode 287是寻找重复数，题目描述如下 12345给定一个包含 n + 1 个整数的数组 nums，其数字都在 1 到 n 之间（包括 1 和 n），可知至少存在一个重复的整数。假设只有一个重复的整数，找出这个重复的数。* 不能更改原数组（假设数组是只读的）。* 只能使用额外的 O(1) 的空间。* 时间复杂度小于 O(n2) 。* 数组中只有一个重">
+<meta name="keywords" content="Leetcode">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2.1 Linux内存管理的基本框架">
-<meta property="og:url" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/index.html">
+<meta property="og:title" content="快慢指针-leetcode287">
+<meta property="og:url" content="https://root1iu.github.io/2018/12/12/快慢指针-leetcode287/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
-<meta property="og:description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
+<meta property="og:description" content="LeetCode 287快慢指针解法Leetcode 287是寻找重复数，题目描述如下 12345给定一个包含 n + 1 个整数的数组 nums，其数字都在 1 到 n 之间（包括 1 和 n），可知至少存在一个重复的整数。假设只有一个重复的整数，找出这个重复的数。* 不能更改原数组（假设数组是只读的）。* 只能使用额外的 O(1) 的空间。* 时间复杂度小于 O(n2) 。* 数组中只有一个重">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png">
-<meta property="og:updated_time" content="2018-12-01T09:02:51.199Z">
+<meta property="og:updated_time" content="2018-12-12T14:43:16.633Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2.1 Linux内存管理的基本框架">
-<meta name="twitter:description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
-<meta name="twitter:image" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png">
+<meta name="twitter:title" content="快慢指针-leetcode287">
+<meta name="twitter:description" content="LeetCode 287快慢指针解法Leetcode 287是寻找重复数，题目描述如下 12345给定一个包含 n + 1 个整数的数组 nums，其数字都在 1 到 n 之间（包括 1 和 n），可知至少存在一个重复的整数。假设只有一个重复的整数，找出这个重复的数。* 不能更改原数组（假设数组是只读的）。* 只能使用额外的 O(1) 的空间。* 时间复杂度小于 O(n2) 。* 数组中只有一个重">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/">
+  <link rel="canonical" href="https://root1iu.github.io/2018/12/12/快慢指针-leetcode287/">
 
 
 
@@ -139,7 +137,7 @@
   };
 </script>
 
-  <title>2.1 Linux内存管理的基本框架 | Root1iu Home Page</title>
+  <title>快慢指针-leetcode287 | Root1iu Home Page</title>
   
 
 
@@ -355,7 +353,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/12/快慢指针-leetcode287/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -372,7 +370,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2.1 Linux内存管理的基本框架
+          <h1 class="post-title" itemprop="name headline">快慢指针-leetcode287
               
             
           </h1>
@@ -397,7 +395,7 @@
                 
               
 
-              <time title="创建时间：2018-12-01 16:15:07 / 修改时间：17:02:51" itemprop="dateCreated datePublished" datetime="2018-12-01T16:15:07+08:00">2018-12-01</time>
+              <time title="创建时间：2018-12-12 21:52:30 / 修改时间：22:43:16" itemprop="dateCreated datePublished" datetime="2018-12-12T21:52:30+08:00">2018-12-12</time>
             
 
             
@@ -419,7 +417,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/《Linux内核情景分析》读书笔记/" itemprop="url" rel="index"><span itemprop="name">《Linux内核情景分析》读书笔记</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Leetcode/" itemprop="url" rel="index"><span itemprop="name">Leetcode</span></a></span>
 
                 
                 
@@ -453,20 +451,37 @@
       
 
       
-        <h2 id="2-1-Linux内存管理的基本框架"><a href="#2-1-Linux内存管理的基本框架" class="headerlink" title="2.1 Linux内存管理的基本框架"></a>2.1 Linux内存管理的基本框架</h2><h5 id="Linux内核的内存映射模型"><a href="#Linux内核的内存映射模型" class="headerlink" title="Linux内核的内存映射模型"></a>Linux内核的内存映射模型</h5><p>Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。</p>
-<ul>
-<li>PGD（页目录表）</li>
-<li>PMD（中间目录）</li>
-<li>PT（页表）</li>
+        <h2 id="LeetCode-287快慢指针解法"><a href="#LeetCode-287快慢指针解法" class="headerlink" title="LeetCode 287快慢指针解法"></a>LeetCode 287快慢指针解法</h2><p>Leetcode 287是寻找重复数，题目描述如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">给定一个包含 n + 1 个整数的数组 nums，其数字都在 1 到 n 之间（包括 1 和 n），可知至少存在一个重复的整数。假设只有一个重复的整数，找出这个重复的数。</span><br><span class="line">* 不能更改原数组（假设数组是只读的）。</span><br><span class="line">* 只能使用额外的 O(1) 的空间。</span><br><span class="line">* 时间复杂度小于 O(n2) 。</span><br><span class="line">* 数组中只有一个重复的数字，但它可能不止重复出现一次。</span><br></pre></td></tr></table></figure>
+<p>由于不能更改原数组，也就是剑指offer的交换值的方法用不了了。另外限制O(1)的空间，所以一开始做法是剑指offer的第二种做法——二分法。</p>
+<h3 id="二分法"><a href="#二分法" class="headerlink" title="二分法"></a>二分法</h3><p>二分法是根据题目的限制，即数字是在1～n之间，并且包含n + 1个数，所以必有重复的数且值在1～n之间。所以有了二分法的解法，解法步骤大致如下：</p>
+<ol>
+<li>将 lowerbound(1)和upperbound(n)从中间切开分成两部分(lowerbound—mid—upperbound)</li>
+<li>搜索整个原数组，算出其中一部分的数字在原数组中出现的次数<ul>
+<li>如果算出来的次数大于该范围内的整数个数，说明其中必有重复数字，否则另一半必有重复数字。</li>
+<li>反之，如果算出来次数等于该范围内的整数个数，无法判断是否有重复数字。（比如原数组中有3个1，没有2和3，如果搜索范围是1~3，可以得出这部分数字在原数组出现次数是3，等于该范围内的整数个数，但却存在重复数字）</li>
 </ul>
-<p>三层地址映射如图：</p>
-<p><img src="/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png" alt=""></p>
-<p>在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。</p>
-<p><strong>系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0000000</strong></p>
-<p>根据这个性质，在需要时，可以直接从虚拟地址转换为物理地址。比如在任务切换时，需要更新CR3的值，使其指向新进程的PGD，而页目录表的起始地址是虚拟地址，CR3需要的是物理地址。</p>
-<h5 id="GDT和LDT"><a href="#GDT和LDT" class="headerlink" title="GDT和LDT"></a>GDT和LDT</h5><p><strong>每个进程的局部段描述符LDT都作为一个独立的段存在，在全局段描述符表中GDT要有一个表项指向LDT这个段的起始地址，并说明该段的长度以及其他参数</strong></p>
-<p>GDT的第一项永远为0，第2、 3项用于内核的代码段和数据段；第5、 6项用于当前进程的代码段和数据段等(5个+？)，还剩下8180个项，所以理论上系统最大的进程数为4090。</p>
-<h5 id="为什么GDT第一项永远为0？"><a href="#为什么GDT第一项永远为0？" class="headerlink" title="为什么GDT第一项永远为0？"></a>为什么GDT第一项永远为0？</h5><p>为了防止未初始化的数据加载到选择子中，Linux采取这种方式来避免严重却不容易发现的错误(未初始化选择子)</p>
+</li>
+<li>根据2.1获得的范围再进行下一步的二分，直到(upperbound - lowerbound + 1) == 2也就是只剩下两个数字时，在原数组进行搜索，即可获得某个重复数字。</li>
+</ol>
+<p>代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int findDuplicate(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">        vector&lt;int&gt;::size_type n = nums.size();</span><br><span class="line">        int upperbound = n;</span><br><span class="line">        int lowerbound = 1;</span><br><span class="line">        while(true) &#123;</span><br><span class="line">            int mid = (upperbound + lowerbound) / 2;</span><br><span class="line">            int count = 0;</span><br><span class="line">            for(int i = 0; i &lt; n; i ++) &#123;</span><br><span class="line">                if(nums[i] &lt;= mid &amp;&amp; nums[i] &gt;= lowerbound)&#123;</span><br><span class="line">                    count++;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            if(mid - lowerbound == 0) &#123;</span><br><span class="line">                if(count &gt; 1) return lowerbound;</span><br><span class="line">                else          return upperbound;</span><br><span class="line">            &#125;</span><br><span class="line">            if(count &gt; mid - lowerbound + 1) &#123;</span><br><span class="line">                upperbound = mid;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                lowerbound = mid + 1;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="快慢指针法"><a href="#快慢指针法" class="headerlink" title="快慢指针法"></a>快慢指针法</h3><p>  后来发现，这道题还能用快慢指针做，将数组的值看成索引，整个数组就可以看成由索引组成的链表，那么问题——找出相同的数就等价于找出相同的索引，也就是找出相同的结点。在链表中，有相同的结点意味着链表里有环，判断单链表是否有环的一个做法是快慢指针，但这也只是判断是否存在环，如何找出重复数即相同结点？相同结点可以看成是环的入口，问题转换成如何找出单链表的环的入口？解决方法还是快慢指针。快慢指针如何找到环的入口呢？</p>
+<h4 id="什么是快慢指针"><a href="#什么是快慢指针" class="headerlink" title="什么是快慢指针"></a>什么是快慢指针</h4><p>所谓快慢指的是步长，慢指针每次前进一步，快指针每次前进两步，这样，如果单链表有环，那么快指针肯定能够追上慢指针，且走的路是慢指针的两倍(2N)。</p>
+<p>快慢指针可以应用到很多地方</p>
+<ul>
+<li>判断链表是否有环并找到环的入口</li>
+<li>找到链表的中间结点</li>
+<li>找到链表的倒数第k个结点</li>
+</ul>
+<h4 id="判断链表是否有环并找到环的入口"><a href="#判断链表是否有环并找到环的入口" class="headerlink" title="判断链表是否有环并找到环的入口"></a>判断链表是否有环并找到环的入口</h4><p>如何找到环入口？假设单链表如代码块所示：</p>
+<ul>
+<li>首先快慢指针在*处相遇，此时慢指针路程长为N，快指针路程长为2N（本例N = 3）</li>
+<li>可以得知慢指针若再走N步，必回到原地。所以将快指针设为单链表开始的地方并设置步长为1，那么，快指针和慢指针必会在*处再次相遇，由于步长一样，所以快慢指针在第一次相遇后，走的路都是一样的，那么快慢指针第一次相遇的地点，就是环的入口。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">o - o - o       o - o - o       1 - o - o       1 - 3 - o       1 - 3 - 3  </span><br><span class="line">    |   |   -&gt;      |   |   -&gt;      |   |   -&gt;      |   |   -&gt;      |   |</span><br><span class="line">    o - o           o - *           2 - *           2 - *           2 - 3(*)</span><br><span class="line">(o 表示结点， * 表示相遇点，1表示快指针重置后快指针的路径，2表示快指针重置后慢指针的路径，3表示快指针重置后快慢指针重合的路径)</span><br></pre></td></tr></table></figure>
+<p>代码如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int findDuplicate(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">        int slow = nums[0];</span><br><span class="line">        int fast = nums[nums[0]];</span><br><span class="line">        while(fast != slow) &#123;</span><br><span class="line">            slow = nums[slow];</span><br><span class="line">            fast = nums[nums[fast]];</span><br><span class="line">        &#125;</span><br><span class="line">        fast = 0;</span><br><span class="line">        while(fast != slow) &#123;</span><br><span class="line">            slow = nums[slow];</span><br><span class="line">            fast = nums[fast];</span><br><span class="line">        &#125;</span><br><span class="line">        return slow;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -490,7 +505,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/《Linux内核情景分析》读书笔记/" rel="tag"># 《Linux内核情景分析》读书笔记</a>
+            <a href="/tags/Leetcode/" rel="tag"># Leetcode</a>
           
         </div>
       
@@ -503,8 +518,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/01/1-预备知识/" rel="next" title="1. 预备知识">
-                <i class="fa fa-chevron-left"></i> 1. 预备知识
+              <a href="/2018/12/09/fork-、vfork-和clone/" rel="next" title="fork()、vfork()和clone()">
+                <i class="fa fa-chevron-left"></i> fork()、vfork()和clone()
               </a>
             
           </div>
@@ -512,10 +527,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/12/01/2-2-Linux地址映射全过程/" rel="prev" title="2.2 Linux地址映射权过程">
-                2.2 Linux地址映射权过程 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -670,7 +681,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Linux内存管理的基本框架"><span class="nav-number">1.</span> <span class="nav-text">2.1 Linux内存管理的基本框架</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux内核的内存映射模型"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">Linux内核的内存映射模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GDT和LDT"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">GDT和LDT</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么GDT第一项永远为0？"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">为什么GDT第一项永远为0？</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#LeetCode-287快慢指针解法"><span class="nav-number">1.</span> <span class="nav-text">LeetCode 287快慢指针解法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#二分法"><span class="nav-number">1.1.</span> <span class="nav-text">二分法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#快慢指针法"><span class="nav-number">1.2.</span> <span class="nav-text">快慢指针法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是快慢指针"><span class="nav-number">1.2.1.</span> <span class="nav-text">什么是快慢指针</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#判断链表是否有环并找到环的入口"><span class="nav-number">1.2.2.</span> <span class="nav-text">判断链表是否有环并找到环的入口</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

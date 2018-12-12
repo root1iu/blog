@@ -109,22 +109,21 @@
 
 
 
-  <meta name="keywords" content="《Linux内核情景分析》读书笔记">
-<meta property="og:type" content="article">
-<meta property="og:title" content="2.3 几个重要的数据结构和函数">
-<meta property="og:url" content="https://root1iu.github.io/2018/12/01/2-3-几个重要的数据结构和函数/index.html">
+  <meta property="og:type" content="article">
+<meta property="og:title" content="fork()、vfork()和clone()">
+<meta property="og:url" content="https://root1iu.github.io/2018/12/09/fork-、vfork-和clone/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-12-01T09:04:25.776Z">
+<meta property="og:updated_time" content="2018-12-09T10:07:55.902Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2.3 几个重要的数据结构和函数">
+<meta name="twitter:title" content="fork()、vfork()和clone()">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/2018/12/01/2-3-几个重要的数据结构和函数/">
+  <link rel="canonical" href="https://root1iu.github.io/2018/12/09/fork-、vfork-和clone/">
 
 
 
@@ -134,7 +133,7 @@
   };
 </script>
 
-  <title>2.3 几个重要的数据结构和函数 | Root1iu Home Page</title>
+  <title>fork()、vfork()和clone() | Root1iu Home Page</title>
   
 
 
@@ -350,7 +349,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/01/2-3-几个重要的数据结构和函数/">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/09/fork-、vfork-和clone/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -367,7 +366,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2.3 几个重要的数据结构和函数
+          <h1 class="post-title" itemprop="name headline">fork()、vfork()和clone()
               
             
           </h1>
@@ -392,34 +391,12 @@
                 
               
 
-              <time title="创建时间：2018-12-01 17:03:48 / 修改时间：17:04:25" itemprop="dateCreated datePublished" datetime="2018-12-01T17:03:48+08:00">2018-12-01</time>
+              <time title="创建时间：2018-12-09 18:07:55" itemprop="dateCreated datePublished" datetime="2018-12-09T18:07:55+08:00">2018-12-09</time>
             
 
-            
-              
-
-              
             
           </span>
 
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/《Linux内核情景分析》读书笔记/" itemprop="url" rel="index"><span itemprop="name">《Linux内核情景分析》读书笔记</span></a></span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -469,12 +446,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/《Linux内核情景分析》读书笔记/" rel="tag"># 《Linux内核情景分析》读书笔记</a>
-          
-        </div>
-      
 
       
       
@@ -484,8 +455,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/01/2-2-Linux地址映射全过程/" rel="next" title="2.2 Linux地址映射权过程">
-                <i class="fa fa-chevron-left"></i> 2.2 Linux地址映射权过程
+              <a href="/2018/12/09/4-1进程和进程的创建、执行与消亡/" rel="next" title="4-1进程和进程的创建、执行与消亡">
+                <i class="fa fa-chevron-left"></i> 4-1进程和进程的创建、执行与消亡
               </a>
             
           </div>
@@ -494,8 +465,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/12/02/CSAPP-静态链接与动态链接/" rel="prev" title="CSAPP - 静态链接与动态链接">
-                CSAPP - 静态链接与动态链接 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/12/12/快慢指针-leetcode287/" rel="prev" title="快慢指针-leetcode287">
+                快慢指针-leetcode287 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>

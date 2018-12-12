@@ -121,7 +121,7 @@
 <meta property="og:image" content="https://root1iu.github.io/2018/12/02/CSAPP-静态链接与动态链接/7-15.png">
 <meta property="og:image" content="https://root1iu.github.io/2018/12/02/CSAPP-静态链接与动态链接/动态链接.png">
 <meta property="og:image" content="https://root1iu.github.io/2018/12/02/CSAPP-静态链接与动态链接/GOTPLT.png">
-<meta property="og:updated_time" content="2018-12-05T12:08:03.497Z">
+<meta property="og:updated_time" content="2018-12-10T03:21:43.449Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP - 静态链接与动态链接">
 <meta name="twitter:description" content="本文参考资料为《深入理解计算机系统》第七章。 本文所有代码在 https://github.com/root1iu/CSAPP-3e/tree/master/ch7 可以找到。 符号解析与静态库链接静态库以一种称为存档(archive)的特殊文件格式存放在内存中。 静态库是一个把相关目标模块打包成一个整体的文件。 链接时，连接器只赋值被程序引用的目标模块，减少了目标文件在磁盘中的内存大小。 123">
@@ -417,7 +417,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-12-05 20:08:03" itemprop="dateModified" datetime="2018-12-05T20:08:03+08:00">2018-12-05</time>
+                <time title="修改时间：2018-12-10 11:21:43" itemprop="dateModified" datetime="2018-12-10T11:21:43+08:00">2018-12-10</time>
               
             
           </span>
@@ -524,7 +524,7 @@
 </ul>
 <p>由上图可知，在链接时，需要共享库提供重定位和符号表的信息，在运行时，才能解析对动态链接库函数的引用。</p>
 <p>重定位类似共享内存（自己的体会），把函数重定位到进程的某个虚拟内存那，然后重定位进程对这些函数的引用，这样就可以在进程中调用这些库中的函数。</p>
-<h5 id="gcc-编译共享库——位置无关代码解决了什么问题"><a href="#gcc-编译共享库——位置无关代码解决了什么问题" class="headerlink" title="gcc 编译共享库——位置无关代码解决了什么问题"></a>gcc 编译共享库——位置无关代码解决了什么问题</h5><p>-fpic 告诉编译器编译和位置无关的代码。</p>
+<h5 id="gcc-编译共享库——位置无关代码解决了什么问题"><a href="#gcc-编译共享库——位置无关代码解决了什么问题" class="headerlink" title="gcc 编译共享库——位置无关代码解决了什么问题"></a>gcc 编译共享库——位置无关代码解决了什么问题</h5><p>-fpic 告诉编译器编译和位置无关的代码。(本文接下来有描述pic)</p>
 <h3 id="从应用程序中加载和链接共享库-dlfcn-h系列函数"><a href="#从应用程序中加载和链接共享库-dlfcn-h系列函数" class="headerlink" title="从应用程序中加载和链接共享库(dlfcn.h系列函数)"></a>从应用程序中加载和链接共享库(dlfcn.h系列函数)</h3><p>应用程序可以在运行过程中要求动态连接器加载和链接某个共享库。</p>
 <p>Linux为动态连接器提供了接口，允许应用程序在运行时，加载和链接共享库</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//加载和链接共享库filename</span><br><span class="line">#include &lt;dlfcn.h&gt;</span><br><span class="line">void* dlopen(const  char* filename, ing flag);</span><br></pre></td></tr></table></figure>
@@ -602,6 +602,11 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">► 0x4005e0     &lt;FirstFunc@plt&gt;    jmp    qword ptr [rip + 0x200a3a] &lt;0x7ffff79cd750&gt;</span><br></pre></td></tr></table></figure>
 <p>  <img src="/2018/12/02/CSAPP-静态链接与动态链接/GOTPLT.png" alt=""></p>
+<h4 id="反向看动态链接的创建可执行文件"><a href="#反向看动态链接的创建可执行文件" class="headerlink" title="反向看动态链接的创建可执行文件"></a>反向看动态链接的创建可执行文件</h4><p>突然突发奇想，如果直接编译，是否存在GOT表，PLT表，GOT表中内容如何，结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -o proc maina.c FirstC.c SecondC.c</span><br><span class="line">$ readelf -r proc</span><br><span class="line">Relocation section &apos;.rela.dyn&apos; at offset 0x380 contains 1 entries:</span><br><span class="line">  Offset          Info           Type           Sym. Value    Sym. Name + Addend</span><br><span class="line">000000600ff8  000300000006 R_X86_64_GLOB_DAT 0000000000000000 __gmon_start__ + 0</span><br><span class="line"></span><br><span class="line">Relocation section &apos;.rela.plt&apos; at offset 0x398 contains 2 entries:</span><br><span class="line">  Offset          Info           Type           Sym. Value    Sym. Name + Addend</span><br><span class="line">000000601018  000100000007 R_X86_64_JUMP_SLO 0000000000000000 puts@GLIBC_2.2.5 + 0</span><br><span class="line">000000601020  000200000007 R_X86_64_JUMP_SLO 0000000000000000 __libc_start_main@GLIBC_2.2.5 + 0</span><br></pre></td></tr></table></figure>
+<p>也就是如果直接编译，最主要的区别是PLT少了两项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">000000601020  000300000007 R_X86_64_JUMP_SLO 0000000000000000 FirstFunc + 0</span><br><span class="line">000000601028  000600000007 R_X86_64_JUMP_SLO 0000000000000000 SecondFunc + 0</span><br></pre></td></tr></table></figure>
+<p>也就是说动态链接在创建可执行文件时，静态执行一些链接（包括PLT），然后在程序加载时，动态完成链接。</p>
 
       
     </div>
@@ -726,7 +731,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -745,7 +750,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">3</span>
+                      
+                    
+                    <span class="site-state-item-count">4</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -768,7 +775,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">5</span>
+                      
+                    
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -803,7 +812,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#符号解析"><span class="nav-number">1.</span> <span class="nav-text">符号解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#与静态库链接"><span class="nav-number">1.1.</span> <span class="nav-text">与静态库链接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加载可执行目标文件"><span class="nav-number">2.</span> <span class="nav-text">加载可执行目标文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux-x86-64运行时内存映像"><span class="nav-number">2.1.</span> <span class="nav-text">Linux x86-64运行时内存映像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加载器工作步骤"><span class="nav-number">2.2.</span> <span class="nav-text">加载器工作步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#？"><span class="nav-number">2.2.1.</span> <span class="nav-text">？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态链接共享库"><span class="nav-number">3.</span> <span class="nav-text">动态链接共享库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#静态库有什么缺点"><span class="nav-number">3.1.</span> <span class="nav-text">静态库有什么缺点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#共享库例子"><span class="nav-number">3.2.</span> <span class="nav-text">共享库例子</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#gcc-编译共享库——位置无关代码解决了什么问题"><span class="nav-number">3.2.1.</span> <span class="nav-text">gcc 编译共享库——位置无关代码解决了什么问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从应用程序中加载和链接共享库-dlfcn-h系列函数"><span class="nav-number">4.</span> <span class="nav-text">从应用程序中加载和链接共享库(dlfcn.h系列函数)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#测试代码"><span class="nav-number">4.1.</span> <span class="nav-text">测试代码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#位置无关代码-PIC"><span class="nav-number">5.</span> <span class="nav-text">位置无关代码(PIC)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PIC数据引用"><span class="nav-number">5.1.</span> <span class="nav-text">PIC数据引用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PIC数据引用——外部变量"><span class="nav-number">5.1.1.</span> <span class="nav-text">PIC数据引用——外部变量</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PIC函数调用"><span class="nav-number">5.2.</span> <span class="nav-text">PIC函数调用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PLT-Procedure-Linkage-Table-过程链接表"><span class="nav-number">5.2.1.</span> <span class="nav-text">PLT(Procedure Linkage Table)过程链接表</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#符号解析"><span class="nav-number">1.</span> <span class="nav-text">符号解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#与静态库链接"><span class="nav-number">1.1.</span> <span class="nav-text">与静态库链接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加载可执行目标文件"><span class="nav-number">2.</span> <span class="nav-text">加载可执行目标文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux-x86-64运行时内存映像"><span class="nav-number">2.1.</span> <span class="nav-text">Linux x86-64运行时内存映像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加载器工作步骤"><span class="nav-number">2.2.</span> <span class="nav-text">加载器工作步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#？"><span class="nav-number">2.2.1.</span> <span class="nav-text">？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态链接共享库"><span class="nav-number">3.</span> <span class="nav-text">动态链接共享库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#静态库有什么缺点"><span class="nav-number">3.1.</span> <span class="nav-text">静态库有什么缺点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#共享库例子"><span class="nav-number">3.2.</span> <span class="nav-text">共享库例子</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#gcc-编译共享库——位置无关代码解决了什么问题"><span class="nav-number">3.2.1.</span> <span class="nav-text">gcc 编译共享库——位置无关代码解决了什么问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从应用程序中加载和链接共享库-dlfcn-h系列函数"><span class="nav-number">4.</span> <span class="nav-text">从应用程序中加载和链接共享库(dlfcn.h系列函数)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#测试代码"><span class="nav-number">4.1.</span> <span class="nav-text">测试代码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#位置无关代码-PIC"><span class="nav-number">5.</span> <span class="nav-text">位置无关代码(PIC)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PIC数据引用"><span class="nav-number">5.1.</span> <span class="nav-text">PIC数据引用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PIC数据引用——外部变量"><span class="nav-number">5.1.1.</span> <span class="nav-text">PIC数据引用——外部变量</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PIC函数调用"><span class="nav-number">5.2.</span> <span class="nav-text">PIC函数调用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PLT-Procedure-Linkage-Table-过程链接表"><span class="nav-number">5.2.1.</span> <span class="nav-text">PLT(Procedure Linkage Table)过程链接表</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反向看动态链接的创建可执行文件"><span class="nav-number">5.3.</span> <span class="nav-text">反向看动态链接的创建可执行文件</span></a></li></ol></li></ol></div>
             
 
           </div>
