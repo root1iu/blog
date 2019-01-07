@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="刚开始了解到futex是通过strace pthread_exit函数发现的，以为是退出当前线程的某种系统调用，后来就去查资料，发现是同步用的一种机制，所以写一篇blog来总结一下这种机制。 Futex 简介Futex(Fast Userspace muTEX)称为快速用户区互斥体，是一个在Linux上实现锁定和构建高级抽象锁如信号量和POSIX互斥的基本工具。它们第一次出现在内核开发的2.5">
+<meta name="keywords" content="Simpthread">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初识futex">
+<meta property="og:url" content="https://root1iu.github.io/2019/01/07/初识futex/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="刚开始了解到futex是通过strace pthread_exit函数发现的，以为是退出当前线程的某种系统调用，后来就去查资料，发现是同步用的一种机制，所以写一篇blog来总结一下这种机制。 Futex 简介Futex(Fast Userspace muTEX)称为快速用户区互斥体，是一个在Linux上实现锁定和构建高级抽象锁如信号量和POSIX互斥的基本工具。它们第一次出现在内核开发的2.5">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-01-07T03:20:20.324Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="初识futex">
+<meta name="twitter:description" content="刚开始了解到futex是通过strace pthread_exit函数发现的，以为是退出当前线程的某种系统调用，后来就去查资料，发现是同步用的一种机制，所以写一篇blog来总结一下这种机制。 Futex 简介Futex(Fast Userspace muTEX)称为快速用户区互斥体，是一个在Linux上实现锁定和构建高级抽象锁如信号量和POSIX互斥的基本工具。它们第一次出现在内核开发的2.5">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/01/07/初识futex/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>初识futex | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/01/07/初识futex/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">初识futex
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-01-07 09:15:32 / 修改时间：11:20:20" itemprop="dateCreated datePublished" datetime="2019-01-07T09:15:32+08:00">2019-01-07</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Simpthread/" itemprop="url" rel="index"><span itemprop="name">Simpthread</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>  刚开始了解到futex是通过strace pthread_exit函数发现的，以为是退出当前线程的某种系统调用，后来就去查资料，发现是同步用的一种机制，所以写一篇blog来总结一下这种机制。</p>
+<h3 id="Futex-简介"><a href="#Futex-简介" class="headerlink" title="Futex 简介"></a>Futex 简介</h3><p>Futex(Fast Userspace muTEX)称为快速用户区互斥体，是一个在<a href="https://zh.wikipedia.org/wiki/Linux" target="_blank" rel="noopener">Linux</a>上实现<a href="https://zh.wikipedia.org/wiki/%E9%8E%96%E5%AE%9A" target="_blank" rel="noopener">锁定</a>和构建高级抽象锁如<a href="https://zh.wikipedia.org/wiki/%E4%BF%A1%E5%8F%B7%E9%87%8F" target="_blank" rel="noopener">信号量</a>和<a href="https://zh.wikipedia.org/wiki/POSIX" target="_blank" rel="noopener">POSIX</a>互斥的基本工具。它们第一次出现在内核开发的2.5.7版；其语义在2.5.40固定下来，然后在2.6.x系列稳定版内核中出现。[参考资料1]</p>
+<p>经过查阅资料，大致了解了futex的功能，即减小进程间同步的开销。[参考资料2]说明了传统Unix进程间同步机制的弊端，即需要频繁访问内核中的对象。而实际情况是很多同步是无竞争的，进入互斥区不需要访问内核中对象来判断是否存在竞争，访问内核对象需要陷入内核，陷入内核一般是通过某些系统调用来委托操作系统，所以造成了很多不必要的系统调用开销。</p>
+<p>Futex是一种类似于共享内存的同步机制，即将内核中的对象提到用户空间上，在用户空间上对Futex体进行操作，判断是否存在竞争，再根据是否存在竞争来判断是否要陷入内核。如果不存在竞争就不陷入内核，直接进入互斥区；如果存在竞争则委托操作系统进行FUTEX_WAIT或FUTEX_WAKE等操作，这样就省去了传统Unix进程间同步机制的部分系统调用开销。</p>
+<h3 id="Futex对象"><a href="#Futex对象" class="headerlink" title="Futex对象"></a>Futex对象</h3><p>futex对象是一个32位的值，其地址提供给系统调用futex().futex对象在所有平台都是32位。所有futex操作都受这个值(futex)管理。为了在进程间共享一个futex值，futex通常放在共享内存中。这导致在不同的进程中，futex有不一样的虚拟地址的值，不过其指向的物理地址都是一样的。在多线程的程序中，只需将futex值作为全局变量即可被所有线程共享。</p>
+<h3 id="Futex系统调用"><a href="#Futex系统调用" class="headerlink" title="Futex系统调用"></a>Futex系统调用</h3><p>futex()系统调用提供一个等待直到条件为真的方法。典型的应用是用于同步的共享内存的上下文阻塞结构。使用futex时，同步操作主要是在用户空间上进行的。一个用户空间的程序只有在它需要阻塞时才会使用futex系统调用。其他的futex操作被用来唤醒等待某个条件的进程或者线程。futex(2)原型如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;linux/futex.h&gt;</span><br><span class="line">#include &lt;sys/time.h&gt;</span><br><span class="line"></span><br><span class="line">int futex(int *uaddr, int futex_op, int val,</span><br><span class="line">          const struct timespec *timeout,   /* or: uint32_t val2 */</span><br><span class="line">          int *uaddr2, int val3);</span><br></pre></td></tr></table></figure>
+<p>uaddr是指向futex字的指针。所有平台中，futex都是4字节。futex_op指明了作用于futex上的操作。val值的含义和目的依赖于futex_op参数。对于一些阻塞操作，timeout参数是一个指向timespec结构的指针，该结构指明了操作的时间限制。其他参数一般用不着，置为空即可。</p>
+<h4 id="FUTEX-WAIT-since-Linux-2-6-0"><a href="#FUTEX-WAIT-since-Linux-2-6-0" class="headerlink" title="FUTEX_WAIT(since Linux 2.6.0)"></a>FUTEX_WAIT(since Linux 2.6.0)</h4><p>这个是futex_op参数上一种选择，即如果uaddr上所指向的futex值和val值相同，则将当前进程/线程会阻塞在uaddr所指向的futex值上，并等待*uaddr的FUTEX_WAKE操作；如果*uaddr != val，那么futex(2)失败并返回伴着EAGAIN错误码。</p>
+<p>如果参数timeout非空，那么timeout指向的结构体会指定休眠的时间。(此时间间隔会向上取到系统时间的粒度，并保证不会提前到期)。timeout默认会根据CLOCK_MONOTONIC时钟来计算，但从Linux4.5开始，可以在futex_op上指定FUTEX_CLOCK_REALTIME来选择CLOCK_REALTIME时钟。如果timeout为空，那么调用会无限期阻塞。</p>
+<h4 id="FUTEX-WAKE-since-Linux-2-6-0"><a href="#FUTEX-WAKE-since-Linux-2-6-0" class="headerlink" title="FUTEX_WAKE(since Linux 2.6.0)"></a>FUTEX_WAKE(since Linux 2.6.0)</h4><p>FUTEX_WAKE操作可以唤醒最多val个在uaddr指向的futex字上的等待者。最常见的是val为1，表示唤醒一个等待者，或者val为INT_MAX，表示唤醒所有等待者。不保证某个等待者被唤醒。比如说不保证高调度优先级的等待者先于低优先级等待者被唤醒。</p>
+<h3 id="Futex机制"><a href="#Futex机制" class="headerlink" title="Futex机制"></a>Futex机制</h3><p>Futex机制就是将futex变量和futex(2)结合使用的同步机制。当执行一个需要阻塞一个线程的futex操作时，内核只有在futex值和futex()指定的值(val)相等时才会阻塞。加载futex的值，将该值和futex()的参数进行比较，阻塞以原子的方式发生，然后当前线程会和其他阻塞在这个futex字上的其他并发线程一同排队等候。因此，futex字是将用户空间的同步和内核阻塞的实现联系起来。和原子比较交换操作类似，通过futex阻塞是一种原子比较交换操作(CMPXCHG)。</p>
+<p>futex机制的一个作用是实现锁，futex对象即锁对象，通过对用户空间的futex对象的访问，来判断是否需要执行futex(2)进行阻塞。如果无竞争，则将futex对象减一(通过原子操作[__sync_bool_compare_and_swap()]来判断并加减)；如果有竞争，则调用futex(2)阻塞。</p>
+<p>当释放时，调用带FUTEX_WAKE参数的futex(2)，唤醒等待的线程，val值指示唤醒的线程数。需要注意的是，当调用FUTEX_WAKE操作唤醒某个等待在futex上的线程后，此时虽然有线程占用了futex，但是futex不会自动减一，所以需要手动的将futex减一。由此可以引出一个问题，即如果在线程占有了futex后有新线程申请futex，应该如何处理，[参考资料3]的例程给出了解答，本文例程代码也给了解答。ps: 参考资料3中的例程的futex函数似乎有错误，uaddr2写成了uaddr.</p>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line">$ cat myfutex.c</span><br><span class="line">#define _GNU_SOURCE</span><br><span class="line">#include &lt;linux/futex.h&gt;    //for FUTEX_WAIT FUTEX_WAKE</span><br><span class="line">#include &lt;sys/time.h&gt;       //for struct timespec</span><br><span class="line">#include &lt;sys/syscall.h&gt;    //for SYS_futex</span><br><span class="line">#include &lt;unistd.h&gt;         //for syscall</span><br><span class="line">#include &lt;sys/mman.h&gt;       //for mmap</span><br><span class="line">#include &lt;stdint.h&gt;         //for uint32_t</span><br><span class="line">#include &lt;errno.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">#define error_handle(msg) do&#123;perror(msg); exit(EXIT_FAILURE);&#125; while(0)</span><br><span class="line"></span><br><span class="line">int futex(int* uaddr, int futex_op, int val, const struct timespec *timeout,</span><br><span class="line">            int *uaddr2, int val3) </span><br><span class="line">&#123;</span><br><span class="line">    return syscall(SYS_futex, uaddr, futex_op, val, timeout, uaddr2, val3);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void futex_wait(int *futexp)</span><br><span class="line">&#123;</span><br><span class="line">    while(1) &#123;</span><br><span class="line">        //通过一个循环来避免多个线程占用同一个futex的情况</span><br><span class="line">        if(__sync_bool_compare_and_swap(futexp, 1, 0))&#123;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        int s = futex(futexp, FUTEX_WAIT, 0, NULL, NULL, 0);</span><br><span class="line">        //判断被唤醒后,再占有futex，此时futexp是否会被futex改为0</span><br><span class="line">        printf(&quot;futexp = %d\n&quot;, *futexp);</span><br><span class="line">        if(s == -1) &#123;</span><br><span class="line">            error_handle(&quot;futex: &quot;);</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void futex_post(int* futexp) </span><br><span class="line">&#123;</span><br><span class="line">    if(__sync_bool_compare_and_swap(futexp, 0, 1)) &#123;</span><br><span class="line">        //这里有一个情况是，将futex值加1后，还没进行下一步唤醒，有新线程过来</span><br><span class="line">        //则新线程会获得futex的所有权</span><br><span class="line">        int s = futex(futexp, FUTEX_WAKE, 1, NULL , NULL, 0);</span><br><span class="line">        if(s == -1) &#123;</span><br><span class="line">            error_handle(&quot;futex FUTEX_WAKE:&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(int argc, char *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    int *futexes = (int *)mmap(NULL, sizeof(uint32_t) * 2, PROT_READ | PROT_WRITE,</span><br><span class="line">            MAP_ANONYMOUS | MAP_SHARED, -1, 0);</span><br><span class="line">    if(futexes == MAP_FAILED) &#123;</span><br><span class="line">        error_handle(&quot;mmap:&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    int *futex1 = &amp;futexes[0];</span><br><span class="line">    int *futex2 = &amp;futexes[1];</span><br><span class="line">    *futex1 = 1;    //child 先走</span><br><span class="line">    *futex2 = 0;    //parent 默认阻塞</span><br><span class="line">    int rt = fork();</span><br><span class="line">    if(rt == -1) &#123;</span><br><span class="line">        error_handle(&quot;fork&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if(rt == 0) &#123;   //child</span><br><span class="line">        for(int i = 0; i &lt; 3; ++i) &#123;</span><br><span class="line">            futex_wait(futex1);</span><br><span class="line">            printf(&quot;child %d\n&quot;, i);</span><br><span class="line">            futex_post(futex2);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        for(int i = 0; i &lt; 3; ++i) &#123;</span><br><span class="line">            futex_wait(futex2);</span><br><span class="line">            printf(&quot;parent %d\n&quot;, i);</span><br><span class="line">            futex_post(futex1);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$ ./myfutex</span><br><span class="line">child 0</span><br><span class="line">futexp = 1</span><br><span class="line">parent 0</span><br><span class="line">futexp = 1</span><br><span class="line">child 1</span><br><span class="line">futexp = 1</span><br><span class="line">parent 1</span><br><span class="line">futexp = 1</span><br><span class="line">child 2</span><br><span class="line">futexp = 1</span><br><span class="line">parent 2</span><br></pre></td></tr></table></figure>
+<p>从结果可以看出，futex唤醒线程后，某个线程占有futex对象，但futex(2)系统调用不会将futex对象减一，所以需要手动减一。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p>[1]<a href="https://zh.wikipedia.org/zh-hans/Futex" target="_blank" rel="noopener">https://zh.wikipedia.org/zh-hans/Futex</a></p>
+<p>[2]<a href="https://blog.csdn.net/nellson/article/details/5400360" target="_blank" rel="noopener">https://blog.csdn.net/nellson/article/details/5400360</a> [Linux进程同步机制-Futex]</p>
+<p>[3]<a href="http://man7.org/linux/man-pages/man2/futex.2.html" target="_blank" rel="noopener">http://man7.org/linux/man-pages/man2/futex.2.html</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Simpthread/" rel="tag"># Simpthread</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/12/快慢指针-leetcode287/" rel="next" title="快慢指针-leetcode287">
+                <i class="fa fa-chevron-left"></i> 快慢指针-leetcode287
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Futex-简介"><span class="nav-number">1.</span> <span class="nav-text">Futex 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Futex对象"><span class="nav-number">2.</span> <span class="nav-text">Futex对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Futex系统调用"><span class="nav-number">3.</span> <span class="nav-text">Futex系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#FUTEX-WAIT-since-Linux-2-6-0"><span class="nav-number">3.1.</span> <span class="nav-text">FUTEX_WAIT(since Linux 2.6.0)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FUTEX-WAKE-since-Linux-2-6-0"><span class="nav-number">3.2.</span> <span class="nav-text">FUTEX_WAKE(since Linux 2.6.0)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Futex机制"><span class="nav-number">4.</span> <span class="nav-text">Futex机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example"><span class="nav-number">5.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
