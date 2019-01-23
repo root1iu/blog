@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="由于项目遇到读写配置文件的问题，于是想到使用正则表达式来判断是否匹配正确格式，所以搜索总结了一下正则表达式的使用： 正则表达式函数原型123456789101112#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;regex.h&amp;gt;int regcomp(regex_t *preg, const char *regex, int cflags);int rege">
+<meta name="keywords" content="Linux编程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux下正则表达式使用">
+<meta property="og:url" content="https://root1iu.github.io/2019/01/23/Linux下正则表达式使用/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="由于项目遇到读写配置文件的问题，于是想到使用正则表达式来判断是否匹配正确格式，所以搜索总结了一下正则表达式的使用： 正则表达式函数原型123456789101112#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;regex.h&amp;gt;int regcomp(regex_t *preg, const char *regex, int cflags);int rege">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-01-23T07:39:36.331Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux下正则表达式使用">
+<meta name="twitter:description" content="由于项目遇到读写配置文件的问题，于是想到使用正则表达式来判断是否匹配正确格式，所以搜索总结了一下正则表达式的使用： 正则表达式函数原型123456789101112#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;regex.h&amp;gt;int regcomp(regex_t *preg, const char *regex, int cflags);int rege">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/01/23/Linux下正则表达式使用/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Linux下正则表达式使用 | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/01/23/Linux下正则表达式使用/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux下正则表达式使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-01-23 15:33:11 / 修改时间：15:39:36" itemprop="dateCreated datePublished" datetime="2019-01-23T15:33:11+08:00">2019-01-23</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Linux编程/" itemprop="url" rel="index"><span itemprop="name">Linux编程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>由于项目遇到读写配置文件的问题，于是想到使用正则表达式来判断是否匹配正确格式，所以搜索总结了一下正则表达式的使用：</p>
+<h4 id="正则表达式函数原型"><a href="#正则表达式函数原型" class="headerlink" title="正则表达式函数原型"></a>正则表达式函数原型</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;sys/types.h&gt;</span><br><span class="line">#include &lt;regex.h&gt;</span><br><span class="line"></span><br><span class="line">int regcomp(regex_t *preg, const char *regex, int cflags);</span><br><span class="line"></span><br><span class="line">int regexec(const regex_t *preg, const char *string, size_t nmatch,</span><br><span class="line">                   regmatch_t pmatch[], int eflags);</span><br><span class="line"></span><br><span class="line">size_t regerror(int errcode, const regex_t *preg, char *errbuf,</span><br><span class="line">                       size_t errbuf_size);</span><br><span class="line"></span><br><span class="line">void regfree(regex_t *preg);</span><br></pre></td></tr></table></figure>
+<h4 id="regcomp"><a href="#regcomp" class="headerlink" title="regcomp()"></a>regcomp()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">preg 	—— 指向一个regex_t结构体的指针</span><br><span class="line">regex 	—— 指向正则表达式串的指针</span><br><span class="line">cflags 	—— 指定编译类型</span><br></pre></td></tr></table></figure>
+<p>所有正则表达式都通过编译后的preg来匹配字符串，所以regcomp()将正则表达式编译成regexec()可以识别的regex_t对象，然后给regexec()去匹配。</p>
+<h5 id="cflag-编译选项"><a href="#cflag-编译选项" class="headerlink" title="cflag 编译选项"></a>cflag 编译选项</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">REG_EXTENDED 使用扩展正则表达式，如果没有这个选项则默认基本正则表达式</span><br><span class="line">REG_ICASE    不区分大小写</span><br><span class="line">REG_NOSUB    不记录位置信息，使用这个选项后，regexec()会忽略参数nmatch和pmatch</span><br><span class="line">REG_NEWLINE  匹配任意字符的操作符不会匹配换行符，使用^可以匹配行开头，$匹配行尾</span><br></pre></td></tr></table></figure>
+<h4 id="regexec"><a href="#regexec" class="headerlink" title="regexec()"></a>regexec()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">preg 	—— 由regcomp()编译后，这个指针指向一个regex_t对象，是匹配字符串的依据</span><br><span class="line">namtch 	—— nmatch是结构体数组pmatch的长度</span><br><span class="line">pmatch  —— 结构体regmatch_t数组</span><br><span class="line">eflags  —— 标识属性</span><br></pre></td></tr></table></figure>
+<p>regexec()是用编译后的正则表达式regex_t对象和字符串参数string指向的字符串匹配，匹配结果（位置信息）存在数组pmatch中。</p>
+<p><a href="https://www.cnblogs.com/stlong/p/6289107.html" target="_blank" rel="noopener">这个博客</a>提到了，虽然pmatch是数组的形式，但实际上regexec()函数只能匹配到一个。自己做了测试，及时namtch不为1且数组pmatch元素个数也大于1，也只有第一个元素有内容，其他全是-1。</p>
+<p>但是如果在正则表达式模式串中加入括号，那么pmatch数组的首个元素是整个匹配项，从第2个元素开始，就是正则表达式模式串中括号的匹配内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pattern = &quot;(index)[^=]*=[^0-9]*([0-9])*$&quot;</span><br><span class="line"># index = 1</span><br><span class="line">pmatch[1] -&gt; index</span><br><span class="line">pmatch[2] -&gt; 1</span><br></pre></td></tr></table></figure>
+<p>再查询资料得知</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(pattern) : 匹配pattern并获取这一匹配。所获取的匹配可以从产生的Matches集合得到</span><br></pre></td></tr></table></figure>
+<h5 id="eflags选项"><a href="#eflags选项" class="headerlink" title="eflags选项"></a>eflags选项</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">REG_NOTBOL  ^无法匹配开头，但在regcomp()中如果cflag设置了REG_NEWLINE可以忽略</span><br><span class="line">            这个标记，这种情况适用于字符串不同部分传给regexec()时，不应该将字符串</span><br><span class="line">            头部视为行开头</span><br><span class="line">REG_NOTEOL  不匹配行尾$，但在regcomp()中如果cflag设置了REG_NEWLINE可以忽略</span><br><span class="line">            这个标记</span><br></pre></td></tr></table></figure>
+<h4 id="regmatch-t"><a href="#regmatch-t" class="headerlink" title="regmatch_t"></a>regmatch_t</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">typedef struct &#123;</span><br><span class="line">	regoff_t rm_so;		//指明了下一个最大匹配串的起始偏移</span><br><span class="line">	regoff_t rm_eo;		//指明了该匹配串的终止偏移，即匹配串的后一个字符的位置</span><br><span class="line">&#125; regmatch_t;</span><br></pre></td></tr></table></figure>
+<h4 id="regerror"><a href="#regerror" class="headerlink" title="regerror()"></a>regerror()</h4><p>通过将错误码errcode传给regerror，和errbuf缓冲区给regerror，regerror会返回错误消息的长度。</p>
+<h4 id="regfree"><a href="#regfree" class="headerlink" title="regfree()"></a>regfree()</h4><p>释放regcomp()为regex_t对象申请的内存空间。</p>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><h5 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//test-config</span><br><span class="line">index = 1</span><br><span class="line">ip = 192.168.1.101</span><br><span class="line">port = 1502</span><br><span class="line"></span><br><span class="line">index = 2</span><br><span class="line">ip = 192.168.1.102</span><br><span class="line">port = 1502</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">//test-re.c</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;regex.h&gt;</span><br><span class="line"></span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">int main(int argc, char *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    FILE *fp;</span><br><span class="line">    fp = fopen(&quot;./test-config&quot;, &quot;r&quot;);</span><br><span class="line">    if(fp == NULL) &#123;</span><br><span class="line">        perror(&quot;fopen fail\n&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    const char* pattern = &quot;((index|ip|port)[^=]*=[^0-9]*([0-9]+(\.[0-9]+)*$))|($)&quot;;</span><br><span class="line">    char buf[1024];</span><br><span class="line">    while(!feof(fp)) &#123;</span><br><span class="line">        if(fgets(buf, 1024, fp) == NULL) break;</span><br><span class="line">        //printf(&quot;buf %s&quot;, buf);</span><br><span class="line"></span><br><span class="line">        regex_t reg;</span><br><span class="line">        regmatch_t match[5];</span><br><span class="line">        regcomp(&amp;reg, pattern, REG_EXTENDED | REG_ICASE | REG_NEWLINE);</span><br><span class="line">        int rt = regexec(&amp;reg, buf, 5, match, REG_NOTBOL);</span><br><span class="line">        if(rt == REG_NOMATCH)</span><br><span class="line">            printf(&quot;error config\n&quot;);</span><br><span class="line">        else if(rt == 0) &#123;</span><br><span class="line">            char output[1024] = &#123;0&#125;;</span><br><span class="line">            //提取最主要的信息</span><br><span class="line">            strncpy(output, buf + match[3].rm_so, match[3].rm_eo - match[3].rm_so);</span><br><span class="line">            printf(&quot;%s\n&quot;, output);</span><br><span class="line">        &#125;</span><br><span class="line">        regfree(&amp;reg);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fclose(fp);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line">//输出</span><br><span class="line">1</span><br><span class="line">192.168.1.101</span><br><span class="line">1502</span><br><span class="line"></span><br><span class="line">2</span><br><span class="line">192.168.1.102</span><br><span class="line">1502</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux编程/" rel="tag"># Linux编程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/07/初识futex/" rel="next" title="初识futex">
+                <i class="fa fa-chevron-left"></i> 初识futex
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#正则表达式函数原型"><span class="nav-number">1.</span> <span class="nav-text">正则表达式函数原型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#regcomp"><span class="nav-number">2.</span> <span class="nav-text">regcomp()</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#cflag-编译选项"><span class="nav-number">2.1.</span> <span class="nav-text">cflag 编译选项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#regexec"><span class="nav-number">3.</span> <span class="nav-text">regexec()</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#eflags选项"><span class="nav-number">3.1.</span> <span class="nav-text">eflags选项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#regmatch-t"><span class="nav-number">4.</span> <span class="nav-text">regmatch_t</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#regerror"><span class="nav-number">5.</span> <span class="nav-text">regerror()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#regfree"><span class="nav-number">6.</span> <span class="nav-text">regfree()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试"><span class="nav-number">7.</span> <span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#配置文件"><span class="nav-number">7.1.</span> <span class="nav-text">配置文件</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
