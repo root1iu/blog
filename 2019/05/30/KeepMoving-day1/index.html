@@ -109,22 +109,25 @@
 
 
 
-  <meta name="keywords" content="《Linux内核情景分析》读书笔记">
+  <meta name="description" content="好久没登blog，也好久没更新blog，因为最近一直在刷绩点学英语，后来发现自己代码能力下降得太快了，所以诞生了这个系列。本系列原意是每天坚持打点代码，或验证基础知识或实现某个算法，旨在保持代码水平，每天学习一点点，期待时间的力量吧。 sizeof第一天来认识一下sizeof sizeof 用于数组名sizeof用于数组名，直接返回数组的整个内存大小 1234int arrayOne[10];co">
+<meta name="keywords" content="基础知识和算法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="fork()、vfork()和clone()">
-<meta property="og:url" content="https://root1iu.github.io/2018/12/09/fork-、vfork-和clone/index.html">
+<meta property="og:title" content="KeepMoving-day1.md">
+<meta property="og:url" content="https://root1iu.github.io/2019/05/30/KeepMoving-day1/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="好久没登blog，也好久没更新blog，因为最近一直在刷绩点学英语，后来发现自己代码能力下降得太快了，所以诞生了这个系列。本系列原意是每天坚持打点代码，或验证基础知识或实现某个算法，旨在保持代码水平，每天学习一点点，期待时间的力量吧。 sizeof第一天来认识一下sizeof sizeof 用于数组名sizeof用于数组名，直接返回数组的整个内存大小 1234int arrayOne[10];co">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-12-17T08:48:48.934Z">
+<meta property="og:updated_time" content="2019-05-30T13:41:34.355Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="fork()、vfork()和clone()">
+<meta name="twitter:title" content="KeepMoving-day1.md">
+<meta name="twitter:description" content="好久没登blog，也好久没更新blog，因为最近一直在刷绩点学英语，后来发现自己代码能力下降得太快了，所以诞生了这个系列。本系列原意是每天坚持打点代码，或验证基础知识或实现某个算法，旨在保持代码水平，每天学习一点点，期待时间的力量吧。 sizeof第一天来认识一下sizeof sizeof 用于数组名sizeof用于数组名，直接返回数组的整个内存大小 1234int arrayOne[10];co">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/2018/12/09/fork-、vfork-和clone/">
+  <link rel="canonical" href="https://root1iu.github.io/2019/05/30/KeepMoving-day1/">
 
 
 
@@ -134,7 +137,7 @@
   };
 </script>
 
-  <title>fork()、vfork()和clone() | Root1iu Home Page</title>
+  <title>KeepMoving-day1.md | Root1iu Home Page</title>
   
 
 
@@ -350,7 +353,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/09/fork-、vfork-和clone/">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/05/30/KeepMoving-day1/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -367,7 +370,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">fork()、vfork()和clone()
+          <h1 class="post-title" itemprop="name headline">KeepMoving-day1.md
               
             
           </h1>
@@ -392,24 +395,12 @@
                 
               
 
-              <time title="创建时间：2018-12-09 18:07:55" itemprop="dateCreated datePublished" datetime="2018-12-09T18:07:55+08:00">2018-12-09</time>
+              <time title="创建时间：2019-05-30 21:09:09 / 修改时间：21:41:34" itemprop="dateCreated datePublished" datetime="2019-05-30T21:09:09+08:00">2019-05-30</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-17 16:48:48" itemprop="dateModified" datetime="2018-12-17T16:48:48+08:00">2018-12-17</time>
               
             
           </span>
@@ -426,7 +417,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/《Linux内核情景分析》读书笔记/" itemprop="url" rel="index"><span itemprop="name">《Linux内核情景分析》读书笔记</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/基础知识和算法/" itemprop="url" rel="index"><span itemprop="name">基础知识和算法</span></a></span>
 
                 
                 
@@ -460,7 +451,22 @@
       
 
       
-        
+        <p>好久没登blog，也好久没更新blog，因为最近一直在刷绩点学英语，后来发现自己代码能力下降得太快了，所以诞生了这个系列。本系列原意是每天坚持打点代码，或验证基础知识或实现某个算法，旨在保持代码水平，每天学习一点点，期待时间的力量吧。</p>
+<h3 id="sizeof"><a href="#sizeof" class="headerlink" title="sizeof"></a>sizeof</h3><p>第一天来认识一下sizeof</p>
+<h4 id="sizeof-用于数组名"><a href="#sizeof-用于数组名" class="headerlink" title="sizeof 用于数组名"></a>sizeof 用于数组名</h4><p>sizeof用于数组名，直接返回数组的整个内存大小</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int arrayOne[10];</span><br><span class="line">cout &lt;&lt; sizeof(arrayOne); // 40</span><br><span class="line">int arrayTwo[0];</span><br><span class="line">cout &lt;&lt; sizeof(arrayTwo); // 0</span><br></pre></td></tr></table></figure>
+<p>查看汇编代码时可以发现，编译器(g++)直接获得arrayOne的内存大小，并将其作为参数传给cout。</p>
+<h4 id="sizeof用于类实例"><a href="#sizeof用于类实例" class="headerlink" title="sizeof用于类实例"></a>sizeof用于类实例</h4><h5 id="空类"><a href="#空类" class="headerlink" title="空类"></a>空类</h5><p>当sizeof用于类实例时，所得的值都是大于等于1的，如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A a;  	//空类</span><br><span class="line">cout &lt;&lt; sizeof(a) &lt;&lt; endl;	//1</span><br></pre></td></tr></table></figure>
+<p>具体原因是声明类型实例时，必须在内存中占有一定的空间，否则无法使用该实例，所以此处结果不应该和数组一样为0，而是1。</p>
+<h5 id="无变量有成员函数的类"><a href="#无变量有成员函数的类" class="headerlink" title="无变量有成员函数的类"></a>无变量有成员函数的类</h5><p>同样，若仅仅是有成员函数的类，在编译时，也不会为每个实例创建一个函数，而是一个类一个成员函数实例，如调用成员函数test()，汇编代码如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;main+131&gt;    call   A::test()</span><br></pre></td></tr></table></figure>
+<p>所以类实例中不需要存储信息，那么这种情况和空类是一致的。</p>
+<h5 id="无变量有虚函数的类"><a href="#无变量有虚函数的类" class="headerlink" title="无变量有虚函数的类"></a>无变量有虚函数的类</h5><p>若有虚函数，类需要为每个实例添加一个虚函数表指针，用来指向类的虚函数表，所以此时实例所占的内存就不是1了，而是指针的大小，即8(64-bit)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A a;  	//虚函数类</span><br><span class="line">cout &lt;&lt; sizeof(a) &lt;&lt; endl;	//8</span><br></pre></td></tr></table></figure>
+<h5 id="有变量的情况"><a href="#有变量的情况" class="headerlink" title="有变量的情况"></a>有变量的情况</h5><p>若类中存在变量，则需要加上变量类型所占的内存，注意对齐，如变量int以及类中存在虚函数，则需要根据指针的大小来对齐</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cout &lt;&lt; sizeof(a) &lt;&lt; endl; //16 = 4 (+4) + 8</span><br></pre></td></tr></table></figure>
+
       
     </div>
 
@@ -483,7 +489,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/《Linux内核情景分析》读书笔记/" rel="tag"># 《Linux内核情景分析》读书笔记</a>
+            <a href="/tags/基础知识和算法/" rel="tag"># 基础知识和算法</a>
           
         </div>
       
@@ -496,8 +502,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/09/4-1进程和进程的创建、执行与消亡/" rel="next" title="4-1进程和进程的创建、执行与消亡">
-                <i class="fa fa-chevron-left"></i> 4-1进程和进程的创建、执行与消亡
+              <a href="/2019/02/02/athread的创建和退出（一）/" rel="next" title="线程库中的创建线程和退出线程（一）">
+                <i class="fa fa-chevron-left"></i> 线程库中的创建线程和退出线程（一）
               </a>
             
           </div>
@@ -505,10 +511,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/12/12/快慢指针-leetcode287/" rel="prev" title="快慢指针-leetcode287">
-                快慢指针-leetcode287 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -557,8 +559,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -658,6 +669,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#sizeof"><span class="nav-number">1.</span> <span class="nav-text">sizeof</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sizeof-用于数组名"><span class="nav-number">1.1.</span> <span class="nav-text">sizeof 用于数组名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sizeof用于类实例"><span class="nav-number">1.2.</span> <span class="nav-text">sizeof用于类实例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#空类"><span class="nav-number">1.2.1.</span> <span class="nav-text">空类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#无变量有成员函数的类"><span class="nav-number">1.2.2.</span> <span class="nav-text">无变量有成员函数的类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#无变量有虚函数的类"><span class="nav-number">1.2.3.</span> <span class="nav-text">无变量有虚函数的类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#有变量的情况"><span class="nav-number">1.2.4.</span> <span class="nav-text">有变量的情况</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
