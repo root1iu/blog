@@ -109,27 +109,25 @@
 
 
 
-  <meta name="description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
-<meta name="keywords" content="《Linux内核情景分析》读书笔记">
+  <meta name="description" content="搜索二维矩阵编写一个高效的算法来判断 m x n 矩阵中，是否存在一个目标值。该矩阵具有如下特性：  每行中的整数从左到右按升序排列。 每行的第一个整数大于前一行的最后一个整数。  错误想法一开始的想法是根据第一行的数的大小，从左往右扫，如果大于本索引的元素值则表示目标在右边的列，否则就在本列。但这样的想法是错误的，因为没办法保证本索引元素值下方的数必小于右边的数。 正确做法正确做法是在数组的右上">
+<meta name="keywords" content="基础知识和算法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2.1 Linux内存管理的基本框架">
-<meta property="og:url" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/index.html">
+<meta property="og:title" content="KM-D6-搜索二维矩阵">
+<meta property="og:url" content="https://root1iu.github.io/2019/06/04/KM-D6-搜索二维矩阵/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
-<meta property="og:description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
+<meta property="og:description" content="搜索二维矩阵编写一个高效的算法来判断 m x n 矩阵中，是否存在一个目标值。该矩阵具有如下特性：  每行中的整数从左到右按升序排列。 每行的第一个整数大于前一行的最后一个整数。  错误想法一开始的想法是根据第一行的数的大小，从左往右扫，如果大于本索引的元素值则表示目标在右边的列，否则就在本列。但这样的想法是错误的，因为没办法保证本索引元素值下方的数必小于右边的数。 正确做法正确做法是在数组的右上">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png">
-<meta property="og:updated_time" content="2018-12-01T09:02:51.199Z">
+<meta property="og:updated_time" content="2019-06-05T10:50:22.827Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2.1 Linux内存管理的基本框架">
-<meta name="twitter:description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
-<meta name="twitter:image" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png">
+<meta name="twitter:title" content="KM-D6-搜索二维矩阵">
+<meta name="twitter:description" content="搜索二维矩阵编写一个高效的算法来判断 m x n 矩阵中，是否存在一个目标值。该矩阵具有如下特性：  每行中的整数从左到右按升序排列。 每行的第一个整数大于前一行的最后一个整数。  错误想法一开始的想法是根据第一行的数的大小，从左往右扫，如果大于本索引的元素值则表示目标在右边的列，否则就在本列。但这样的想法是错误的，因为没办法保证本索引元素值下方的数必小于右边的数。 正确做法正确做法是在数组的右上">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/">
+  <link rel="canonical" href="https://root1iu.github.io/2019/06/04/KM-D6-搜索二维矩阵/">
 
 
 
@@ -139,7 +137,7 @@
   };
 </script>
 
-  <title>2.1 Linux内存管理的基本框架 | Root1iu Home Page</title>
+  <title>KM-D6-搜索二维矩阵 | Root1iu Home Page</title>
   
 
 
@@ -355,7 +353,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/06/04/KM-D6-搜索二维矩阵/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -372,7 +370,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2.1 Linux内存管理的基本框架
+          <h1 class="post-title" itemprop="name headline">KM-D6-搜索二维矩阵
               
             
           </h1>
@@ -397,12 +395,24 @@
                 
               
 
-              <time title="创建时间：2018-12-01 16:15:07 / 修改时间：17:02:51" itemprop="dateCreated datePublished" datetime="2018-12-01T16:15:07+08:00">2018-12-01</time>
+              <time title="创建时间：2019-06-04 18:42:02" itemprop="dateCreated datePublished" datetime="2019-06-04T18:42:02+08:00">2019-06-04</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-05 18:50:22" itemprop="dateModified" datetime="2019-06-05T18:50:22+08:00">2019-06-05</time>
               
             
           </span>
@@ -419,7 +429,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/《Linux内核情景分析》读书笔记/" itemprop="url" rel="index"><span itemprop="name">《Linux内核情景分析》读书笔记</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/基础知识和算法/" itemprop="url" rel="index"><span itemprop="name">基础知识和算法</span></a></span>
 
                 
                 
@@ -453,20 +463,28 @@
       
 
       
-        <h2 id="2-1-Linux内存管理的基本框架"><a href="#2-1-Linux内存管理的基本框架" class="headerlink" title="2.1 Linux内存管理的基本框架"></a>2.1 Linux内存管理的基本框架</h2><h5 id="Linux内核的内存映射模型"><a href="#Linux内核的内存映射模型" class="headerlink" title="Linux内核的内存映射模型"></a>Linux内核的内存映射模型</h5><p>Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。</p>
+        <h4 id="搜索二维矩阵"><a href="#搜索二维矩阵" class="headerlink" title="搜索二维矩阵"></a>搜索二维矩阵</h4><p>编写一个高效的算法来判断 <em>m</em> x <em>n</em> 矩阵中，是否存在一个目标值。该矩阵具有如下特性：</p>
 <ul>
-<li>PGD（页目录表）</li>
-<li>PMD（中间目录）</li>
-<li>PT（页表）</li>
+<li>每行中的整数从左到右按升序排列。</li>
+<li>每行的第一个整数大于前一行的最后一个整数。</li>
 </ul>
-<p>三层地址映射如图：</p>
-<p><img src="/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png" alt=""></p>
-<p>在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。</p>
-<p><strong>系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0000000</strong></p>
-<p>根据这个性质，在需要时，可以直接从虚拟地址转换为物理地址。比如在任务切换时，需要更新CR3的值，使其指向新进程的PGD，而页目录表的起始地址是虚拟地址，CR3需要的是物理地址。</p>
-<h5 id="GDT和LDT"><a href="#GDT和LDT" class="headerlink" title="GDT和LDT"></a>GDT和LDT</h5><p><strong>每个进程的局部段描述符LDT都作为一个独立的段存在，在全局段描述符表中GDT要有一个表项指向LDT这个段的起始地址，并说明该段的长度以及其他参数</strong></p>
-<p>GDT的第一项永远为0，第2、 3项用于内核的代码段和数据段；第5、 6项用于当前进程的代码段和数据段等(5个+？)，还剩下8180个项，所以理论上系统最大的进程数为4090。</p>
-<h5 id="为什么GDT第一项永远为0？"><a href="#为什么GDT第一项永远为0？" class="headerlink" title="为什么GDT第一项永远为0？"></a>为什么GDT第一项永远为0？</h5><p>为了防止未初始化的数据加载到选择子中，Linux采取这种方式来避免严重却不容易发现的错误(未初始化选择子)</p>
+<h5 id="错误想法"><a href="#错误想法" class="headerlink" title="错误想法"></a>错误想法</h5><p>一开始的想法是根据第一行的数的大小，从左往右扫，如果大于本索引的元素值则表示目标在右边的列，否则就在本列。但这样的想法是错误的，因为没办法保证本索引元素值下方的数必小于右边的数。</p>
+<h5 id="正确做法"><a href="#正确做法" class="headerlink" title="正确做法"></a>正确做法</h5><p>正确做法是在数组的右上角起手，不断缩小数组搜索范围</p>
+<ul>
+<li>若目标小于右上角，则可以排除本列；</li>
+<li>若目标大于右上角，则可以排除本行。</li>
+</ul>
+<p>具体代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    bool searchMatrix(vector&lt;vector&lt;int&gt;&gt;&amp; matrix, int target) &#123;</span><br><span class="line">        int row = matrix.size();</span><br><span class="line">        if(row == 0) return false;</span><br><span class="line">        int column = matrix[0].size();</span><br><span class="line">        </span><br><span class="line">        int r = 0, c = column - 1, tmp;</span><br><span class="line">        while( r &lt; row &amp;&amp; c &gt;= 0) &#123;</span><br><span class="line">            tmp = matrix[r][c];</span><br><span class="line">            if( target == tmp ) return true;</span><br><span class="line">            else if( target &gt; tmp) r++;</span><br><span class="line">            else c--;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h5 id="根据题目要求的改进做法"><a href="#根据题目要求的改进做法" class="headerlink" title="根据题目要求的改进做法"></a>根据题目要求的改进做法</h5><p>根据题目的条件之一：”每行的第一个整数大于前一行的最后一个整数”，我们可以想到从左上角入手或许速度更快一些。</p>
+<p>首先说说为什么可以从左上角入手。因为题目的条件，我们可以根据本行的最右的数和目标的大小关系来选择往下找还是往右找(目标大于本行最右的数则往下，否则往右)。</p>
+<p>这样做的好处有</p>
+<ul>
+<li>如果数组较大，且刚好目标在前几行，那么可以很快的排除掉其余的矩阵数据；</li>
+<li>根据cache的存储行为，这样顺序的扫描数组要比从右上角开始往前扫描要快，因为读取第一个数的时候大部分接下来要读取的数据都在cache中；而从右上角读取，若是一直平行往左寻找，那么每次访问左边的数据都会刷新cache，导致速度可能稍慢。</li>
+</ul>
+<p>“从左上开始扫描”做法的具体代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    bool searchMatrix(vector&lt;vector&lt;int&gt;&gt;&amp; matrix, int target) &#123;</span><br><span class="line">        int row = matrix.size();</span><br><span class="line">        if(row == 0) return false;</span><br><span class="line">        int column = matrix[0].size();</span><br><span class="line">        </span><br><span class="line">        int r = 0, c = 0, tmp;</span><br><span class="line">        while( r &lt; row &amp;&amp; c &lt; column ) &#123;</span><br><span class="line">            tmp = matrix[r][c];</span><br><span class="line">            if( target == tmp ) return true;</span><br><span class="line">            else if( target &gt; tmp &amp;&amp; target &gt; matrix[r][column - 1] &amp;&amp; r + 1 &lt; row ) r++;</span><br><span class="line">            else &#123;c++;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -490,7 +508,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/《Linux内核情景分析》读书笔记/" rel="tag"># 《Linux内核情景分析》读书笔记</a>
+            <a href="/tags/基础知识和算法/" rel="tag"># 基础知识和算法</a>
           
         </div>
       
@@ -503,8 +521,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/01/1-预备知识/" rel="next" title="1. 预备知识">
-                <i class="fa fa-chevron-left"></i> 1. 预备知识
+              <a href="/2019/06/03/KM-D5-找到数组中消失的数字/" rel="next" title="KM-D5-找到数组中消失的数字">
+                <i class="fa fa-chevron-left"></i> KM-D5-找到数组中消失的数字
               </a>
             
           </div>
@@ -513,8 +531,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/12/01/2-2-Linux地址映射全过程/" rel="prev" title="2.2 Linux地址映射权过程">
-                2.2 Linux地址映射权过程 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/06/05/KM-D7-char数组和char-的关系/" rel="prev" title="KM-D7-char数组和char*的关系">
+                KM-D7-char数组和char*的关系 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -684,7 +702,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Linux内存管理的基本框架"><span class="nav-number">1.</span> <span class="nav-text">2.1 Linux内存管理的基本框架</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux内核的内存映射模型"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">Linux内核的内存映射模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GDT和LDT"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">GDT和LDT</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么GDT第一项永远为0？"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">为什么GDT第一项永远为0？</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#搜索二维矩阵"><span class="nav-number">1.</span> <span class="nav-text">搜索二维矩阵</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#错误想法"><span class="nav-number">1.1.</span> <span class="nav-text">错误想法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#正确做法"><span class="nav-number">1.2.</span> <span class="nav-text">正确做法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#根据题目要求的改进做法"><span class="nav-number">1.3.</span> <span class="nav-text">根据题目要求的改进做法</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -869,7 +887,7 @@
           distractionFreeMode: 'true'
         })
         gitalk.render('gitalk-container')           
-       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+       </script>
 
   
 
@@ -891,6 +909,36 @@
   
   
 
+  
+    
+      <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      TeX: {equationNumbers: { autoNumber: "AMS" }}
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/npm/mathjax@2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<style>
+.MathJax_Display {
+    overflow: auto hidden;
+}
+</style><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
   
 
 
