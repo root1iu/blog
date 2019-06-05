@@ -117,14 +117,14 @@
 <meta property="og:site_name" content="Root1iu Home Page">
 <meta property="og:description" content="样例代码1234567int main(int argc, char *argv[])&amp;#123;    char array[] = &amp;quot;Here is Array!&amp;quot;;    char *pointer = &amp;quot;Here is pointer!&amp;quot;;    return 0;&amp;#125; 存储位置基础知识编译后用gdb进行调试，可以看到数组字符串的存储位置和指">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://root1iu.github.io/2019/06/05/KM-D7-char数组和char-的关系/home/root1iu/github/blog/source/_posts/KM-D7-char数组和char-的关系/数组和指针存储位置.png">
-<meta property="og:image" content="https://root1iu.github.io/2019/06/05/KM-D7-char数组和char-的关系/home/root1iu/Pictures/C++/数组和指针关系的栈内容.png">
-<meta property="og:image" content="https://root1iu.github.io/2019/06/05/KM-D7-char数组和char-的关系/home/root1iu/Pictures/C++/数组和指针相同字符串.png">
-<meta property="og:updated_time" content="2019-06-05T12:09:56.105Z">
+<meta property="og:image" content="https://root1iu.github.io/2019/06/05/KM-D7-char数组和char-的关系/数组和指针存储位置.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/06/05/KM-D7-char数组和char-的关系/数组和指针关系的栈内容.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/06/05/KM-D7-char数组和char-的关系/数组和指针相同字符串.png">
+<meta property="og:updated_time" content="2019-06-05T12:16:15.395Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="KM-D7-char数组和char*的关系">
 <meta name="twitter:description" content="样例代码1234567int main(int argc, char *argv[])&amp;#123;    char array[] = &amp;quot;Here is Array!&amp;quot;;    char *pointer = &amp;quot;Here is pointer!&amp;quot;;    return 0;&amp;#125; 存储位置基础知识编译后用gdb进行调试，可以看到数组字符串的存储位置和指">
-<meta name="twitter:image" content="https://root1iu.github.io/2019/06/05/KM-D7-char数组和char-的关系/home/root1iu/github/blog/source/_posts/KM-D7-char数组和char-的关系/数组和指针存储位置.png">
+<meta name="twitter:image" content="https://root1iu.github.io/2019/06/05/KM-D7-char数组和char-的关系/数组和指针存储位置.png">
 
 
 
@@ -399,7 +399,7 @@
                 
               
 
-              <time title="创建时间：2019-06-05 18:50:59 / 修改时间：20:09:56" itemprop="dateCreated datePublished" datetime="2019-06-05T18:50:59+08:00">2019-06-05</time>
+              <time title="创建时间：2019-06-05 18:50:59 / 修改时间：20:16:15" itemprop="dateCreated datePublished" datetime="2019-06-05T18:50:59+08:00">2019-06-05</time>
             
 
             
@@ -457,14 +457,14 @@
       
         <h4 id="样例代码"><a href="#样例代码" class="headerlink" title="样例代码"></a>样例代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc, char *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    char array[] = &quot;Here is Array!&quot;;</span><br><span class="line">    char *pointer = &quot;Here is pointer!&quot;;</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="存储位置"><a href="#存储位置" class="headerlink" title="存储位置"></a>存储位置</h4><h5 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h5><p>编译后用gdb进行调试，可以看到数组字符串的存储位置和指针所指的字符串(常量)不同</p>
-<p><img src="/2019/06/05/KM-D7-char数组和char-的关系/home/root1iu/github/blog/source/_posts/KM-D7-char数组和char-的关系/数组和指针存储位置.png" alt=""></p>
+<p><img src="/2019/06/05/KM-D7-char数组和char-的关系/数组和指针存储位置.png" alt=""></p>
 <p>具体来说，数组存储在栈中；指针本身存在栈中，但指针指向的字符串是常量，存储在只读存储区中，因为常量字符串不能被改变，所以放在只读区域也是合理的。</p>
-<p><img src="/2019/06/05/KM-D7-char数组和char-的关系/home/root1iu/Pictures/C++/数组和指针关系的栈内容.png" alt=""></p>
+<p><img src="/2019/06/05/KM-D7-char数组和char-的关系/数组和指针关系的栈内容.png" alt=""></p>
 <p>从栈的具体内容可以得到验证，其中数组内容在0x7fffffffd800处；指针也存在栈中，存储地址是0x7fffffffd7f8，内容是0x400864，也就是常量字符串的地址。</p>
 <h5 id="相同字符串的存储位置"><a href="#相同字符串的存储位置" class="headerlink" title="相同字符串的存储位置"></a>相同字符串的存储位置</h5><p>如果给两个数组和两个指针分别赋予相同的字符串，编译器会使他们指向相同的地址吗？答案是数组不会，指针会。</p>
-<p><img src="/2019/06/05/KM-D7-char数组和char-的关系/home/root1iu/Pictures/C++/数组和指针相同字符串.png" alt=""></p>
+<p><img src="/2019/06/05/KM-D7-char数组和char-的关系/数组和指针相同字符串.png" alt=""></p>
 <p>和上面道理是一样的，数组存储栈中，指针指向的常量字符串则存在只读区域，所以编译器将指针指向同一个只读区域。</p>
-<h4 id="使用sizeof-的表现"><a href="#使用sizeof-的表现" class="headerlink" title="使用sizeof 的表现"></a>使用sizeof 的表现</h4><p>对数组进行sizeof[<a href="&quot;Here is Array!&quot;">day1</a>介绍了对数组进行sizeof]会直接返回数组字符串的大小（注意要包括字符串尾部的’\0’），本测试代码中[“Here is Array!”]一共有14个字符，所以sizeof返回15.</p>
+<h4 id="使用sizeof-的表现"><a href="#使用sizeof-的表现" class="headerlink" title="使用sizeof 的表现"></a>使用sizeof 的表现</h4><p>对数组进行sizeof[<a href="https://root1iu.github.io/2019/05/30/KM-D1-sizeof/">day1</a>(“Here is Array!”)介绍了对数组进行sizeof]会直接返回数组字符串的大小（注意要包括字符串尾部的’\0’），本测试代码中[“Here is Array!”]一共有14个字符，所以sizeof返回15.</p>
 <p>对指针进行sizeof则只是返回指针相应的大小[64位为8字节]。</p>
 <p><strong>Note:</strong> strlen不会包含最后的’\0’</p>
 <h4 id="无法对数组进行自增操作"><a href="#无法对数组进行自增操作" class="headerlink" title="无法对数组进行自增操作"></a>无法对数组进行自增操作</h4><p>因为数组本身是一个结构，指定了一整块的内存；而指针本身是一个整数。这样的区别导致了数组没办法自增(数组自增会导致编译错误)，但指针可以。</p>
