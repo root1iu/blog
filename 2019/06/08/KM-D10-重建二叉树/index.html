@@ -109,27 +109,25 @@
 
 
 
-  <meta name="description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
-<meta name="keywords" content="《Linux内核情景分析》读书笔记">
+  <meta name="description" content="重建二叉树根据一棵树的前序遍历与中序遍历构造二叉树。注意:  你可以假设树中没有重复的元素。 例如，给出 前序遍历 preorder = [3,9,20,15,7]中序遍历 inorder = [9,3,15,20,7] 返回如下的二叉树： 12345  3 / \9  20  /  \ 15   7 Day-10思路前序遍历的第一个一定是根节点，根据这个根节点我们可以在中序遍历中分出来左右子树，">
+<meta name="keywords" content="基础知识和算法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2.1 Linux内存管理的基本框架">
-<meta property="og:url" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/index.html">
+<meta property="og:title" content="KM-D10-重建二叉树">
+<meta property="og:url" content="https://root1iu.github.io/2019/06/08/KM-D10-重建二叉树/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
-<meta property="og:description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
+<meta property="og:description" content="重建二叉树根据一棵树的前序遍历与中序遍历构造二叉树。注意:  你可以假设树中没有重复的元素。 例如，给出 前序遍历 preorder = [3,9,20,15,7]中序遍历 inorder = [9,3,15,20,7] 返回如下的二叉树： 12345  3 / \9  20  /  \ 15   7 Day-10思路前序遍历的第一个一定是根节点，根据这个根节点我们可以在中序遍历中分出来左右子树，">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png">
-<meta property="og:updated_time" content="2018-12-01T09:02:51.199Z">
+<meta property="og:updated_time" content="2019-06-08T11:59:36.278Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2.1 Linux内存管理的基本框架">
-<meta name="twitter:description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
-<meta name="twitter:image" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png">
+<meta name="twitter:title" content="KM-D10-重建二叉树">
+<meta name="twitter:description" content="重建二叉树根据一棵树的前序遍历与中序遍历构造二叉树。注意:  你可以假设树中没有重复的元素。 例如，给出 前序遍历 preorder = [3,9,20,15,7]中序遍历 inorder = [9,3,15,20,7] 返回如下的二叉树： 12345  3 / \9  20  /  \ 15   7 Day-10思路前序遍历的第一个一定是根节点，根据这个根节点我们可以在中序遍历中分出来左右子树，">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/">
+  <link rel="canonical" href="https://root1iu.github.io/2019/06/08/KM-D10-重建二叉树/">
 
 
 
@@ -139,7 +137,7 @@
   };
 </script>
 
-  <title>2.1 Linux内存管理的基本框架 | Root1iu Home Page</title>
+  <title>KM-D10-重建二叉树 | Root1iu Home Page</title>
   
 
 
@@ -355,7 +353,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/06/08/KM-D10-重建二叉树/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -372,7 +370,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2.1 Linux内存管理的基本框架
+          <h1 class="post-title" itemprop="name headline">KM-D10-重建二叉树
               
             
           </h1>
@@ -397,7 +395,7 @@
                 
               
 
-              <time title="创建时间：2018-12-01 16:15:07 / 修改时间：17:02:51" itemprop="dateCreated datePublished" datetime="2018-12-01T16:15:07+08:00">2018-12-01</time>
+              <time title="创建时间：2019-06-08 19:24:03 / 修改时间：19:59:36" itemprop="dateCreated datePublished" datetime="2019-06-08T19:24:03+08:00">2019-06-08</time>
             
 
             
@@ -419,7 +417,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/《Linux内核情景分析》读书笔记/" itemprop="url" rel="index"><span itemprop="name">《Linux内核情景分析》读书笔记</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/基础知识和算法/" itemprop="url" rel="index"><span itemprop="name">基础知识和算法</span></a></span>
 
                 
                 
@@ -453,20 +451,30 @@
       
 
       
-        <h2 id="2-1-Linux内存管理的基本框架"><a href="#2-1-Linux内存管理的基本框架" class="headerlink" title="2.1 Linux内存管理的基本框架"></a>2.1 Linux内存管理的基本框架</h2><h5 id="Linux内核的内存映射模型"><a href="#Linux内核的内存映射模型" class="headerlink" title="Linux内核的内存映射模型"></a>Linux内核的内存映射模型</h5><p>Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。</p>
+        <h4 id="重建二叉树"><a href="#重建二叉树" class="headerlink" title="重建二叉树"></a>重建二叉树</h4><p>根据一棵树的前序遍历与中序遍历构造二叉树。<strong>注意:</strong>  你可以假设树中没有重复的元素。</p>
+<p>例如，给出</p>
+<p>前序遍历 preorder = [3,9,20,15,7]<br>中序遍历 inorder = [9,3,15,20,7]</p>
+<p>返回如下的二叉树：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  3</span><br><span class="line"> / \</span><br><span class="line">9  20</span><br><span class="line">  /  \</span><br><span class="line"> 15   7</span><br></pre></td></tr></table></figure>
+<h4 id="Day-10"><a href="#Day-10" class="headerlink" title="Day-10"></a>Day-10</h4><h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>前序遍历的第一个一定是根节点，根据这个根节点我们可以在中序遍历中分出来左右子树，所以我们可以通过递归来实现重构二叉树。这个思路要解决的点有</p>
 <ul>
-<li>PGD（页目录表）</li>
-<li>PMD（中间目录）</li>
-<li>PT（页表）</li>
+<li>递归的结束条件是什么？</li>
+<li>递归意味着数组需要分出来，怎么分？</li>
 </ul>
-<p>三层地址映射如图：</p>
-<p><img src="/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png" alt=""></p>
-<p>在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。</p>
-<p><strong>系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0000000</strong></p>
-<p>根据这个性质，在需要时，可以直接从虚拟地址转换为物理地址。比如在任务切换时，需要更新CR3的值，使其指向新进程的PGD，而页目录表的起始地址是虚拟地址，CR3需要的是物理地址。</p>
-<h5 id="GDT和LDT"><a href="#GDT和LDT" class="headerlink" title="GDT和LDT"></a>GDT和LDT</h5><p><strong>每个进程的局部段描述符LDT都作为一个独立的段存在，在全局段描述符表中GDT要有一个表项指向LDT这个段的起始地址，并说明该段的长度以及其他参数</strong></p>
-<p>GDT的第一项永远为0，第2、 3项用于内核的代码段和数据段；第5、 6项用于当前进程的代码段和数据段等(5个+？)，还剩下8180个项，所以理论上系统最大的进程数为4090。</p>
-<h5 id="为什么GDT第一项永远为0？"><a href="#为什么GDT第一项永远为0？" class="headerlink" title="为什么GDT第一项永远为0？"></a>为什么GDT第一项永远为0？</h5><p>为了防止未初始化的数据加载到选择子中，Linux采取这种方式来避免严重却不容易发现的错误(未初始化选择子)</p>
+<p>首先贴上一个简单粗暴的写法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Definition for a binary tree node.</span><br><span class="line"> * struct TreeNode &#123;</span><br><span class="line"> *     int val;</span><br><span class="line"> *     TreeNode *left;</span><br><span class="line"> *     TreeNode *right;</span><br><span class="line"> *     TreeNode(int x) : val(x), left(NULL), right(NULL) &#123;&#125;</span><br><span class="line"> * &#125;;</span><br><span class="line"> */</span><br><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    TreeNode* buildTree(vector&lt;int&gt;&amp; preorder, vector&lt;int&gt;&amp; inorder) &#123;</span><br><span class="line">        size_t prelen = preorder.size();</span><br><span class="line">        size_t inlen  = inorder.size();</span><br><span class="line">        if(prelen == 0 &amp;&amp; inlen == 0) return NULL;</span><br><span class="line">        </span><br><span class="line">        int i = 0, lsize, rsize;</span><br><span class="line">        vector&lt;int&gt; n_preorder, n_inorder;</span><br><span class="line">        TreeNode *head = new TreeNode(preorder[0]);</span><br><span class="line">        for(; i &lt; inlen; i++) &#123;</span><br><span class="line">            if(inorder[i] == preorder[0]) break;</span><br><span class="line">        &#125;</span><br><span class="line">        if( i != inlen) &#123;</span><br><span class="line">            lsize = i - 0;</span><br><span class="line">            rsize = inlen - 1 - i;</span><br><span class="line">        &#125;</span><br><span class="line">        n_preorder = vector&lt;int&gt;(preorder.begin() + 1, preorder.begin() + 1 + lsize);</span><br><span class="line">        n_inorder = vector&lt;int&gt;(inorder.begin(), inorder.begin() + lsize);</span><br><span class="line">        TreeNode* pleft = buildTree(n_preorder, n_inorder);</span><br><span class="line">        </span><br><span class="line">        n_preorder = vector&lt;int&gt;(preorder.begin() + 1 + lsize, preorder.begin() + 1 + lsize + rsize);</span><br><span class="line">        n_inorder = vector&lt;int&gt;(inorder.begin() + lsize + 1, inorder.begin() + lsize + 1 + rsize);</span><br><span class="line">        TreeNode* pright = buildTree(n_preorder, n_inorder);</span><br><span class="line">        </span><br><span class="line">        head-&gt;left = pleft;</span><br><span class="line">        head-&gt;right = pright;</span><br><span class="line">        return head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>时间居然达到了残暴的96ms……先解答一下上面提出的问题</p>
+<ul>
+<li><p>数组怎么分？——前序数组的组成可以简单的看成[根、左子树、右子树]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[3,9,20,15,7] 可以看成 [3 | 9 | 20,15,7]</span><br></pre></td></tr></table></figure>
+<p>怎么知道左子树的节点个数？—看中序数组中根节点的位置，假设为i，那么i的左边则是左子树，右边是右子树，即[左子树、根、右子树]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[9,3,15,20,7] 可以看成 [9 | 3 | 15,20,7]</span><br></pre></td></tr></table></figure>
+<p>于是，左子树节点个数可以从中序数组中得到，那么：根、左子树、右子树便可以在前序数组和中序数组中分出来，分别作为递归函数的参数即可。</p>
+</li>
+<li><p>到什么条件结束？——当然是前序和中序的元素个数都为0时结束，意味着此时树已经经过叶子节点了，直接返回NULL即可。</p>
+</li>
+</ul>
+<p>至于为什么是96ms，明天学习一下别人的代码总结一下经验…</p>
 
       
     </div>
@@ -490,7 +498,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/《Linux内核情景分析》读书笔记/" rel="tag"># 《Linux内核情景分析》读书笔记</a>
+            <a href="/tags/基础知识和算法/" rel="tag"># 基础知识和算法</a>
           
         </div>
       
@@ -503,8 +511,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/01/1-预备知识/" rel="next" title="1. 预备知识">
-                <i class="fa fa-chevron-left"></i> 1. 预备知识
+              <a href="/2019/06/07/KM-D9-逆向输出链表/" rel="next" title="KM-D9-逆向输出链表">
+                <i class="fa fa-chevron-left"></i> KM-D9-逆向输出链表
               </a>
             
           </div>
@@ -512,10 +520,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/12/01/2-2-Linux地址映射全过程/" rel="prev" title="2.2 Linux地址映射权过程">
-                2.2 Linux地址映射权过程 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -684,7 +688,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Linux内存管理的基本框架"><span class="nav-number">1.</span> <span class="nav-text">2.1 Linux内存管理的基本框架</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux内核的内存映射模型"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">Linux内核的内存映射模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GDT和LDT"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">GDT和LDT</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么GDT第一项永远为0？"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">为什么GDT第一项永远为0？</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#重建二叉树"><span class="nav-number">1.</span> <span class="nav-text">重建二叉树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Day-10"><span class="nav-number">2.</span> <span class="nav-text">Day-10</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#思路"><span class="nav-number">2.1.</span> <span class="nav-text">思路</span></a></li></ol></li></ol></div>
             
 
           </div>
