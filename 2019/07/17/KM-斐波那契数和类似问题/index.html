@@ -109,27 +109,25 @@
 
 
 
-  <meta name="description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
-<meta name="keywords" content="《Linux内核情景分析》读书笔记">
+  <meta name="description" content="斐波那契数—Leetcode 509斐波那契数，通常用 $F(n)$ 表示，形成的序列称为斐波那契数列。该数列由 $0$ 和 $1$ 开始，后面的每一项数字都是前面两项数字的和。也就是： 12F(0) = 0,   F(1) = 1F(N) = F(N - 1) + F(N - 2), 其中 N &amp;gt; 1. 给定 $N$，计算 $F(N)$。 思路斐波那契数列是经典问题了，可以用递归，也可以用">
+<meta name="keywords" content="基础知识和算法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2.1 Linux内存管理的基本框架">
-<meta property="og:url" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/index.html">
+<meta property="og:title" content="KM-斐波那契数和类似问题">
+<meta property="og:url" content="https://root1iu.github.io/2019/07/17/KM-斐波那契数和类似问题/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
-<meta property="og:description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
+<meta property="og:description" content="斐波那契数—Leetcode 509斐波那契数，通常用 $F(n)$ 表示，形成的序列称为斐波那契数列。该数列由 $0$ 和 $1$ 开始，后面的每一项数字都是前面两项数字的和。也就是： 12F(0) = 0,   F(1) = 1F(N) = F(N - 1) + F(N - 2), 其中 N &amp;gt; 1. 给定 $N$，计算 $F(N)$。 思路斐波那契数列是经典问题了，可以用递归，也可以用">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png">
-<meta property="og:updated_time" content="2018-12-01T09:02:51.199Z">
+<meta property="og:updated_time" content="2019-07-18T11:21:53.473Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2.1 Linux内存管理的基本框架">
-<meta name="twitter:description" content="2.1 Linux内存管理的基本框架Linux内核的内存映射模型Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。  PGD（页目录表） PMD（中间目录） PT（页表）  三层地址映射如图：  在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。 系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0">
-<meta name="twitter:image" content="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png">
+<meta name="twitter:title" content="KM-斐波那契数和类似问题">
+<meta name="twitter:description" content="斐波那契数—Leetcode 509斐波那契数，通常用 $F(n)$ 表示，形成的序列称为斐波那契数列。该数列由 $0$ 和 $1$ 开始，后面的每一项数字都是前面两项数字的和。也就是： 12F(0) = 0,   F(1) = 1F(N) = F(N - 1) + F(N - 2), 其中 N &amp;gt; 1. 给定 $N$，计算 $F(N)$。 思路斐波那契数列是经典问题了，可以用递归，也可以用">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/">
+  <link rel="canonical" href="https://root1iu.github.io/2019/07/17/KM-斐波那契数和类似问题/">
 
 
 
@@ -139,7 +137,7 @@
   };
 </script>
 
-  <title>2.1 Linux内存管理的基本框架 | Root1iu Home Page</title>
+  <title>KM-斐波那契数和类似问题 | Root1iu Home Page</title>
   
 
 
@@ -355,7 +353,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2018/12/01/2-1-Linux内存管理的基本框架/">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/07/17/KM-斐波那契数和类似问题/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -372,7 +370,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2.1 Linux内存管理的基本框架
+          <h1 class="post-title" itemprop="name headline">KM-斐波那契数和类似问题
               
             
           </h1>
@@ -397,12 +395,24 @@
                 
               
 
-              <time title="创建时间：2018-12-01 16:15:07 / 修改时间：17:02:51" itemprop="dateCreated datePublished" datetime="2018-12-01T16:15:07+08:00">2018-12-01</time>
+              <time title="创建时间：2019-07-17 18:40:54" itemprop="dateCreated datePublished" datetime="2019-07-17T18:40:54+08:00">2019-07-17</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-18 19:21:53" itemprop="dateModified" datetime="2019-07-18T19:21:53+08:00">2019-07-18</time>
               
             
           </span>
@@ -419,7 +429,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/《Linux内核情景分析》读书笔记/" itemprop="url" rel="index"><span itemprop="name">《Linux内核情景分析》读书笔记</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/基础知识和算法/" itemprop="url" rel="index"><span itemprop="name">基础知识和算法</span></a></span>
 
                 
                 
@@ -453,20 +463,28 @@
       
 
       
-        <h2 id="2-1-Linux内存管理的基本框架"><a href="#2-1-Linux内存管理的基本框架" class="headerlink" title="2.1 Linux内存管理的基本框架"></a>2.1 Linux内存管理的基本框架</h2><h5 id="Linux内核的内存映射模型"><a href="#Linux内核的内存映射模型" class="headerlink" title="Linux内核的内存映射模型"></a>Linux内核的内存映射模型</h5><p>Linux内核要考虑多种CPU上的实现，设计出一种三层层映射机制。</p>
+        <h4 id="斐波那契数—Leetcode-509"><a href="#斐波那契数—Leetcode-509" class="headerlink" title="斐波那契数—Leetcode 509"></a>斐波那契数—Leetcode 509</h4><p>斐波那契数，通常用 $F(n)$ 表示，形成的序列称为斐波那契数列。该数列由 $0$ 和 $1$ 开始，后面的每一项数字都是前面两项数字的和。也就是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">F(0) = 0,   F(1) = 1</span><br><span class="line">F(N) = F(N - 1) + F(N - 2), 其中 N &gt; 1.</span><br></pre></td></tr></table></figure>
+<p>给定 $N$，计算 $F(N)$。</p>
+<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>斐波那契数列是经典问题了，可以用递归，也可以用迭代来做。</p>
 <ul>
-<li>PGD（页目录表）</li>
-<li>PMD（中间目录）</li>
-<li>PT（页表）</li>
+<li><p>递归</p>
+<p>递归的做法容易实现，但由于是从顶层往下计算，所以效率较低，效率较低的实例如下(以F(5)为例)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">F(5) = F(4) + F(3)</span><br><span class="line">F(4) = F(3) + F(2)</span><br><span class="line">F(3) = F(2) + F(1)</span><br><span class="line">F(2) = F(1) + F(0)</span><br><span class="line">#F(3)计算了2次，F(2)计算了2次</span><br></pre></td></tr></table></figure>
+<p>由于重复的计算相同的数据，导致效率较低；</p>
+</li>
+<li><p>迭代</p>
+<p>除了递归，我们可以用迭代的方式来做，也就是我们可以从底层往顶计算，然后把算得的值储存起来，这样可以避免计算多次相同的值，具体实例如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">array[2] = array[1] + array[0];</span><br><span class="line">array[3] = array[2] + array[1];</span><br><span class="line">array[4] = array[3] + array[2];</span><br><span class="line">array[5] = array[4] + array[3];</span><br><span class="line">#所有数据都只需算一次</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
-<p>三层地址映射如图：</p>
-<p><img src="/2018/12/01/2-1-Linux内存管理的基本框架/%E4%B8%89%E5%B1%82%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png" alt=""></p>
-<p>在32位系统中，PMD的位移为22， PMD的项为1（占地址0位，$2^0 = 1$）即直接映射。</p>
-<p><strong>系统空间物理地址是从0开始，但虚拟地址是从0xc0000000开始，之间刚好相差0xc0000000</strong></p>
-<p>根据这个性质，在需要时，可以直接从虚拟地址转换为物理地址。比如在任务切换时，需要更新CR3的值，使其指向新进程的PGD，而页目录表的起始地址是虚拟地址，CR3需要的是物理地址。</p>
-<h5 id="GDT和LDT"><a href="#GDT和LDT" class="headerlink" title="GDT和LDT"></a>GDT和LDT</h5><p><strong>每个进程的局部段描述符LDT都作为一个独立的段存在，在全局段描述符表中GDT要有一个表项指向LDT这个段的起始地址，并说明该段的长度以及其他参数</strong></p>
-<p>GDT的第一项永远为0，第2、 3项用于内核的代码段和数据段；第5、 6项用于当前进程的代码段和数据段等(5个+？)，还剩下8180个项，所以理论上系统最大的进程数为4090。</p>
-<h5 id="为什么GDT第一项永远为0？"><a href="#为什么GDT第一项永远为0？" class="headerlink" title="为什么GDT第一项永远为0？"></a>为什么GDT第一项永远为0？</h5><p>为了防止未初始化的数据加载到选择子中，Linux采取这种方式来避免严重却不容易发现的错误(未初始化选择子)</p>
+<h5 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h5><p>我们的代码实现效率较高的迭代的做法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int fib(int N) &#123;</span><br><span class="line">        if(N &lt;= 1) return N;</span><br><span class="line">        int numOne = 1;</span><br><span class="line">        int numTwo = 0;</span><br><span class="line">        </span><br><span class="line">        for(int i = 2; i &lt; N + 1; ++i) &#123;</span><br><span class="line">            int ans = numOne + numTwo;</span><br><span class="line">            numTwo = numOne;</span><br><span class="line">            numOne = ans;</span><br><span class="line">        &#125;</span><br><span class="line">        return numOne;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="爬楼梯—Leetcode-70"><a href="#爬楼梯—Leetcode-70" class="headerlink" title="爬楼梯—Leetcode 70"></a>爬楼梯—Leetcode 70</h4><p>假设你正在爬楼梯。需要 <em>n</em> 阶你才能到达楼顶。</p>
+<p>每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？</p>
+<p><strong>注意：</strong>给定 <em>n</em> 是一个正整数。</p>
+<h5 id="思路-1"><a href="#思路-1" class="headerlink" title="思路"></a>思路</h5><p>和斐波那契数列类似，这个问题可以这样理解：给定一个数字n，爬楼梯的方法个数为N，这个状态可以由两个状态进化而来，即n-1的状态和n-2的状态。因为我们可以有两种爬法：1. 在上一个状态之后爬一个台阶到达状态n，这个状态就是n-1;2. 在上一个状态之后爬两个台阶到达状态n，这个状态就是n-2.那么这个问题就变成了斐波那契数列问题，可以用递归也可以用迭代。</p>
+<h5 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int climbStairs(int n) &#123;</span><br><span class="line">        if(n &lt; 2) return n;</span><br><span class="line">        int numOne = 0, numTwo = 1;</span><br><span class="line">        </span><br><span class="line">        while(n--) &#123;</span><br><span class="line">            int tmp = numOne + numTwo;</span><br><span class="line">            numOne = numTwo;</span><br><span class="line">            numTwo = tmp;</span><br><span class="line">        &#125;</span><br><span class="line">        return numTwo;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -490,7 +508,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/《Linux内核情景分析》读书笔记/" rel="tag"># 《Linux内核情景分析》读书笔记</a>
+            <a href="/tags/基础知识和算法/" rel="tag"># 基础知识和算法</a>
           
         </div>
       
@@ -503,8 +521,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/01/1-预备知识/" rel="next" title="1. 预备知识">
-                <i class="fa fa-chevron-left"></i> 1. 预备知识
+              <a href="/2019/07/15/KM-栈模拟队列、队列模拟栈/" rel="next" title="KM-栈模拟队列 、队列模拟栈">
+                <i class="fa fa-chevron-left"></i> KM-栈模拟队列 、队列模拟栈
               </a>
             
           </div>
@@ -512,10 +530,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/12/01/2-2-Linux地址映射全过程/" rel="prev" title="2.2 Linux地址映射权过程">
-                2.2 Linux地址映射权过程 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -684,7 +698,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Linux内存管理的基本框架"><span class="nav-number">1.</span> <span class="nav-text">2.1 Linux内存管理的基本框架</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux内核的内存映射模型"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">Linux内核的内存映射模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GDT和LDT"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">GDT和LDT</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么GDT第一项永远为0？"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">为什么GDT第一项永远为0？</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#斐波那契数—Leetcode-509"><span class="nav-number">1.</span> <span class="nav-text">斐波那契数—Leetcode 509</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#思路"><span class="nav-number">1.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#代码"><span class="nav-number">1.2.</span> <span class="nav-text">代码</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#爬楼梯—Leetcode-70"><span class="nav-number">2.</span> <span class="nav-text">爬楼梯—Leetcode 70</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#思路-1"><span class="nav-number">2.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#代码-1"><span class="nav-number">2.2.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></div>
             
 
           </div>
