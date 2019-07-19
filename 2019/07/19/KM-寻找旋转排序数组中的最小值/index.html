@@ -109,25 +109,25 @@
 
 
 
-  <meta name="description" content="搜索二维矩阵编写一个高效的算法来判断 m x n 矩阵中，是否存在一个目标值。该矩阵具有如下特性：  每行中的整数从左到右按升序排列。 每行的第一个整数大于前一行的最后一个整数。  错误想法一开始的想法是根据第一行的数的大小，从左往右扫，如果大于本索引的元素值则表示目标在右边的列，否则就在本列。但这样的想法是错误的，因为没办法保证本索引元素值下方的数必小于右边的数。 正确做法正确做法是在数组的右上">
+  <meta name="description" content="寻找旋转排序数组中的最小组——Leetcode 153假设按照升序排序的数组在预先未知的某个点上进行了旋转。 ( 例如，数组 [0,1,2,4,5,6,7] 可能变为 [4,5,6,7,0,1,2] )。 请找出其中最小的元素。 你可以假设数组中不存在重复元素。 思路这个问题是搜索问题，可以直接遍历找出最小的元素，但时间复杂度为$O(n)$。但这个问题可以用二分来做。那么首先要确认如何缩小范围？我">
 <meta name="keywords" content="基础知识和算法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="KM-D6-搜索二维矩阵">
-<meta property="og:url" content="https://root1iu.github.io/2019/06/04/KM-D6-搜索二维矩阵/index.html">
+<meta property="og:title" content="KM-寻找旋转排序数组中的最小值">
+<meta property="og:url" content="https://root1iu.github.io/2019/07/19/KM-寻找旋转排序数组中的最小值/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
-<meta property="og:description" content="搜索二维矩阵编写一个高效的算法来判断 m x n 矩阵中，是否存在一个目标值。该矩阵具有如下特性：  每行中的整数从左到右按升序排列。 每行的第一个整数大于前一行的最后一个整数。  错误想法一开始的想法是根据第一行的数的大小，从左往右扫，如果大于本索引的元素值则表示目标在右边的列，否则就在本列。但这样的想法是错误的，因为没办法保证本索引元素值下方的数必小于右边的数。 正确做法正确做法是在数组的右上">
+<meta property="og:description" content="寻找旋转排序数组中的最小组——Leetcode 153假设按照升序排序的数组在预先未知的某个点上进行了旋转。 ( 例如，数组 [0,1,2,4,5,6,7] 可能变为 [4,5,6,7,0,1,2] )。 请找出其中最小的元素。 你可以假设数组中不存在重复元素。 思路这个问题是搜索问题，可以直接遍历找出最小的元素，但时间复杂度为$O(n)$。但这个问题可以用二分来做。那么首先要确认如何缩小范围？我">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-06-05T10:50:22.827Z">
+<meta property="og:updated_time" content="2019-07-19T12:00:58.724Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="KM-D6-搜索二维矩阵">
-<meta name="twitter:description" content="搜索二维矩阵编写一个高效的算法来判断 m x n 矩阵中，是否存在一个目标值。该矩阵具有如下特性：  每行中的整数从左到右按升序排列。 每行的第一个整数大于前一行的最后一个整数。  错误想法一开始的想法是根据第一行的数的大小，从左往右扫，如果大于本索引的元素值则表示目标在右边的列，否则就在本列。但这样的想法是错误的，因为没办法保证本索引元素值下方的数必小于右边的数。 正确做法正确做法是在数组的右上">
+<meta name="twitter:title" content="KM-寻找旋转排序数组中的最小值">
+<meta name="twitter:description" content="寻找旋转排序数组中的最小组——Leetcode 153假设按照升序排序的数组在预先未知的某个点上进行了旋转。 ( 例如，数组 [0,1,2,4,5,6,7] 可能变为 [4,5,6,7,0,1,2] )。 请找出其中最小的元素。 你可以假设数组中不存在重复元素。 思路这个问题是搜索问题，可以直接遍历找出最小的元素，但时间复杂度为$O(n)$。但这个问题可以用二分来做。那么首先要确认如何缩小范围？我">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/2019/06/04/KM-D6-搜索二维矩阵/">
+  <link rel="canonical" href="https://root1iu.github.io/2019/07/19/KM-寻找旋转排序数组中的最小值/">
 
 
 
@@ -137,7 +137,7 @@
   };
 </script>
 
-  <title>KM-D6-搜索二维矩阵 | Root1iu Home Page</title>
+  <title>KM-寻找旋转排序数组中的最小值 | Root1iu Home Page</title>
   
 
 
@@ -353,7 +353,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/06/04/KM-D6-搜索二维矩阵/">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/07/19/KM-寻找旋转排序数组中的最小值/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -370,7 +370,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">KM-D6-搜索二维矩阵
+          <h1 class="post-title" itemprop="name headline">KM-寻找旋转排序数组中的最小值
               
             
           </h1>
@@ -395,24 +395,12 @@
                 
               
 
-              <time title="创建时间：2019-06-04 18:42:02" itemprop="dateCreated datePublished" datetime="2019-06-04T18:42:02+08:00">2019-06-04</time>
+              <time title="创建时间：2019-07-19 18:46:12 / 修改时间：20:00:58" itemprop="dateCreated datePublished" datetime="2019-07-19T18:46:12+08:00">2019-07-19</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-06-05 18:50:22" itemprop="dateModified" datetime="2019-06-05T18:50:22+08:00">2019-06-05</time>
               
             
           </span>
@@ -463,28 +451,38 @@
       
 
       
-        <h4 id="搜索二维矩阵"><a href="#搜索二维矩阵" class="headerlink" title="搜索二维矩阵"></a>搜索二维矩阵</h4><p>编写一个高效的算法来判断 <em>m</em> x <em>n</em> 矩阵中，是否存在一个目标值。该矩阵具有如下特性：</p>
+        <h4 id="寻找旋转排序数组中的最小组——Leetcode-153"><a href="#寻找旋转排序数组中的最小组——Leetcode-153" class="headerlink" title="寻找旋转排序数组中的最小组——Leetcode 153"></a>寻找旋转排序数组中的最小组——Leetcode 153</h4><p>假设按照升序排序的数组在预先未知的某个点上进行了旋转。</p>
+<p>( 例如，数组 <code>[0,1,2,4,5,6,7]</code> 可能变为 <code>[4,5,6,7,0,1,2]</code> )。</p>
+<p>请找出其中最小的元素。</p>
+<p>你可以假设数组中不存在重复元素。</p>
+<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>这个问题是搜索问题，可以直接遍历找出最小的元素，但时间复杂度为$O(n)$。但这个问题可以用二分来做。那么首先要确认如何缩小范围？我们要找的范围具有的特征是：<code>数组范围内第一个元素大于数组范围内的最后一个元素</code>。</p>
+<p>给定一个数组有两种情况</p>
 <ul>
-<li>每行中的整数从左到右按升序排列。</li>
-<li>每行的第一个整数大于前一行的最后一个整数。</li>
+<li>第一种情况是数组旋转为0，此时数组完全有序，第一个元素即最小元素。</li>
+<li>第二种情况是数组旋转不为0，此时数组表现出我们总结出来的特征，即<code>数组范围内第一个元素大于数组范围内的最后一个元素</code>，这时我们把数组二分，找到具有指定特征的子数组，再二分……直到找到一个范围内完全有序的数组或者搜索范围缩小到一点。</li>
 </ul>
-<h5 id="错误想法"><a href="#错误想法" class="headerlink" title="错误想法"></a>错误想法</h5><p>一开始的想法是根据第一行的数的大小，从左往右扫，如果大于本索引的元素值则表示目标在右边的列，否则就在本列。但这样的想法是错误的，因为没办法保证本索引元素值下方的数必小于右边的数。</p>
-<h5 id="正确做法"><a href="#正确做法" class="headerlink" title="正确做法"></a>正确做法</h5><p>正确做法是在数组的右上角起手，不断缩小数组搜索范围</p>
+<p>给定一个数组，根据以下步骤对数组进行搜索</p>
+<ol>
+<li><p>开始的索引<code>s</code>是否小于结束索引<code>e</code></p>
 <ul>
-<li>若目标小于右上角，则可以排除本列；</li>
-<li>若目标大于右上角，则可以排除本行。</li>
+<li>若小于，说明搜索范围正常；</li>
+<li>若不小于，则说明搜索范围已经收缩到一点了，此时跳出循环步骤，返回第一个元素。</li>
 </ul>
-<p>具体代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    bool searchMatrix(vector&lt;vector&lt;int&gt;&gt;&amp; matrix, int target) &#123;</span><br><span class="line">        int row = matrix.size();</span><br><span class="line">        if(row == 0) return false;</span><br><span class="line">        int column = matrix[0].size();</span><br><span class="line">        </span><br><span class="line">        int r = 0, c = column - 1, tmp;</span><br><span class="line">        while( r &lt; row &amp;&amp; c &gt;= 0) &#123;</span><br><span class="line">            tmp = matrix[r][c];</span><br><span class="line">            if( target == tmp ) return true;</span><br><span class="line">            else if( target &gt; tmp) r++;</span><br><span class="line">            else c--;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h5 id="根据题目要求的改进做法"><a href="#根据题目要求的改进做法" class="headerlink" title="根据题目要求的改进做法"></a>根据题目要求的改进做法</h5><p>根据题目的条件之一：”每行的第一个整数大于前一行的最后一个整数”，我们可以想到从左上角入手或许速度更快一些。</p>
-<p>首先说说为什么可以从左上角入手。因为题目的条件，我们可以根据本行的最右的数和目标的大小关系来选择往下找还是往右找(目标大于本行最右的数则往下，否则往右)。</p>
-<p>这样做的好处有</p>
+</li>
+<li><p>该范围的数组是否完全有序（即第一个元素是否小于最后一个元素）</p>
 <ul>
-<li>如果数组较大，且刚好目标在前几行，那么可以很快的排除掉其余的矩阵数据；</li>
-<li>根据cache的存储行为，这样顺序的扫描数组要比从右上角开始往前扫描要快，因为读取第一个数的时候大部分接下来要读取的数据都在cache中；而从右上角读取，若是一直平行往左寻找，那么每次访问左边的数据都会刷新cache，导致速度可能稍慢。</li>
+<li>若有序，说明我们要找的最小元素在此数组或者子数组中，只需返回排序最小的元素即可（第一个元素）；</li>
+<li>若无序（即nums[s] &gt; nums[e]），则需要将数组二分然后继续寻找</li>
 </ul>
-<p>“从左上开始扫描”做法的具体代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    bool searchMatrix(vector&lt;vector&lt;int&gt;&gt;&amp; matrix, int target) &#123;</span><br><span class="line">        int row = matrix.size();</span><br><span class="line">        if(row == 0) return false;</span><br><span class="line">        int column = matrix[0].size();</span><br><span class="line">        </span><br><span class="line">        int r = 0, c = 0, tmp;</span><br><span class="line">        while( r &lt; row &amp;&amp; c &lt; column ) &#123;</span><br><span class="line">            tmp = matrix[r][c];</span><br><span class="line">            if( target == tmp ) return true;</span><br><span class="line">            else if( target &gt; tmp &amp;&amp; target &gt; matrix[r][column - 1] &amp;&amp; r + 1 &lt; row ) r++;</span><br><span class="line">            else &#123;c++;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li>（注意此时隐藏条件是$s&lt;e$）算出中间元素的索引值，此时数组划分为【s…mid…e】，此时数组分成的两个子数组中必有一个满足指定的特征。<ul>
+<li>若nums[s] &lt;= nums[mid]，此时说明我们要找的数不在$s—mid$的范围内。因为不满足我们指定的特征，此时缩小范围（s = mid + 1）；</li>
+<li>否则，此时条件是nums[s] &gt; nums[mid]，满足我们指定的特征，所以缩小范围到此子数组（ e = mid）。</li>
+</ul>
+</li>
+<li>返回第一步</li>
+</ol>
+<h5 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int findMin(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">        auto e = nums.size() - 1;</span><br><span class="line">        decltype(nums.size()) s = 0;</span><br><span class="line">        while(s &lt; e) &#123;</span><br><span class="line">            if(nums[s] &lt; nums[e]) return nums[s];</span><br><span class="line">            else &#123;</span><br><span class="line">                decltype(s) mid = (s + e) / 2;</span><br><span class="line">                if(nums[s] &lt;= nums[mid]) s = mid + 1;</span><br><span class="line">                else e = mid;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return nums[s];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -521,8 +519,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/03/KM-D5-找到数组中消失的数字/" rel="next" title="KM-D5-找到数组中消失的数字">
-                <i class="fa fa-chevron-left"></i> KM-D5-找到数组中消失的数字
+              <a href="/2019/07/17/KM-斐波那契数和类似问题/" rel="next" title="KM-斐波那契数和类似问题">
+                <i class="fa fa-chevron-left"></i> KM-斐波那契数和类似问题
               </a>
             
           </div>
@@ -530,10 +528,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/06/05/KM-D7-char数组和char-的关系/" rel="prev" title="KM-D7-char数组和char*的关系">
-                KM-D7-char数组和char*的关系 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -702,7 +696,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#搜索二维矩阵"><span class="nav-number">1.</span> <span class="nav-text">搜索二维矩阵</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#错误想法"><span class="nav-number">1.1.</span> <span class="nav-text">错误想法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#正确做法"><span class="nav-number">1.2.</span> <span class="nav-text">正确做法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#根据题目要求的改进做法"><span class="nav-number">1.3.</span> <span class="nav-text">根据题目要求的改进做法</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#寻找旋转排序数组中的最小组——Leetcode-153"><span class="nav-number">1.</span> <span class="nav-text">寻找旋转排序数组中的最小组——Leetcode 153</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#思路"><span class="nav-number">1.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#代码"><span class="nav-number">1.2.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -887,7 +881,7 @@
           distractionFreeMode: 'true'
         })
         gitalk.render('gitalk-container')           
-       </script>
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
   
 
@@ -909,36 +903,6 @@
   
   
 
-  
-    
-      <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
-        processEscapes: true,
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      },
-      TeX: {equationNumbers: { autoNumber: "AMS" }}
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-      var all = MathJax.Hub.getAllJax(), i;
-        for (i=0; i < all.length; i += 1) {
-          all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-<script type="text/javascript" src="//cdn.jsdelivr.net/npm/mathjax@2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-<style>
-.MathJax_Display {
-    overflow: auto hidden;
-}
-</style><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-
-    
   
 
 
