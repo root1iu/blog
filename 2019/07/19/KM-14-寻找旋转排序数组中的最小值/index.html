@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="寻找旋转排序数组中的最小组——Leetcode 153假设按照升序排序的数组在预先未知的某个点上进行了旋转。 ( 例如，数组 [0,1,2,4,5,6,7] 可能变为 [4,5,6,7,0,1,2] )。 请找出其中最小的元素。 你可以假设数组中不存在重复元素。 思路这个问题是搜索问题，可以直接遍历找出最小的元素，但时间复杂度为$O(n)$。但这个问题可以用二分来做。那么首先要确认如何缩小范围？我">
+<meta name="keywords" content="基础知识和算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KM-14-寻找旋转排序数组中的最小值">
+<meta property="og:url" content="https://root1iu.github.io/2019/07/19/KM-14-寻找旋转排序数组中的最小值/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="寻找旋转排序数组中的最小组——Leetcode 153假设按照升序排序的数组在预先未知的某个点上进行了旋转。 ( 例如，数组 [0,1,2,4,5,6,7] 可能变为 [4,5,6,7,0,1,2] )。 请找出其中最小的元素。 你可以假设数组中不存在重复元素。 思路这个问题是搜索问题，可以直接遍历找出最小的元素，但时间复杂度为$O(n)$。但这个问题可以用二分来做。那么首先要确认如何缩小范围？我">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-06T13:33:47.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KM-14-寻找旋转排序数组中的最小值">
+<meta name="twitter:description" content="寻找旋转排序数组中的最小组——Leetcode 153假设按照升序排序的数组在预先未知的某个点上进行了旋转。 ( 例如，数组 [0,1,2,4,5,6,7] 可能变为 [4,5,6,7,0,1,2] )。 请找出其中最小的元素。 你可以假设数组中不存在重复元素。 思路这个问题是搜索问题，可以直接遍历找出最小的元素，但时间复杂度为$O(n)$。但这个问题可以用二分来做。那么首先要确认如何缩小范围？我">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/07/19/KM-14-寻找旋转排序数组中的最小值/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>KM-14-寻找旋转排序数组中的最小值 | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/07/19/KM-14-寻找旋转排序数组中的最小值/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">KM-14-寻找旋转排序数组中的最小值
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-19 18:46:12" itemprop="dateCreated datePublished" datetime="2019-07-19T18:46:12+08:00">2019-07-19</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-06 21:33:47" itemprop="dateModified" datetime="2019-08-06T21:33:47+08:00">2019-08-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/基础知识和算法/" itemprop="url" rel="index"><span itemprop="name">基础知识和算法</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="寻找旋转排序数组中的最小组——Leetcode-153"><a href="#寻找旋转排序数组中的最小组——Leetcode-153" class="headerlink" title="寻找旋转排序数组中的最小组——Leetcode 153"></a>寻找旋转排序数组中的最小组——Leetcode 153</h4><p>假设按照升序排序的数组在预先未知的某个点上进行了旋转。</p>
+<p>( 例如，数组 <code>[0,1,2,4,5,6,7]</code> 可能变为 <code>[4,5,6,7,0,1,2]</code> )。</p>
+<p>请找出其中最小的元素。</p>
+<p>你可以假设数组中不存在重复元素。</p>
+<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>这个问题是搜索问题，可以直接遍历找出最小的元素，但时间复杂度为$O(n)$。但这个问题可以用二分来做。那么首先要确认如何缩小范围？我们要找的范围具有的特征是：<code>数组范围内第一个元素大于数组范围内的最后一个元素</code>。</p>
+<p>给定一个数组有两种情况</p>
+<ul>
+<li>第一种情况是数组旋转为0，此时数组完全有序，第一个元素即最小元素。</li>
+<li>第二种情况是数组旋转不为0，此时数组表现出我们总结出来的特征，即<code>数组范围内第一个元素大于数组范围内的最后一个元素</code>，这时我们把数组二分，找到具有指定特征的子数组，再二分……直到找到一个范围内完全有序的数组或者搜索范围缩小到一点。</li>
+</ul>
+<p>给定一个数组，根据以下步骤对数组进行搜索</p>
+<ol>
+<li><p>开始的索引<code>s</code>是否小于结束索引<code>e</code></p>
+<ul>
+<li>若小于，说明搜索范围正常；</li>
+<li>若不小于，则说明搜索范围已经收缩到一点了，此时跳出循环步骤，返回第一个元素。</li>
+</ul>
+</li>
+<li><p>该范围的数组是否完全有序（即第一个元素是否小于最后一个元素）</p>
+<ul>
+<li>若有序，说明我们要找的最小元素在此数组或者子数组中，只需返回排序最小的元素即可（第一个元素）；</li>
+<li>若无序（即nums[s] &gt; nums[e]），则需要将数组二分然后继续寻找</li>
+</ul>
+</li>
+<li>（注意此时隐藏条件是$s&lt;e$）算出中间元素的索引值，此时数组划分为【s…mid…e】，此时数组分成的两个子数组中必有一个满足指定的特征。<ul>
+<li>若nums[s] &lt;= nums[mid]，此时说明我们要找的数不在$s—mid$的范围内。因为不满足我们指定的特征，此时缩小范围（s = mid + 1）；</li>
+<li>否则，此时条件是nums[s] &gt; nums[mid]，满足我们指定的特征，所以缩小范围到此子数组（ e = mid）。</li>
+</ul>
+</li>
+<li>返回第一步</li>
+</ol>
+<h5 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int findMin(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">        auto e = nums.size() - 1;</span><br><span class="line">        decltype(nums.size()) s = 0;</span><br><span class="line">        while(s &lt; e) &#123;</span><br><span class="line">            if(nums[s] &lt; nums[e]) return nums[s];</span><br><span class="line">            else &#123;</span><br><span class="line">                decltype(s) mid = (s + e) / 2;</span><br><span class="line">                if(nums[s] &lt;= nums[mid]) s = mid + 1;</span><br><span class="line">                else e = mid;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return nums[s];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="寻找旋转排序数组中的最小值-II——Leetcode-154"><a href="#寻找旋转排序数组中的最小值-II——Leetcode-154" class="headerlink" title="寻找旋转排序数组中的最小值 II——Leetcode 154"></a>寻找旋转排序数组中的最小值 II——Leetcode 154</h4><p>假设按照升序排序的数组在预先未知的某个点上进行了旋转。</p>
+<p>( 例如，数组 <code>[0,1,2,4,5,6,7]</code> 可能变为 <code>[4,5,6,7,0,1,2]</code> )。</p>
+<p>请找出其中最小的元素。</p>
+<p>注意数组中可能存在重复的元素。</p>
+<h5 id="思路1"><a href="#思路1" class="headerlink" title="思路1"></a>思路1</h5><p>这道题和上面那道体最大的不同就是存在重复的数。而我们上面的做法是根据<code>nums[s]</code>和<code>nums[mid]</code>来对搜索范围进行二分调整，现在的情况是如果<code>nums[s]、nums[mid]、nums[e]</code>都相同，那么我们无法分辨该往哪边调整，所以上面的解法在存在重复数字的情况下就存在问题。解决方法也很简单，就是遇到这种情况就进行顺序查找:)</p>
+<h5 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int findMin(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">        auto e = nums.size() - 1;</span><br><span class="line">        decltype(nums.size()) s = 0;</span><br><span class="line">        while(s &lt; e) &#123;</span><br><span class="line">            if(nums[s] &lt; nums[e]) return nums[s];</span><br><span class="line">            else &#123;</span><br><span class="line">                decltype(s) mid = (s + e) / 2;</span><br><span class="line">                if(nums[s] == nums[mid] &amp;&amp; nums[s] == nums[e]) return findInOrder(nums, s, e);</span><br><span class="line">                if(nums[s] &lt;= nums[mid]) s = mid + 1;</span><br><span class="line">                else e = mid;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return nums[s];</span><br><span class="line">    &#125;</span><br><span class="line">    int findInOrder(vector&lt;int&gt; nums, int s, int e) &#123;</span><br><span class="line">        int tmp = INT_MAX;</span><br><span class="line">        for(int i = s; i &lt;= e; ++i) &#123;</span><br><span class="line">            if(nums[i] &lt;= tmp) </span><br><span class="line">                tmp = nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        return tmp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h5 id="思路2"><a href="#思路2" class="headerlink" title="思路2"></a>思路2</h5><p>看了别人的代码，发现不需要另外顺序遍历。当发现中间元素和第一个元素相同时，我们不对数组进行范围二分，而是直接缩小一个元素的范围，即把第一个元素排除。我们也可以把中间的元素排除在外，因为如果中间元素和第一个元素相等，那么中间元素之后（或之前）的元素也和中间元素相等，删掉哪个都一样，但排除中间元素这种做法不好操作。</p>
+<p>除了这个特殊情况，其他情况和无重复的做法一致。</p>
+<h5 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int findMin(vector&lt;int&gt;&amp; nums) &#123;</span><br><span class="line">        auto e = nums.size() - 1;</span><br><span class="line">        decltype(nums.size()) s = 0;</span><br><span class="line">        while(s &lt; e) &#123;</span><br><span class="line">            if(nums[s] &lt; nums[e]) return nums[s];</span><br><span class="line">            else &#123;</span><br><span class="line">                decltype(s) mid = s + (e - s) / 2;</span><br><span class="line">                if(nums[s] == nums[mid]) s++;</span><br><span class="line">                else if(nums[s] &lt; nums[mid]) s = mid + 1;</span><br><span class="line">                else e = mid;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return nums[s];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/基础知识和算法/" rel="tag"># 基础知识和算法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/17/KM-13-斐波那契数和类似问题/" rel="next" title="KM-13-斐波那契数和类似问题">
+                <i class="fa fa-chevron-left"></i> KM-13-斐波那契数和类似问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/22/KM-15-矩阵中的路径-AcWing-23/" rel="prev" title="KM-15-矩阵中的路径-AcWing-23">
+                KM-15-矩阵中的路径-AcWing-23 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#寻找旋转排序数组中的最小组——Leetcode-153"><span class="nav-number">1.</span> <span class="nav-text">寻找旋转排序数组中的最小组——Leetcode 153</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#思路"><span class="nav-number">1.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#代码"><span class="nav-number">1.2.</span> <span class="nav-text">代码</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#寻找旋转排序数组中的最小值-II——Leetcode-154"><span class="nav-number">2.</span> <span class="nav-text">寻找旋转排序数组中的最小值 II——Leetcode 154</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#思路1"><span class="nav-number">2.1.</span> <span class="nav-text">思路1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#代码-1"><span class="nav-number">2.2.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#思路2"><span class="nav-number">2.3.</span> <span class="nav-text">思路2</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#代码-2"><span class="nav-number">2.4.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

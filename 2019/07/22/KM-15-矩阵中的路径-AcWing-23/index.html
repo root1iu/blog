@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="矩阵中的路径——AcWing-23请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。 路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。 如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。 注意：  输入的路径不为空； 所有出现的字符均为大写英文字母；  样例 12345678910matrix=[  [&amp;quot;">
+<meta name="keywords" content="基础知识和算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KM-15-矩阵中的路径-AcWing-23">
+<meta property="og:url" content="https://root1iu.github.io/2019/07/22/KM-15-矩阵中的路径-AcWing-23/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="矩阵中的路径——AcWing-23请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。 路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。 如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。 注意：  输入的路径不为空； 所有出现的字符均为大写英文字母；  样例 12345678910matrix=[  [&amp;quot;">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-06T13:33:55.336Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KM-15-矩阵中的路径-AcWing-23">
+<meta name="twitter:description" content="矩阵中的路径——AcWing-23请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。 路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。 如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。 注意：  输入的路径不为空； 所有出现的字符均为大写英文字母；  样例 12345678910matrix=[  [&amp;quot;">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/07/22/KM-15-矩阵中的路径-AcWing-23/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>KM-15-矩阵中的路径-AcWing-23 | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/07/22/KM-15-矩阵中的路径-AcWing-23/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">KM-15-矩阵中的路径-AcWing-23
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-22 20:05:02" itemprop="dateCreated datePublished" datetime="2019-07-22T20:05:02+08:00">2019-07-22</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-06 21:33:55" itemprop="dateModified" datetime="2019-08-06T21:33:55+08:00">2019-08-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/基础知识和算法/" itemprop="url" rel="index"><span itemprop="name">基础知识和算法</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="矩阵中的路径——AcWing-23"><a href="#矩阵中的路径——AcWing-23" class="headerlink" title="矩阵中的路径——AcWing-23"></a>矩阵中的路径——AcWing-23</h4><p>请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。</p>
+<p>路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。</p>
+<p>如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。</p>
+<p><strong>注意：</strong></p>
+<ul>
+<li>输入的路径不为空；</li>
+<li>所有出现的字符均为大写英文字母；</li>
+</ul>
+<p><strong>样例</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">matrix=</span><br><span class="line">[</span><br><span class="line">  [&quot;A&quot;,&quot;B&quot;,&quot;C&quot;,&quot;E&quot;],</span><br><span class="line">  [&quot;S&quot;,&quot;F&quot;,&quot;C&quot;,&quot;S&quot;],</span><br><span class="line">  [&quot;A&quot;,&quot;D&quot;,&quot;E&quot;,&quot;E&quot;]</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">str=&quot;BCCE&quot; , return &quot;true&quot; </span><br><span class="line"></span><br><span class="line">str=&quot;ASAE&quot; , return &quot;false&quot;</span><br></pre></td></tr></table></figure>
+<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>题目要求我们搜索处符合要求的字符串，且路径不能重复。首先可以想到DFS，根据不同的起点进行DFS寻找是否存在这样的路径，且要求中要注意路径不能重叠，所以申明一个二维bool数组来进行判断。有几个点需要注意</p>
+<ul>
+<li>进行dfs的条件为<ul>
+<li>不能越界；</li>
+<li>当前位置矩阵字符和字符串中第一个字符相同，这样才有dfs的必要；</li>
+<li>当前位置没有被走过。</li>
+</ul>
+</li>
+<li>将是否走过的标识位置反后需要在dfs返回时清空，否则在下一次dfs时会误判成路径重叠。</li>
+<li>dfs的结束条件是字符串已经被扫描完了，此时表示字符串完全匹配了，返回true；</li>
+<li>边界情况<ul>
+<li>字符串为空，这时返回true；</li>
+<li>矩阵为空，字符串不为空，返回false；</li>
+<li>矩阵元素少于字符串长度，返回false。</li>
+</ul>
+</li>
+</ul>
+<h5 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int dire[4][2] = &#123;&#123;-1, 0&#125;, &#123;1, 0&#125;, &#123;0, -1&#125;, &#123;0, 1&#125;&#125;; //上下左右</span><br><span class="line"></span><br><span class="line">    bool hasPath(vector&lt;vector&lt;char&gt;&gt;&amp; matrix, string str) &#123;</span><br><span class="line">        if(matrix.size() == 0 ) return false;</span><br><span class="line">        if(str.size() &gt; matrix.size() * matrix[0].size()) return false;</span><br><span class="line">        if(str.size() == 0) return true;</span><br><span class="line">        </span><br><span class="line">        bool ret = false;</span><br><span class="line">        </span><br><span class="line">        vector&lt;vector&lt;bool&gt;&gt; flags(matrix.size(), vector&lt;bool&gt;(matrix[0].size(), true));</span><br><span class="line">        for(unsigned int i = 0; i &lt; matrix.size(); ++i) </span><br><span class="line">        &#123;</span><br><span class="line">            for(unsigned int j = 0; j &lt; matrix[0].size(); ++j) </span><br><span class="line">            &#123;</span><br><span class="line">                if(matrix[i][j] == str[0]) &#123;</span><br><span class="line">                    flags[i][j] = false;</span><br><span class="line">                    ret = dfs(matrix, flags, i, j, str.substr(1));</span><br><span class="line">                    flags[i][j] = true;</span><br><span class="line">                    if(ret) return ret;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return ret;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    bool dfs(vector&lt;vector&lt;char&gt;&gt;&amp; matrix, vector&lt;vector&lt;bool&gt;&gt;&amp; flags, unsigned int ri, unsigned int ci, string str) &#123;</span><br><span class="line">        //cout &lt;&lt; matrix[ri][ci] &lt;&lt; endl;</span><br><span class="line">        if(str.size() == 0) return true;</span><br><span class="line">        </span><br><span class="line">        bool ret = false;</span><br><span class="line">        for(unsigned int i = 0; i &lt; 4; ++i) &#123;</span><br><span class="line">            unsigned int nri = ri + dire[i][0], nci = ci + dire[i][1];</span><br><span class="line">            if(nri &lt; matrix.size() &amp;&amp; nci &lt; matrix[0].size() &amp;&amp; matrix[nri][nci] == str[0] &amp;&amp; flags[nri][nci])</span><br><span class="line">            &#123;</span><br><span class="line">                flags[nri][nci] = false;</span><br><span class="line">                ret = dfs(matrix, flags, nri, nci, str.substr(1));</span><br><span class="line">                flags[nri][nci] = true;</span><br><span class="line">                if(ret) return ret;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/基础知识和算法/" rel="tag"># 基础知识和算法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/19/KM-14-寻找旋转排序数组中的最小值/" rel="next" title="KM-14-寻找旋转排序数组中的最小值">
+                <i class="fa fa-chevron-left"></i> KM-14-寻找旋转排序数组中的最小值
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/23/KM-16-机器人的活动范围/" rel="prev" title="KM-16-机器人的活动范围">
+                KM-16-机器人的活动范围 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#矩阵中的路径——AcWing-23"><span class="nav-number">1.</span> <span class="nav-text">矩阵中的路径——AcWing-23</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#思路"><span class="nav-number">1.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#代码"><span class="nav-number">1.2.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
