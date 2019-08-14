@@ -109,25 +109,25 @@
 
 
 
-  <meta name="description" content="矩阵中的路径——AcWing-23请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。 路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。 如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。 注意：  输入的路径不为空； 所有出现的字符均为大写英文字母；  样例 12345678910matrix=[  [&amp;quot;">
+  <meta name="description" content="链表中环的入口节点——AcWing-34给定一个链表，若其中包含环，则输出环的入口节点。 若其中不包含环，则输出null。 思路快慢指针，两个指针初始化为起点。快指针每次走2步，慢指针每次走1步。假设环入口距离链表起点$x$步，快慢指针第一次相遇的节点距离环入口$y$步。那么当第一次相遇，慢指针走了$x+y$步，快指针走了$2x+2y$步，由于相遇（设环的长度为$z$）所以有性质$(2x+2y)-">
 <meta name="keywords" content="基础知识和算法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="KM-15-矩阵中的路径-AcWing-23">
-<meta property="og:url" content="https://root1iu.github.io/2019/07/22/KM-15-矩阵中的路径-AcWing-23/index.html">
+<meta property="og:title" content="KM-26-链表中环的入口节点.md">
+<meta property="og:url" content="https://root1iu.github.io/2019/08/14/KM-26-链表中环的入口节点-md/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
-<meta property="og:description" content="矩阵中的路径——AcWing-23请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。 路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。 如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。 注意：  输入的路径不为空； 所有出现的字符均为大写英文字母；  样例 12345678910matrix=[  [&amp;quot;">
+<meta property="og:description" content="链表中环的入口节点——AcWing-34给定一个链表，若其中包含环，则输出环的入口节点。 若其中不包含环，则输出null。 思路快慢指针，两个指针初始化为起点。快指针每次走2步，慢指针每次走1步。假设环入口距离链表起点$x$步，快慢指针第一次相遇的节点距离环入口$y$步。那么当第一次相遇，慢指针走了$x+y$步，快指针走了$2x+2y$步，由于相遇（设环的长度为$z$）所以有性质$(2x+2y)-">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-06T13:33:55.336Z">
+<meta property="og:updated_time" content="2019-08-14T13:05:44.345Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="KM-15-矩阵中的路径-AcWing-23">
-<meta name="twitter:description" content="矩阵中的路径——AcWing-23请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。 路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。 如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。 注意：  输入的路径不为空； 所有出现的字符均为大写英文字母；  样例 12345678910matrix=[  [&amp;quot;">
+<meta name="twitter:title" content="KM-26-链表中环的入口节点.md">
+<meta name="twitter:description" content="链表中环的入口节点——AcWing-34给定一个链表，若其中包含环，则输出环的入口节点。 若其中不包含环，则输出null。 思路快慢指针，两个指针初始化为起点。快指针每次走2步，慢指针每次走1步。假设环入口距离链表起点$x$步，快慢指针第一次相遇的节点距离环入口$y$步。那么当第一次相遇，慢指针走了$x+y$步，快指针走了$2x+2y$步，由于相遇（设环的长度为$z$）所以有性质$(2x+2y)-">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/2019/07/22/KM-15-矩阵中的路径-AcWing-23/">
+  <link rel="canonical" href="https://root1iu.github.io/2019/08/14/KM-26-链表中环的入口节点-md/">
 
 
 
@@ -137,7 +137,7 @@
   };
 </script>
 
-  <title>KM-15-矩阵中的路径-AcWing-23 | Root1iu Home Page</title>
+  <title>KM-26-链表中环的入口节点.md | Root1iu Home Page</title>
   
 
 
@@ -353,7 +353,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/07/22/KM-15-矩阵中的路径-AcWing-23/">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/08/14/KM-26-链表中环的入口节点-md/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -370,7 +370,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">KM-15-矩阵中的路径-AcWing-23
+          <h1 class="post-title" itemprop="name headline">KM-26-链表中环的入口节点.md
               
             
           </h1>
@@ -395,24 +395,12 @@
                 
               
 
-              <time title="创建时间：2019-07-22 20:05:02" itemprop="dateCreated datePublished" datetime="2019-07-22T20:05:02+08:00">2019-07-22</time>
+              <time title="创建时间：2019-08-14 21:05:27 / 修改时间：21:05:44" itemprop="dateCreated datePublished" datetime="2019-08-14T21:05:27+08:00">2019-08-14</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-08-06 21:33:55" itemprop="dateModified" datetime="2019-08-06T21:33:55+08:00">2019-08-06</time>
               
             
           </span>
@@ -463,34 +451,10 @@
       
 
       
-        <h4 id="矩阵中的路径——AcWing-23"><a href="#矩阵中的路径——AcWing-23" class="headerlink" title="矩阵中的路径——AcWing-23"></a>矩阵中的路径——AcWing-23</h4><p>请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。</p>
-<p>路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。</p>
-<p>如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。</p>
-<p><strong>注意：</strong></p>
-<ul>
-<li>输入的路径不为空；</li>
-<li>所有出现的字符均为大写英文字母；</li>
-</ul>
-<p><strong>样例</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">matrix=</span><br><span class="line">[</span><br><span class="line">  [&quot;A&quot;,&quot;B&quot;,&quot;C&quot;,&quot;E&quot;],</span><br><span class="line">  [&quot;S&quot;,&quot;F&quot;,&quot;C&quot;,&quot;S&quot;],</span><br><span class="line">  [&quot;A&quot;,&quot;D&quot;,&quot;E&quot;,&quot;E&quot;]</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">str=&quot;BCCE&quot; , return &quot;true&quot; </span><br><span class="line"></span><br><span class="line">str=&quot;ASAE&quot; , return &quot;false&quot;</span><br></pre></td></tr></table></figure>
-<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>题目要求我们搜索处符合要求的字符串，且路径不能重复。首先可以想到DFS，根据不同的起点进行DFS寻找是否存在这样的路径，且要求中要注意路径不能重叠，所以申明一个二维bool数组来进行判断。有几个点需要注意</p>
-<ul>
-<li>进行dfs的条件为<ul>
-<li>不能越界；</li>
-<li>当前位置矩阵字符和字符串中第一个字符相同，这样才有dfs的必要；</li>
-<li>当前位置没有被走过。</li>
-</ul>
-</li>
-<li>将是否走过的标识位置反后需要在dfs返回时清空，否则在下一次dfs时会误判成路径重叠。</li>
-<li>dfs的结束条件是字符串已经被扫描完了，此时表示字符串完全匹配了，返回true；</li>
-<li>边界情况<ul>
-<li>字符串为空，这时返回true；</li>
-<li>矩阵为空，字符串不为空，返回false；</li>
-<li>矩阵元素少于字符串长度，返回false。</li>
-</ul>
-</li>
-</ul>
-<h5 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int dire[4][2] = &#123;&#123;-1, 0&#125;, &#123;1, 0&#125;, &#123;0, -1&#125;, &#123;0, 1&#125;&#125;; //上下左右</span><br><span class="line"></span><br><span class="line">    bool hasPath(vector&lt;vector&lt;char&gt;&gt;&amp; matrix, string str) &#123;</span><br><span class="line">        if(matrix.size() == 0 ) return false;</span><br><span class="line">        if(str.size() &gt; matrix.size() * matrix[0].size()) return false;</span><br><span class="line">        if(str.size() == 0) return true;</span><br><span class="line">        </span><br><span class="line">        bool ret = false;</span><br><span class="line">        </span><br><span class="line">        vector&lt;vector&lt;bool&gt;&gt; flags(matrix.size(), vector&lt;bool&gt;(matrix[0].size(), true));</span><br><span class="line">        for(unsigned int i = 0; i &lt; matrix.size(); ++i) </span><br><span class="line">        &#123;</span><br><span class="line">            for(unsigned int j = 0; j &lt; matrix[0].size(); ++j) </span><br><span class="line">            &#123;</span><br><span class="line">                if(matrix[i][j] == str[0]) &#123;</span><br><span class="line">                    flags[i][j] = false;</span><br><span class="line">                    ret = dfs(matrix, flags, i, j, str.substr(1));</span><br><span class="line">                    flags[i][j] = true;</span><br><span class="line">                    if(ret) return ret;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return ret;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    bool dfs(vector&lt;vector&lt;char&gt;&gt;&amp; matrix, vector&lt;vector&lt;bool&gt;&gt;&amp; flags, unsigned int ri, unsigned int ci, string str) &#123;</span><br><span class="line">        //cout &lt;&lt; matrix[ri][ci] &lt;&lt; endl;</span><br><span class="line">        if(str.size() == 0) return true;</span><br><span class="line">        </span><br><span class="line">        bool ret = false;</span><br><span class="line">        for(unsigned int i = 0; i &lt; 4; ++i) &#123;</span><br><span class="line">            unsigned int nri = ri + dire[i][0], nci = ci + dire[i][1];</span><br><span class="line">            if(nri &lt; matrix.size() &amp;&amp; nci &lt; matrix[0].size() &amp;&amp; matrix[nri][nci] == str[0] &amp;&amp; flags[nri][nci])</span><br><span class="line">            &#123;</span><br><span class="line">                flags[nri][nci] = false;</span><br><span class="line">                ret = dfs(matrix, flags, nri, nci, str.substr(1));</span><br><span class="line">                flags[nri][nci] = true;</span><br><span class="line">                if(ret) return ret;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+        <h4 id="链表中环的入口节点——AcWing-34"><a href="#链表中环的入口节点——AcWing-34" class="headerlink" title="链表中环的入口节点——AcWing-34"></a>链表中环的入口节点——AcWing-34</h4><p>给定一个链表，若其中包含环，则输出环的入口节点。</p>
+<p>若其中不包含环，则输出<code>null</code>。</p>
+<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>快慢指针，两个指针初始化为起点。快指针每次走2步，慢指针每次走1步。假设环入口距离链表起点$x$步，快慢指针第一次相遇的节点距离环入口$y$步。那么当第一次相遇，慢指针走了$x+y$步，快指针走了$2x+2y$步，由于相遇（设环的长度为$z$）所以有性质$(2x+2y)-(x+y) = Nz$，于是慢指针还有$x$步走到环入口（因为此时慢指针已经在环里走了$y$步）。此后将快指针初始化为起点，且每次走一步，只需要走$x$步就可以到达环入口，慢指针也是走$x$步到达换入口，所以当他俩相遇时的节点即环入口节点。</p>
+<h5 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode *<span class="title">entryNodeOfLoop</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!head) <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        ListNode * fast = head, *slow = head;</span><br><span class="line">        <span class="keyword">while</span>(fast &amp;&amp; slow) &#123;</span><br><span class="line">            <span class="keyword">if</span>(!fast-&gt;next || !fast-&gt;next-&gt;next) <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">            fast = fast-&gt;next;</span><br><span class="line">            fast = fast-&gt;next;</span><br><span class="line">            slow = slow-&gt;next;</span><br><span class="line">            <span class="keyword">if</span>(fast == slow) <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        fast = head;</span><br><span class="line">        <span class="keyword">while</span>(fast != slow) &#123;</span><br><span class="line">            fast = fast-&gt;next;</span><br><span class="line">            slow = slow-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> slow;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -527,8 +491,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/19/KM-14-寻找旋转排序数组中的最小值/" rel="next" title="KM-14-寻找旋转排序数组中的最小值">
-                <i class="fa fa-chevron-left"></i> KM-14-寻找旋转排序数组中的最小值
+              <a href="/2019/08/10/KM-25-链表翻转/" rel="next" title="KM-25-链表翻转">
+                <i class="fa fa-chevron-left"></i> KM-25-链表翻转
               </a>
             
           </div>
@@ -536,10 +500,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/07/23/KM-16-机器人的活动范围/" rel="prev" title="KM-16-机器人的活动范围">
-                KM-16-机器人的活动范围 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -712,7 +672,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#矩阵中的路径——AcWing-23"><span class="nav-number">1.</span> <span class="nav-text">矩阵中的路径——AcWing-23</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#思路"><span class="nav-number">1.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#代码"><span class="nav-number">1.2.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#链表中环的入口节点——AcWing-34"><span class="nav-number">1.</span> <span class="nav-text">链表中环的入口节点——AcWing-34</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#思路"><span class="nav-number">1.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#代码"><span class="nav-number">1.2.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></div>
             
 
           </div>
