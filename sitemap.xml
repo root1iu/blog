@@ -2,6 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://root1iu.github.io/2019/10/27/UNP-Ch3-Sockets-Introdution/</loc>
+    
+    <lastmod>2019-10-27T07:37:49.097Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://root1iu.github.io/2018/12/02/CSAPP-%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5%E4%B8%8E%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/</loc>
+    
+    <lastmod>2019-10-27T07:32:49.580Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://root1iu.github.io/2018/12/12/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88-leetcode287/</loc>
+    
+    <lastmod>2019-10-27T07:32:03.400Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://root1iu.github.io/2019/01/07/%E5%88%9D%E8%AF%86futex/</loc>
+    
+    <lastmod>2019-10-27T07:31:03.820Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://root1iu.github.io/2019/08/06/KM-19-%E6%95%B0%E5%AD%97%E7%9A%84%E6%95%B4%E6%95%B0%E6%AC%A1%E6%96%B9/</loc>
     
     <lastmod>2019-09-02T09:19:26.721Z</lastmod>
@@ -40,13 +68,6 @@
     <loc>https://root1iu.github.io/2019/08/08/KM-23-%E8%B0%83%E6%95%B4%E6%95%B0%E7%BB%84%E9%A1%BA%E5%BA%8F%E4%BD%BF%E5%A5%87%E6%95%B0%E4%BD%8D%E4%BA%8E%E5%81%B6%E6%95%B0%E5%89%8D%E9%9D%A2/</loc>
     
     <lastmod>2019-08-08T13:49:44.970Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://root1iu.github.io/2018/12/12/%E5%BF%AB%E6%85%A2%E6%8C%87%E9%92%88-leetcode287/</loc>
-    
-    <lastmod>2019-08-08T12:39:01.301Z</lastmod>
     
   </url>
   
@@ -198,13 +219,6 @@
   </url>
   
   <url>
-    <loc>https://root1iu.github.io/2019/01/07/%E5%88%9D%E8%AF%86futex/</loc>
-    
-    <lastmod>2019-01-24T12:29:13.761Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://root1iu.github.io/2019/01/23/Linux%E4%B8%8B%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%BD%BF%E7%94%A8/</loc>
     
     <lastmod>2019-01-23T07:39:36.331Z</lastmod>
@@ -215,13 +229,6 @@
     <loc>https://root1iu.github.io/2018/12/09/fork-%E3%80%81vfork-%E5%92%8Cclone/</loc>
     
     <lastmod>2018-12-17T08:48:48.934Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://root1iu.github.io/2018/12/02/CSAPP-%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5%E4%B8%8E%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/</loc>
-    
-    <lastmod>2018-12-10T03:21:43.449Z</lastmod>
     
   </url>
   
