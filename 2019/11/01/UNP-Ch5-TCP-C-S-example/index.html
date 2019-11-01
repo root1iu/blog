@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="信号处理在使用fork来创建进程进行TCP通信时，需要注意信号处理问题。因为每次通信进程exit后，若监听进程(父进程)没有进行wait，那么会造成僵尸进程，不仅消耗资源还可能造成耗尽进程号的情况。所以信号处理在使用进程进行TCP通信的过程显得比较重要。 信号信号在到达时会终止当前调用的系统调用，转至信号处理函数。至于被中断的系统调用会不会重启，不同的系统有不同的实现。但要注意信号SIGALRM，">
+<meta name="keywords" content="UNP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNP-Ch5-TCP-C&#x2F;S example">
+<meta property="og:url" content="https://root1iu.github.io/2019/11/01/UNP-Ch5-TCP-C-S-example/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="信号处理在使用fork来创建进程进行TCP通信时，需要注意信号处理问题。因为每次通信进程exit后，若监听进程(父进程)没有进行wait，那么会造成僵尸进程，不仅消耗资源还可能造成耗尽进程号的情况。所以信号处理在使用进程进行TCP通信的过程显得比较重要。 信号信号在到达时会终止当前调用的系统调用，转至信号处理函数。至于被中断的系统调用会不会重启，不同的系统有不同的实现。但要注意信号SIGALRM，">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-01T03:47:39.022Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UNP-Ch5-TCP-C&#x2F;S example">
+<meta name="twitter:description" content="信号处理在使用fork来创建进程进行TCP通信时，需要注意信号处理问题。因为每次通信进程exit后，若监听进程(父进程)没有进行wait，那么会造成僵尸进程，不仅消耗资源还可能造成耗尽进程号的情况。所以信号处理在使用进程进行TCP通信的过程显得比较重要。 信号信号在到达时会终止当前调用的系统调用，转至信号处理函数。至于被中断的系统调用会不会重启，不同的系统有不同的实现。但要注意信号SIGALRM，">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/11/01/UNP-Ch5-TCP-C-S-example/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>UNP-Ch5-TCP-C/S example | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/11/01/UNP-Ch5-TCP-C-S-example/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UNP-Ch5-TCP-C/S example
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-01 11:47:02 / 修改时间：11:47:39" itemprop="dateCreated datePublished" datetime="2019-11-01T11:47:02+08:00">2019-11-01</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/UNP/" itemprop="url" rel="index"><span itemprop="name">UNP</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="信号处理"><a href="#信号处理" class="headerlink" title="信号处理"></a>信号处理</h2><p>在使用<code>fork</code>来创建进程进行TCP通信时，需要注意信号处理问题。因为每次通信进程<code>exit</code>后，若监听进程(父进程)没有进行<code>wait</code>，那么会造成僵尸进程，不仅消耗资源还可能造成耗尽进程号的情况。所以信号处理在使用进程进行TCP通信的过程显得比较重要。</p>
+<h3 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h3><p>信号在到达时会终止当前调用的系统调用，转至信号处理函数。至于被中断的系统调用会不会重启，不同的系统有不同的实现。但要注意信号<code>SIGALRM</code>，这个信号可能是某些定时等待<code>timeout</code>的函数发起的，这样的函数并不期望被当前<code>SIGALRM</code>中断的系统调用能够重启，所以这个信号发生时，要将其设置为不重启被中断的系统调用。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span><span class="params">(*sigFunc)</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">sigFunc <span class="title">signal_m</span><span class="params">(<span class="keyword">int</span> signo, sigFunc fn)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">act</span>, <span class="title">oact</span>;</span></span><br><span class="line"></span><br><span class="line">    act.sa_handler = fn;</span><br><span class="line">    sigemptyset(&amp;act.sa_mask);</span><br><span class="line">    act.sa_flags = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span>( signo == SIGALRM) &#123;</span><br><span class="line">        act.sa_flags |= SA_INTERRUPT;		<span class="comment">// 对于被中断的系统调用不进行重启</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        act.sa_flags |= SA_RESTART;			<span class="comment">// </span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( sigaction(signo, &amp;act, &amp;oact) == <span class="number">-1</span>)</span><br><span class="line">        <span class="keyword">return</span> SIG_ERR;</span><br><span class="line">    <span class="keyword">return</span> oact.sa_handler;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用这个封装函数可以在不同的系统上都使得被信号中断(除了<code>SIGALRM</code>的系统调用可以被重启。</p>
+<p><strong>注意：</strong></p>
+<ul>
+<li>一些系统即使设置了<code>SA_RESTART</code>，被中断的系统调用也可能不会自动重启。</li>
+<li><code>connect</code>不能自动重启，若被信号中断后将其重启，会出现错误。[待测试]</li>
+</ul>
+<h3 id="SIGCHLD信号处理函数"><a href="#SIGCHLD信号处理函数" class="headerlink" title="SIGCHLD信号处理函数"></a>SIGCHLD信号处理函数</h3><p>对TCP多进程服务端的进程进行信号处理一部分原因是为了解决僵尸进程，解决僵尸进程的方法是使用信号处理程序处理子进程发出的<code>SIGCHLD</code>。而信号处理还有一个棘手的问题是标准信号是不排队的，也就是可能会丢失信号。解决信号丢失问题的方法(就<code>SIGCHLD</code>来说)，就是使用<code>waitpid</code>函数。[疑问：为什么信号处理函数中不能有<code>printf</code>等标准IO。<code>printf</code>等函数是不可重入函数，当其被中断时会导致输出错误]</p>
+<h4 id="wait-amp-waitpid"><a href="#wait-amp-waitpid" class="headerlink" title="wait &amp; waitpid"></a>wait &amp; waitpid</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">pid_t</span> wait(<span class="keyword">int</span> *status);</span><br><span class="line"><span class="keyword">pid_t</span> waitpid(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> *status, <span class="keyword">int</span> options);</span><br></pre></td></tr></table></figure>
+<p>相比<code>wait</code>，<code>waitpid</code>的优点有</p>
+<ol>
+<li><code>waitpid</code>可以等待指定的<code>pid</code>进程，若<code>pid</code>设置为-1，则等待所有子进程直到有一个终止。</li>
+<li>当没有子进程终止时，<code>wait</code>会阻塞，<code>waitpid</code>则可以通过选项<code>WNOHANG</code>来避免阻塞。</li>
+</ol>
+<p>这样<code>waitpid</code>能够达到的功能：当信号<code>SIGCHLD</code>过来时，我们可以在信号处理函数中非阻塞循环调用<code>waitpid</code>，通过其返回值来判断是否还有子进程终止，若已经回收所有子进程，则信号处理函数退出。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sig_chld</span><span class="params">(<span class="keyword">int</span> signo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">int</span> stat;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>( (pid = waitpid(<span class="number">-1</span>, &amp;stat, WNOHANG)) &gt; <span class="number">0</span>)  &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"child %d terminated\n"</span>, pid);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>这里阻塞的问题在于信号处理函数不能循环调用<code>wait</code>。若循环调用，<code>wait</code>会一直在这里而不能对新连接进行响应；而若不循环调用，则会导致信号捕获缺失。所以在这里必须用非阻塞的<code>waitpid</code>。</p>
+<h3 id="网络编程中的子进程处理"><a href="#网络编程中的子进程处理" class="headerlink" title="网络编程中的子进程处理"></a>网络编程中的子进程处理</h3><ol>
+<li>注意<code>SIGCHLD</code>信号的捕获和处理。</li>
+<li>当信号被捕获时注意系统调用的重启问题。</li>
+<li><code>SIGCHLD</code>信号处理函数必须使用<code>waitpid</code>来避免信号捕获缺失的问题。</li>
+</ol>
+<h2 id="异常中止"><a href="#异常中止" class="headerlink" title="异常中止"></a>异常中止</h2><h3 id="accept返回前异常中止"><a href="#accept返回前异常中止" class="headerlink" title="accept返回前异常中止"></a>accept返回前异常中止</h3><p>在client的<code>connect</code>返回后异常中止返回RST，此时假设三次握手已经完成，连接在完成握手的连接队列里，accept返回。而此时服务端的反应在不同的系统有所不同，在BSD是完全由kernel处理；在POSIX的话<code>accept</code>会返回错误，并设置<code>errno</code>为<code>ECONNABORTED(software caused connection abort)</code>，在这种情况下(<code>ECONNABORTED</code>)，可以忽略错误并重启<code>accept</code>来接受下一个连接。</p>
+<p><strong>注意：</strong></p>
+<ul>
+<li>可以通过设置<code>SO_LINGER</code>选项来发送RST给对端。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client,在创建连接之后马上发送RST给服务端</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">linger</span> <span class="title">lger</span>;</span></span><br><span class="line">    lger.l_onoff = <span class="number">1</span>;</span><br><span class="line">    lger.l_linger = <span class="number">0</span>;</span><br><span class="line">    setsockopt(connfd, SOL_SOCKET, SO_LINGER, &amp;lger, <span class="keyword">sizeof</span>(lger));</span><br><span class="line">    close(connfd);</span><br><span class="line"><span class="comment">// server,在accept接受连接之前先让client发送RST</span></span><br><span class="line">	sleep(<span class="number">5</span>);</span><br><span class="line">	accept(....);</span><br><span class="line"><span class="comment">// 结果是accept并不返回错误，而是在写入socket时才识别到错误(ECONNRESET),这一点和书上说的"POSIX版本下,accept会返回错误ECONNABORTED"不符;但又不知道如何查看系统使用的哪个版本的socket.</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>SO_LINGER</code>可以用来避免大量<code>TIME_WAIT</code>的情况。</li>
+</ul>
+<h3 id="服务器进程中止"><a href="#服务器进程中止" class="headerlink" title="服务器进程中止"></a>服务器进程中止</h3><p>服务器进程中止会使服务器文件描述符被关闭，从而导致服务端发送FIN给client，此时client返回ACK给服务端。</p>
+<ul>
+<li>第一次读取是在FIN后，client能知道的是其获得了FIN而导致读取函数读到EOF(read返回0)，而此后client对socket进行写数据，Server会返回RST。</li>
+<li>再次读取是在RST之后，此时会返回<code>ECONNERSET</code>错误。</li>
+</ul>
+<h3 id="对RST的socket进行write"><a href="#对RST的socket进行write" class="headerlink" title="对RST的socket进行write"></a>对RST的socket进行write</h3><p>若进程对已经收到RST的socket进行写操作，那么该进程会收到<code>SIGPIPE</code>信号，其默认操作是终止进程。若忽略该信号或为该信号注册处理函数，此时的<code>write</code>会返回<code>EPIPE</code>错误。</p>
+<p><strong>注意：</strong>我们这里的RST是通过第一次调用<code>write</code>来获得的服务器回应，而第二次<code>write</code>才是引起信号。我们没办法在第一次<code>write</code>就感知Server返回的RST。</p>
+<h3 id="服务器主机崩溃"><a href="#服务器主机崩溃" class="headerlink" title="服务器主机崩溃"></a>服务器主机崩溃</h3><p>如果是服务器主机崩溃，那么Server端不会发送FIN给client。client在写入数据后阻塞在read上，而由于写出的数据无法获得ACK，于是会不断重传，直到等待时间太长而放弃（发12次或9min）。放弃后，<code>read</code>会返回错误(<code>ETIMEDOUT</code>或<code>EHOSTUNREACH or ENETUNREACH</code>)。这种情况（等待时间太长）的解决方法是给<code>read</code>操作设置一个定时器[待引用:ch14.2]或者设置socket选项<code>SO_KEEPALIVE</code>来定时检查Server的情况[待引用:ch7.5]。</p>
+<p>[疑问:如何模拟服务器主机崩溃？]</p>
+<h3 id="服务器主机崩溃并重启"><a href="#服务器主机崩溃并重启" class="headerlink" title="服务器主机崩溃并重启"></a>服务器主机崩溃并重启</h3><p>崩溃后重启的Server的TCP会丢失崩溃前连接的信息，所以client发送数据给Server会使得Server返回RST。</p>
+<h3 id="服务器主机关机"><a href="#服务器主机关机" class="headerlink" title="服务器主机关机"></a>服务器主机关机</h3><p>一个Unix系统关机，其<code>init</code>进程会发送<code>SIGTERM</code>信号给所有进程，让他们中止程序，等待一段时间后，在发送<code>SIGKILL</code>信号给剩下的还没中止的进程。这就和前面的<em>服务器进程中止</em>一节内容一样了。</p>
+<h2 id="网络数据格式问题"><a href="#网络数据格式问题" class="headerlink" title="网络数据格式问题"></a>网络数据格式问题</h2><p>若两端的host字节序分别为大端和小端，那么在数据流中直接使用二进制进行读写会出现问题。</p>
+<p>在数据流中直接传输结构体（使用二进制流）需要注意的问题：</p>
+<ol>
+<li>主机双方字节序不同。</li>
+<li>主机双方位数不同，导致相同的类型的解释不同，如<code>long</code>。</li>
+<li>对结构体来说，不同的主机可能对齐方式不一样。</li>
+</ol>
+<p>解决方法有：</p>
+<ol>
+<li>将数据转成字符串。</li>
+<li>双方主机定义协议，制定数据格式。</li>
+</ol>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><ol>
+<li><p>让我们掐表测试TIME_WAIT状态的时间，目前暂时不会Shell[待解决]。</p>
+</li>
+<li><p>将文件重定向到client的输入</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./a.out <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> &lt; tcpcli.c</span><br></pre></td></tr></table></figure>
+<p>从tcpdump来看数据正常，client只输出stdout，不会显示stdin。</p>
+</li>
+<li><p>Telnet连接到Server和client连接到Server有什么区别？没发现什么区别。[待解决]</p>
+</li>
+<li><p>当服务器进程中止时，会发送交换4次挥手的头两次，会不会进行剩下的两次挥手？</p>
+<ul>
+<li>若client是被<code>ctrl+c</code>中止的(<code>SIGINT</code>)，那么会进行剩下的两次挥手。</li>
+<li>若client是<code>write</code>（收到信号<code>SIGPIPE</code>而导致进程中止）而引起Server返回RST的话，在tcpdump中没有发现剩下两次挥手的数据包。</li>
+<li>[疑问：<code>SIGINT</code>和<code>SIGPIPE</code>的默认行为有什么不同？]</li>
+</ul>
+</li>
+<li><p>Server重启后收到之前连接发来的数据包会返回RST。</p>
+</li>
+<li><p>注册信号处理函数测试了之前服务器中止的情况。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sig_pipe</span><span class="params">(<span class="keyword">int</span> signo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"catch SIGPIPE\n"</span>);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>题目无法理解[待解决]。</p>
+</li>
+<li><p>大小端问题画个内存分布图就行了。</p>
+</li>
+<li><p>在写入网络时使用hton，读取时使用ntoh就行了。[待测试]</p>
+</li>
+<li><p>32bit和64bit的数据之间交互的情况，需要统一类型长度再进行通信。</p>
+</li>
+<li><p>client的IP选择基于路由，意思就是client的IP基于路由表的选择，若路由表有指定到Server的IP用哪个IP作为出口，那么kernel就会选择该IP。</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UNP/" rel="tag"># UNP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/29/TLPI-Ch5-FILEIO-FutherDetails/" rel="next" title="TLPI-Ch5-FILEIO:FutherDetails">
+                <i class="fa fa-chevron-left"></i> TLPI-Ch5-FILEIO:FutherDetails
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">42</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#信号处理"><span class="nav-number">1.</span> <span class="nav-text">信号处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#信号"><span class="nav-number">1.1.</span> <span class="nav-text">信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SIGCHLD信号处理函数"><span class="nav-number">1.2.</span> <span class="nav-text">SIGCHLD信号处理函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#wait-amp-waitpid"><span class="nav-number">1.2.1.</span> <span class="nav-text">wait &amp; waitpid</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络编程中的子进程处理"><span class="nav-number">1.3.</span> <span class="nav-text">网络编程中的子进程处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异常中止"><span class="nav-number">2.</span> <span class="nav-text">异常中止</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#accept返回前异常中止"><span class="nav-number">2.1.</span> <span class="nav-text">accept返回前异常中止</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器进程中止"><span class="nav-number">2.2.</span> <span class="nav-text">服务器进程中止</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对RST的socket进行write"><span class="nav-number">2.3.</span> <span class="nav-text">对RST的socket进行write</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器主机崩溃"><span class="nav-number">2.4.</span> <span class="nav-text">服务器主机崩溃</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器主机崩溃并重启"><span class="nav-number">2.5.</span> <span class="nav-text">服务器主机崩溃并重启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器主机关机"><span class="nav-number">2.6.</span> <span class="nav-text">服务器主机关机</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络数据格式问题"><span class="nav-number">3.</span> <span class="nav-text">网络数据格式问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">4.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
