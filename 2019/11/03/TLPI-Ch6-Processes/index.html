@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="程序和进程进程是程序是实例，或者说进程是由内核分配空间的抽象实体，用来执行一个程序。 程序包含的信息 二进制格式信息(ELF)； 机器指令； 程序入口地址； 数据； 符号表和重定位表，包括函数、变量的名字和地址； 共享内存和动态链接信息，程序文件有一个块地方列了程序需要的共享库和动态链接器的地址； 其他信息  从内核的角度出发，进程分为两部分，用户空间和内核空间。用户空间存放代码需要的信息；内核空">
+<meta name="keywords" content="TLPI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TLPI-Ch6-Processes">
+<meta property="og:url" content="https://root1iu.github.io/2019/11/03/TLPI-Ch6-Processes/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="程序和进程进程是程序是实例，或者说进程是由内核分配空间的抽象实体，用来执行一个程序。 程序包含的信息 二进制格式信息(ELF)； 机器指令； 程序入口地址； 数据； 符号表和重定位表，包括函数、变量的名字和地址； 共享内存和动态链接信息，程序文件有一个块地方列了程序需要的共享库和动态链接器的地址； 其他信息  从内核的角度出发，进程分为两部分，用户空间和内核空间。用户空间存放代码需要的信息；内核空">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://root1iu.github.io/2019/11/03/TLPI-Ch6-Processes/figure6-1.png">
+<meta property="og:updated_time" content="2019-11-03T11:34:26.803Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TLPI-Ch6-Processes">
+<meta name="twitter:description" content="程序和进程进程是程序是实例，或者说进程是由内核分配空间的抽象实体，用来执行一个程序。 程序包含的信息 二进制格式信息(ELF)； 机器指令； 程序入口地址； 数据； 符号表和重定位表，包括函数、变量的名字和地址； 共享内存和动态链接信息，程序文件有一个块地方列了程序需要的共享库和动态链接器的地址； 其他信息  从内核的角度出发，进程分为两部分，用户空间和内核空间。用户空间存放代码需要的信息；内核空">
+<meta name="twitter:image" content="https://root1iu.github.io/2019/11/03/TLPI-Ch6-Processes/figure6-1.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/11/03/TLPI-Ch6-Processes/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>TLPI-Ch6-Processes | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/11/03/TLPI-Ch6-Processes/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TLPI-Ch6-Processes
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-03 19:26:21 / 修改时间：19:34:26" itemprop="dateCreated datePublished" datetime="2019-11-03T19:26:21+08:00">2019-11-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/TLPI/" itemprop="url" rel="index"><span itemprop="name">TLPI</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="程序和进程"><a href="#程序和进程" class="headerlink" title="程序和进程"></a>程序和进程</h3><p>进程是程序是实例，或者说进程是由内核分配空间的抽象实体，用来执行一个程序。</p>
+<h4 id="程序包含的信息"><a href="#程序包含的信息" class="headerlink" title="程序包含的信息"></a>程序包含的信息</h4><ul>
+<li>二进制格式信息(ELF)；</li>
+<li>机器指令；</li>
+<li>程序入口地址；</li>
+<li>数据；</li>
+<li>符号表和重定位表，包括函数、变量的名字和地址；</li>
+<li>共享内存和动态链接信息，程序文件有一个块地方列了程序需要的共享库和动态链接器的地址；</li>
+<li>其他信息</li>
+</ul>
+<p>从内核的角度出发，进程分为两部分，用户空间和内核空间。用户空间存放代码需要的信息；内核空间维护进程的状态信息，包括进程ID、虚拟内存表、打开的文件描述符表、信号传递和处理有关的信息、进程的资源使用和限制、当前工作目录和其他信息。</p>
+<h3 id="进程ID和父进程ID"><a href="#进程ID和父进程ID" class="headerlink" title="进程ID和父进程ID"></a>进程ID和父进程ID</h3><h4 id="PID的限制"><a href="#PID的限制" class="headerlink" title="PID的限制"></a>PID的限制</h4><p>Linux内核限制进程ID不能超过<code>32767</code>，有几点需要注意</p>
+<ol>
+<li>一旦进程ID超过<code>32767</code>，进程ID汇编重置到<code>300</code>.这是因为数字较小的进程ID通常是内核使用的，不应该浪费时间来在这个范围内搜索可用ID；</li>
+<li>我们可以通过<code>/proc/sys/kernel/pid_max</code>文件来修改进程ID的限制；在32位系统上最大值为<code>32768</code>(开区间)，在64位系统上，最大值为$2^{22}$(开区间)。</li>
+</ol>
+<p>需要注意的是，当父进程终止但子进程还在运行，此时子进程成为孤儿进程，会被<code>init</code>进程收留，之后，使用<code>getppid()</code>系统调用获取父进程ID时就会返回1.</p>
+<h3 id="进程的内存布局"><a href="#进程的内存布局" class="headerlink" title="进程的内存布局"></a>进程的内存布局</h3><p><img src="/2019/11/03/TLPI-Ch6-Processes/figure6-1.png" alt=""></p>
+<p>从书中的图片可以清楚看到进程内存布局(灰色部分为不可访问)，这里主要记录重要部分</p>
+<ul>
+<li><code>text</code>为代码段，只读。因为可以让多个进程共享同个程序，只保留单个程序的代码的副本</li>
+<li><code>initialized data</code>显式初始化的全局和静态变量</li>
+<li><code>bss</code>未初始化的全局和静态变量，这部分内容在文件中没有空间，也就是磁盘不为其保留空间，只记录地址和大小，当程序加载后才分配空间</li>
+<li><code>stack</code>栈主要是局部变量和函数调用时使用的，用来保留参数和<code>IP</code>指针的</li>
+<li><code>heap</code>，运行时动态分配内存的区域，其顶部称为<code>program break</code></li>
+</ul>
+<p>大部分Linux环境下的C程序的实现提供了3个全局符号：<code>etext</code>、<code>edata</code>、<code>end</code>，能够用来获得对应地址的尾后地址，分配表示代码段的尾后地址、初始化的数据段的尾后地址、未初始化的数据段的尾后地址。</p>
+<h4 id="ABI-application-binary-interface"><a href="#ABI-application-binary-interface" class="headerlink" title="ABI(application binary interface)"></a>ABI(<code>application binary interface</code>)</h4><p><code>ABI</code>是一些规则的集合，这些规则规定了函数调用、返回等行为如何进行数据交换的，支持同种<code>ABI</code>的编译器和执行环境之间能够兼容。</p>
+<h3 id="虚拟内存管理"><a href="#虚拟内存管理" class="headerlink" title="虚拟内存管理"></a>虚拟内存管理</h3><p>虚拟内存管理把内存分成页，在某个时间点，一个程序只需要少量的页在内存中，这些页称为常驻集(<code>resident set</code>)，而那些没有用到的页被保留在<code>swap</code>区中。因为程序的局部性，这种设计使得计算机性能更好。</p>
+<ul>
+<li>空间局部性：程序总是倾向于访问刚访问过的地址的附近内容(如数组)</li>
+<li>时间局部性：程序总是倾向于访问一小段时间前访问过的地址(如循环)</li>
+</ul>
+<p>页一般是<code>4KB</code>，但我们可以使用系统调用<code>sysconf(_SC_PAGESIZE)</code>来修改页大小。</p>
+<p>为了支持页的这种内存管理，内核为每个进程维护了一个页表，页表内的页表项指明了虚拟页在内存中的地址或其当前在磁盘中([疑问：]如何指示在磁盘中？)。通常情况下，很大部分的虚拟地址没有被使用，所以没有为它们维护对应的页表项的必要，但如果访问了没有页表项的地址，将会收到一个<code>SIGSEGV</code>错误(段错误)</p>
+<p>虚拟内存管理将虚拟地址和物理地址隔离，带来了很多好处</p>
+<ul>
+<li>进程间的隔离</li>
+<li>进程间的共享（包括代码和内存）</li>
+<li>内存保护机制，可以在页表项中加入诸多限制</li>
+<li>只有部分程序需要加载到内存，速度更快</li>
+</ul>
+<h3 id="栈和栈帧"><a href="#栈和栈帧" class="headerlink" title="栈和栈帧"></a>栈和栈帧</h3><p>内核栈存放在进程空间的内核部分，用来给系统调用过程中提供环境。</p>
+<h3 id="命令行参数-argc-argv"><a href="#命令行参数-argc-argv" class="headerlink" title="命令行参数(argc, argv)"></a>命令行参数(argc, argv)</h3><p>除了<code>main</code>函数参数获得命令行参数外，命令行参数还(全部)存放在<code>/proc/PID/cmdline</code>中，以及GNU C函数库提供的部分全局变量中。</p>
+<p>命令行参数的字节数有一个上限，保存在<code>ARG_MAX</code>中，可以使用<code>sysconf(_S_ARG_MAX)</code>来修改这个限制。</p>
+<h3 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h3><p>每个进程都有一组称为<code>environment list</code>的环境变量字符串组，他们形如<code>name=value</code>，<code>name</code>是环境变量的名字。当一个进程被创建，它就会继承（复制）其父进程的环境变量，所以父子进程间的环境变量是相互独立的。</p>
+<h4 id="shell环境变量的设置"><a href="#shell环境变量的设置" class="headerlink" title="shell环境变量的设置"></a>shell环境变量的设置</h4><p><code>shell</code>通过环境变量的设置，<code>shell</code>能够确保这些变量被传给运行他们命令的进程中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="keyword">export</span> name=value		#设置shell环境变量，仅当前shell有效</span><br><span class="line">$ unset name			#删除环境变量name</span><br><span class="line">$ name=value progrom    #仅对program添加环境变量</span><br></pre></td></tr></table></figure>
+<h4 id="通过程序访问环境变量"><a href="#通过程序访问环境变量" class="headerlink" title="通过程序访问环境变量"></a>通过程序访问环境变量</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="keyword">char</span> ** environ;							<span class="comment">//1. 直接声明environ，该指针指向环境变量表</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[], <span class="keyword">char</span>* envp[])</span>  <span class="comment">//2. 和argv一样在main函数形参中声明</span></span></span><br></pre></td></tr></table></figure>
+<p>不推荐第二种，因为除了作用域的限制外还有<code>SUSv3</code>不支持。</p>
+<h4 id="getenv"><a href="#getenv" class="headerlink" title="getenv"></a>getenv</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">getenv</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name)</span></span>;		</span><br><span class="line"><span class="comment">// NULL if no such variable</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>不要修改<code>getenv</code>返回的字符串。因为这个字符串实际上就是环境变量的一部分，也就是说我们修改后会对环境变量造成改动，影响后面的进程。</p>
+<p><code>SUSv3</code>是静态分配内存，虽然<code>glibc</code>的实现不采用静态分配内存，但要想程序可移植性好，需要将返回值复制一份副本。</p>
+<h4 id="putenv"><a href="#putenv" class="headerlink" title="putenv"></a>putenv</h4><p>修改环境变量，有两种情况</p>
+<ol>
+<li>传递给子进程(一次性的进程间通信)</li>
+<li>传递给下一个程序(用<code>exec()</code>)（<strong>程序间</strong>通信）</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">putenv</span><span class="params">(<span class="keyword">char</span> *<span class="built_in">string</span>)</span></span>;		<span class="comment">//Returns 0 on success, or nonzero on error</span></span><br><span class="line"><span class="comment">//给环境变量组添加环境变量，string为name=value</span></span><br><span class="line"><span class="comment">//如果string中没有=号，则putenv的行为是删除环境变量</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>形参<code>string</code>的值会称为环境变量的一部分，也就是说对实参的修改会影响到环境变量，<code>putenv</code>没有创造副本，所以<code>string</code>不能是局部变量。</p>
+<p><code>glibc</code>实现有一个非标准的扩展，就是若<code>string</code>没有包含<code>=</code>号，那么<code>string</code>指定的环境变量会从环境变量list中删除。</p>
+<h4 id="setenv"><a href="#setenv" class="headerlink" title="setenv"></a>setenv</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setenv</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">const</span> <span class="keyword">char</span> *value, <span class="keyword">int</span> overwrite)</span></span>;</span><br><span class="line"><span class="comment">//Returns 0 on success, or –1 on error</span></span><br></pre></td></tr></table></figure>
+<p><code>setenv</code>是<code>putenv</code>的一个替代版本，他会为环境变量<strong>分配内存</strong>，<strong>拷贝</strong><code>name</code>和<code>value</code>到其中。如果<code>overwrite</code>设置为0且<code>name</code>的环境变量已经存在，则<code>setenv</code>不会改变它(<code>overwrite</code>不为0则会改变)。</p>
+<p><strong>注意：</strong>若<code>putenv</code>或<code>setenv</code>发现<code>environ</code>为<code>NULL</code>，则会创建一个新的环境链表然后将其地址赋给<code>envrion</code>。</p>
+<h4 id="删除环境变量"><a href="#删除环境变量" class="headerlink" title="删除环境变量"></a>删除环境变量</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">environ = <span class="literal">NULL</span>;	<span class="comment">//行为和clearenv()一致</span></span><br></pre></td></tr></table></figure>
+<p>但若和<code>setenv</code>一起使用会导致内存泄露(<code>clearenv()</code>也一样)。因为<code>setenv</code>会分配内存。</p>
+<p><strong>注意：</strong>应用应该通过获取环境变量名然后调用<code>unsetenv()</code>来清理环境变量，但不能使用<code>clearenv()</code>。</p>
+<h3 id="setjmp-amp-longjmp"><a href="#setjmp-amp-longjmp" class="headerlink" title="setjmp() &amp; longjmp()"></a>setjmp() &amp; longjmp()</h3><p>C语言中有<code>goto</code>，但<code>goto</code>的限制是在同一个函数中，在不同的函数中要实现goto就是使用<code>setjmp &amp; longjmp</code>。<code>setjmp</code>就是设置一个标签，在其他函数中调用<code>longjmp</code>就可以回到这个<code>setjmp</code>设置的标签处。当<code>setjmp</code>是设置标签时，返回0，当<code>setjmp</code>是由<code>longjmp</code>调用而来时，返回&gt;0的数，该值由<code>longjmp</code>设置。</p>
+<p>他们的实现是通过保存<code>pc</code>寄存器和<code>sp</code>寄存器而实现的，所以当使用<code>longjmp</code>跳到已经返回的<code>setjmp</code>标签处会导致错误，而且编译器通常会对程序进行优化，这样对于<code>setjmp &amp; longjmp</code>的使用就造成了很多麻烦。</p>
+<p>应该尽量避免使用<code>setjmp &amp; longjmp</code>，所以这里只是简单的介绍，并没有进行分析。</p>
+<h3 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h3><ul>
+<li>6-1: 因为<code>mbuf</code>是静态变量，静态变量存在文件的<code>.bss</code>区，在磁盘里<code>.bss</code>不占空间。</li>
+<li>6-2: 会在<code>setjmp</code>处返回然后出现段错误。</li>
+<li>6-3: 见github[待引用]。</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TLPI/" rel="tag"># TLPI</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/01/UNPv1-Ch5-TCP-C-S-example/" rel="next" title="UNPv1-Ch5-TCP-C/S example">
+                <i class="fa fa-chevron-left"></i> UNPv1-Ch5-TCP-C/S example
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/03/UNPv1-Ch6-IO多路复用/" rel="prev" title="UNPv1-Ch6-IO多路复用">
+                UNPv1-Ch6-IO多路复用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">44</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#程序和进程"><span class="nav-number">1.</span> <span class="nav-text">程序和进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#程序包含的信息"><span class="nav-number">1.1.</span> <span class="nav-text">程序包含的信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程ID和父进程ID"><span class="nav-number">2.</span> <span class="nav-text">进程ID和父进程ID</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PID的限制"><span class="nav-number">2.1.</span> <span class="nav-text">PID的限制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程的内存布局"><span class="nav-number">3.</span> <span class="nav-text">进程的内存布局</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ABI-application-binary-interface"><span class="nav-number">3.1.</span> <span class="nav-text">ABI(application binary interface)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟内存管理"><span class="nav-number">4.</span> <span class="nav-text">虚拟内存管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈和栈帧"><span class="nav-number">5.</span> <span class="nav-text">栈和栈帧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命令行参数-argc-argv"><span class="nav-number">6.</span> <span class="nav-text">命令行参数(argc, argv)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#环境变量"><span class="nav-number">7.</span> <span class="nav-text">环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#shell环境变量的设置"><span class="nav-number">7.1.</span> <span class="nav-text">shell环境变量的设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#通过程序访问环境变量"><span class="nav-number">7.2.</span> <span class="nav-text">通过程序访问环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#getenv"><span class="nav-number">7.3.</span> <span class="nav-text">getenv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#putenv"><span class="nav-number">7.4.</span> <span class="nav-text">putenv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#setenv"><span class="nav-number">7.5.</span> <span class="nav-text">setenv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除环境变量"><span class="nav-number">7.6.</span> <span class="nav-text">删除环境变量</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setjmp-amp-longjmp"><span class="nav-number">8.</span> <span class="nav-text">setjmp() &amp; longjmp()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exercises"><span class="nav-number">9.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

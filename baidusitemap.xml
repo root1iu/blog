@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://root1iu.github.io/2019/11/01/UNP-Ch5-TCP-C-S-example/</loc>
-    <lastmod>2019-11-01T03:47:39.022Z</lastmod>
+    <loc>https://root1iu.github.io/2019/10/27/UNPv1-Ch3-Sockets-Introdution/</loc>
+    <lastmod>2019-11-03T11:43:14.772Z</lastmod>
   </url>  <url>
-    <loc>https://root1iu.github.io/2019/10/28/UNP-Ch4-ElementaryTcpSockets/</loc>
-    <lastmod>2019-11-01T02:56:39.100Z</lastmod>
+    <loc>https://root1iu.github.io/2019/10/28/UNPv1-Ch4-ElementaryTcpSockets/</loc>
+    <lastmod>2019-11-03T11:43:08.079Z</lastmod>
+  </url>  <url>
+    <loc>https://root1iu.github.io/2019/11/01/UNPv1-Ch5-TCP-C-S-example/</loc>
+    <lastmod>2019-11-03T11:43:01.699Z</lastmod>
   </url>  <url>
     <loc>https://root1iu.github.io/2019/10/29/TLPI-Ch5-FILEIO-FutherDetails/</loc>
-    <lastmod>2019-10-29T13:26:25.079Z</lastmod>
+    <lastmod>2019-11-03T11:38:07.278Z</lastmod>
   </url>  <url>
-    <loc>https://root1iu.github.io/2019/10/27/UNP-Ch3-Sockets-Introdution/</loc>
-    <lastmod>2019-10-27T07:37:49.097Z</lastmod>
+    <loc>https://root1iu.github.io/2019/11/03/TLPI-Ch6-Processes/</loc>
+    <lastmod>2019-11-03T11:34:26.803Z</lastmod>
+  </url>  <url>
+    <loc>https://root1iu.github.io/2019/11/03/UNPv1-Ch6-IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</loc>
+    <lastmod>2019-11-03T11:32:30.332Z</lastmod>
   </url>  <url>
     <loc>https://root1iu.github.io/2018/12/02/CSAPP-%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5%E4%B8%8E%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5/</loc>
     <lastmod>2019-10-27T07:32:49.580Z</lastmod>

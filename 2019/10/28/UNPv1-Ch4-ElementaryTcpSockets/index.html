@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Socket函数12345#include &amp;lt;sys/types.h&amp;gt;// POSIX.1 does not require the inclusion of &amp;lt;sys/types.h&amp;gt;, and this header file is not required on Linux. However, some historical (BSD) implementations">
+<meta name="keywords" content="UNPv1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNPv1-Ch4-ElementaryTcpSockets">
+<meta property="og:url" content="https://root1iu.github.io/2019/10/28/UNPv1-Ch4-ElementaryTcpSockets/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="Socket函数12345#include &amp;lt;sys/types.h&amp;gt;// POSIX.1 does not require the inclusion of &amp;lt;sys/types.h&amp;gt;, and this header file is not required on Linux. However, some historical (BSD) implementations">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-03T11:43:08.079Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UNPv1-Ch4-ElementaryTcpSockets">
+<meta name="twitter:description" content="Socket函数12345#include &amp;lt;sys/types.h&amp;gt;// POSIX.1 does not require the inclusion of &amp;lt;sys/types.h&amp;gt;, and this header file is not required on Linux. However, some historical (BSD) implementations">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/10/28/UNPv1-Ch4-ElementaryTcpSockets/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>UNPv1-Ch4-ElementaryTcpSockets | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/10/28/UNPv1-Ch4-ElementaryTcpSockets/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UNPv1-Ch4-ElementaryTcpSockets
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-28 20:31:07" itemprop="dateCreated datePublished" datetime="2019-10-28T20:31:07+08:00">2019-10-28</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-11-03 19:43:08" itemprop="dateModified" datetime="2019-11-03T19:43:08+08:00">2019-11-03</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/UNPv1/" itemprop="url" rel="index"><span itemprop="name">UNPv1</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Socket函数"><a href="#Socket函数" class="headerlink" title="Socket函数"></a>Socket函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="comment">// POSIX.1 does not require the inclusion of &lt;sys/types.h&gt;, and this header file is not required on Linux. However, some historical (BSD) implementations required this header file, and portable applications are probably wise to include it.</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">socket</span><span class="params">(<span class="keyword">int</span> domain, <span class="keyword">int</span> type, <span class="keyword">int</span> protocol)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>domain</code>: <code>AF_INET</code>、<code>AF_INET6</code>、<code>AF_LOCAL(Unix domain protocols)</code>、<code>AF_ROUTE(Routing sockets)</code>、<code>AF_KEY(Key socket)</code></li>
+<li><code>type</code>: <code>SOCK_STREAM</code>、<code>SOCK_DGRAM</code>、<code>SOCK_SEQPACKET</code>、<code>SOCK_RAW</code>；Linux支持了一种新的socket类型<code>SOCK_PACKET</code>提供了对数据链路的访问。</li>
+<li><code>protocol</code>: <code>IPPROTO_TCP</code>、<code>IPPROTO_UDP</code>、<code>IPPROTO_SCTP</code>，或者指定为0来使用系统对于<code>domain</code>和<code>type</code>的不同组合的默认协议选项。</li>
+</ul>
+<h2 id="connect函数"><a href="#connect函数" class="headerlink" title="connect函数"></a>connect函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;          /* 同上 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">connect</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">const</span> struct sockaddr *servaddr, <span class="keyword">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>sockfd</code>是<code>socket</code>函数的返回值</li>
+<li><code>servaddr</code>是要链接到的服务器的地址结构，<code>addrlen</code>是其长度</li>
+</ul>
+<p><code>connect</code>在成功连接或者出现错误时返回，出现错误的多种情况：</p>
+<ol>
+<li>如果client没有收到SYN，那么<code>connect</code>返回-1，且<code>errno</code>置为<code>ETIMEDOUT</code>；在调用<code>connect</code>时client发送SYN，若没有回应，会在6s后、anther 24s(即24s+6s)后发送SYN，若总共75s后没有回应，则发生错误并设置错误码。（例如在局域网中连接不存在的主机I，错误信息为<code>Connection timed out</code>）</li>
+<li>硬错误(<code>hard error</code>)，当client发送SYN然后接收到RST时，表示对方没有进程监听该端口，<code>connect</code>会马上返回-1且设置<code>errno</code>为<code>ECONNREFUSED</code>。有三种出现RST的情况：（错误信息为<code>Connection refused</code>）<ul>
+<li>服务端的端口没有监听</li>
+<li>TCP想要中止已经存在的链接</li>
+<li>TCP接收到了不存在的链接的数据包(segment)</li>
+</ul>
+</li>
+<li>软错误(<code>soft error</code>)，client的SYN在中介路由器中导致ICMP发出<code>destination unreachable</code>报文。client的内核会将这个错误报文保存，然后以第一种情况的频率(6s 24s …)发送SYN直到75s的到期，如果此时还是没有收到对端的回应，那么内核会将ICMP错误返回给client进程，返回形式为<code>EHOSTUNREACH(主机不可达)</code>或者<code>ENETUNREACH(网络不可达)</code>。（错误信息为<code>No route to host</code>）</li>
+</ol>
+<p><strong>注意：</strong>客户端也可以指定出口的IP地址和端口的（使用bind），只不过一般没有这么做。</p>
+<h2 id="bind函数"><a href="#bind函数" class="headerlink" title="bind函数"></a>bind函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;          /* 同上 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bind</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">const</span> struct sockaddr *addr, <span class="keyword">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">//Returns: 0 if OK,-1 on error</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>一般来说<code>addr</code>中会指定地址和端口，若没有指定，则内核会在<code>listen</code>或<code>connect</code>时选择一个随机的地址或端口。通常服务器不会选择随机的端口，但有一个例外是RPC(<code>Remote Procedure Call</code>)，因为这些服务的端口会注册到RPC端口映射器(<code>RPC port mapper</code>)上，client需要返回端口映射器来获得这些端口然后再进行连接。</li>
+<li>对于client来说，”bind”指定了socket通信过程中发出的数据包的源地址（通常由内核选择，基于接口和route表）；对于server来说，bind限定了只接受目的为该地址的连接。如果Server没有绑定IP到其socket上，那么内核使用client的SYN的目的IP作为Server的源IP。[疑问：既然Server没有指定IP，那么client的SYN是如何传到Server的？测试使用lo和本机ip都不能使Server accept]</li>
+</ul>
+<p><code>bind</code>的常见错误是<code>EADDRINUSE</code>，表示地址已经被使用。</p>
+<h3 id="通配地址-wildcard-address"><a href="#通配地址-wildcard-address" class="headerlink" title="通配地址(wildcard address)"></a>通配地址(wildcard address)</h3><p>当我们要让内核自己选择端口时，我们只需要将<code>bind</code>的<code>addr</code>的<code>sin_port</code>设置为0即可。若我们要使用通配地址时，我们需要将<code>sin_addr</code>设置为<code>INADDR_ANY</code>(IPv4)，该值通常为0。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">servaddr</span>;</span>						<span class="comment">// IPv4	</span></span><br><span class="line">servaddr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in6</span> <span class="title">serv</span>;</span>							<span class="comment">// IPv6</span></span><br><span class="line">serv.sin6_addr = in6addr_any;</span><br></pre></td></tr></table></figure>
+<p>当我们指定通配地址后，内核直到socket被连接(is connected)[TCP]或者数据报到达socket[UDP]才会选择本地的IP地址。</p>
+<p>若使用了随机端口，那么我们只能在<code>accept</code>后通过<code>getsockname &amp; sockfd</code>来获得该端口值。</p>
+<p><strong>注意：</strong><code>INADDR_</code>常量都是主机字节序，所以要赋值给地址结构时需要转换字节序。</p>
+<h4 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h4><ul>
+<li>通配地址+指定端口：Server监听host的端口，然后根据client发来的数据包的目的地址来确定自己的源地址。</li>
+<li>通配地址+通配端口：测试失败，Server无法accept。</li>
+<li>指定地址+通配端口：测试失败，Server无法accept。</li>
+</ul>
+<h2 id="listen函数"><a href="#listen函数" class="headerlink" title="listen函数"></a>listen函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;          /* 同上 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">listen</span> <span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> backlog)</span></span>;</span><br><span class="line"><span class="comment">//Returns: 0 if OK, -1 on error</span></span><br></pre></td></tr></table></figure>
+<p><code>listen</code>函数就是将一个未连接的socket转换成被动socket，告知内核接受以这个socket为目的的连接。<code>backlog</code>参数指定了内核需要为其保持缓冲的最大连接数。这个最大连接数包含未完成连接队列和完成连接队列的总和。</p>
+<p><strong>注意：</strong>不要将<code>backlog</code>设置为0，因为这在不同的系统上有着不同的实现。通常可以设置一个超过内核能够支持的值的大小，因为内核会默默将该值设置为内核所支持的最大值。</p>
+<h3 id="缓冲队列"><a href="#缓冲队列" class="headerlink" title="缓冲队列"></a>缓冲队列</h3><ul>
+<li>未完成连接队列：在接到client的SYN后的连接就进入这个未完成连接队列中（发起第二次握手时），这个队列中的项保持到完成三次握手或者超时。</li>
+<li>完成连接队列：当完成三次握手后，连接就进入完成连接队列。当Server执行accept来获取该队列中的项后，完成连接队列中的项就传入进程。</li>
+</ul>
+<p>注意当队列满后，还有client的SYN到达，会将这些SYN忽略，而不是返回RST。返回RST会导致对端的Connect返回错误。</p>
+<h2 id="accept函数"><a href="#accept函数" class="headerlink" title="accept函数"></a>accept函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;          /* 同上 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> sockfd, struct sockaddr *cliaddr, <span class="keyword">socklen_t</span> *addrlen)</span></span>;</span><br><span class="line"><span class="comment">// Returns: non-negative descriptor if OK, -1 on error</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>sockfd</code>:监听socket</li>
+<li><code>cliaddr</code>：链接对端(client)的地址结构</li>
+</ul>
+<p><code>sockfd</code>被称为监听socket，<code>accept</code>的返回值被称为是连接socket，这两个socket是不一样的。监听socket只有一个，而连接socket是每来一个连接就会创建一个连接socket。</p>
+<h2 id="close函数"><a href="#close函数" class="headerlink" title="close函数"></a>close函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">close</span><span class="params">(<span class="keyword">int</span> fd)</span></span>;</span><br><span class="line"><span class="comment">// return: 0 is ok, -1 on error</span></span><br></pre></td></tr></table></figure>
+<p>对sockfd执行<code>close</code>后该描述符就不能再被使用了，意味着不能作为<code>read</code>或<code>write</code>的参数。但TCP会将存在队列里的数据输出到另一端，然后终止TCP链接。</p>
+<p>对sockfd进行<code>close</code>不一定会导致发送FIN，因为sockfd会保持一个引用计数，直到引用计数为0才会发送FIN，若要立即发送FIN可以使用<code>shutdown</code>[待引用: ch6.6]</p>
+<p><strong>注意：</strong>在使用<code>fork</code>的并行服务器上，父进程要<code>close</code>接收到的连接fd，否则当子进程完成任务并<code>close</code>时会导致不发送FIN，使得连接无法正常关闭，而且会耗尽文件描述符；</p>
+<h2 id="getsockname-amp-getpeername函数"><a href="#getsockname-amp-getpeername函数" class="headerlink" title="getsockname &amp; getpeername函数"></a>getsockname &amp; getpeername函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getsockname</span><span class="params">(<span class="keyword">int</span> sockfd, struct sockaddr *localaddr, <span class="keyword">socklen_t</span> *addrlen)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getpeername</span><span class="params">(<span class="keyword">int</span> sockfd, struct sockaddr *peeraddr, <span class="keyword">socklen_t</span> *addrlen)</span></span>;</span><br><span class="line"><span class="comment">// return 0 is ok, -1 on error</span></span><br></pre></td></tr></table></figure>
+<p>使用场景：</p>
+<ul>
+<li><code>Connect</code>成功返回，但由于client并没有使用<code>bind</code>，只能通过<code>getsockname</code>来确认自己使用的IP和端口。</li>
+<li>当<code>accept</code>后执行<code>exec</code>，由于进程映像被程序覆盖，要获得双端的信息只能通过这两个函数来获得。并且要注意将连接fd传递给新进程的方法有<ul>
+<li>将描述符作为命令行参数传递给新程序</li>
+<li>将连接fd建在一个确定的文件描述符上再调用<code>exec</code>，比如012等。</li>
+</ul>
+</li>
+</ul>
+<p><strong>注意：</strong>当Server要使用这两个函数时，要注意参数<code>sockfd</code>应该为连接fd而不是监听fd。</p>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><ol>
+<li>子进程已经完成任务并且关闭连接fd，等到父进程时，父进程也会关闭连接fd，此时发送FIN结束连接。</li>
+<li><code>accept</code>报<code>Invalid argument</code>错误。</li>
+<li><code>accept</code>不返回，没有<code>bind</code>可能导致内部数据结构没有初始化，从而无法正确接受到来的连接。</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// testServer.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"unp.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;      // for inet_ntop</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printAddr</span><span class="params">(struct sockaddr_in *addr)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buff[<span class="number">16</span>];</span><br><span class="line">    <span class="keyword">if</span>( inet_ntop(AF_INET, &amp;addr-&gt;sin_addr.s_addr, buff, <span class="keyword">sizeof</span>(buff)) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"inet_ntop\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%s:%d\n"</span>, buff, ntohs(addr-&gt;sin_port));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buf[<span class="number">16</span>] = <span class="string">"Hello "</span>;</span><br><span class="line">    <span class="keyword">int</span> servfd, clifd;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">ori_addr</span>, <span class="title">acc_addr</span>;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 1. 清空ori_addr &amp; acc_addr</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;ori_addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(ori_addr));</span><br><span class="line">    <span class="built_in">memset</span>(&amp;acc_addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(acc_addr));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 设置ori_addr为wildcard</span></span><br><span class="line">    ori_addr.sin_family = AF_INET;</span><br><span class="line">    <span class="comment">//inet_pton(AF_INET, "172.16.49.221", &amp;ori_addr.sin_addr.s_addr);</span></span><br><span class="line">    ori_addr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    ori_addr.sin_port = htons(<span class="number">8888</span>);</span><br><span class="line"></span><br><span class="line">    servfd = socket(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">/** if ( bind(servfd, (struct sockaddr*)&amp;ori_addr, sizeof(ori_addr)) == -1) </span></span><br><span class="line"><span class="comment">      *     printf("error bind\n"); */</span></span><br><span class="line">    <span class="keyword">if</span> (listen(servfd, <span class="number">5</span>) == <span class="number">-1</span>)</span><br><span class="line">        err_sys(<span class="string">"listen"</span>);</span><br><span class="line">    </span><br><span class="line">    printAddr(&amp;ori_addr);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> ( (clifd = accept(servfd, <span class="literal">NULL</span>, <span class="literal">NULL</span>))) &#123;</span><br><span class="line">        <span class="keyword">if</span>(clifd == <span class="number">-1</span>) err_sys(<span class="string">"accpet"</span>);</span><br><span class="line">        printAddr(&amp;ori_addr);</span><br><span class="line">        <span class="keyword">socklen_t</span> len = <span class="keyword">sizeof</span>(acc_addr);</span><br><span class="line">        <span class="keyword">if</span>( getsockname(clifd, (struct sockaddr*) &amp;acc_addr, &amp;len) &lt; <span class="number">0</span>) &#123;&#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"getsockname: \n"</span>);</span><br><span class="line">        printAddr(&amp;acc_addr);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>( getpeername(clifd, (struct sockaddr*) &amp;acc_addr, &amp;len) &lt; <span class="number">0</span>) &#123;&#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"getpeername: \n"</span>);</span><br><span class="line">        printAddr(&amp;acc_addr);</span><br><span class="line">        </span><br><span class="line">        write(clifd, buf, <span class="keyword">sizeof</span>(buf));</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"finished\n"</span>);</span><br><span class="line">        sleep(<span class="number">5</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// testClient.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"unp.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;      // inet_pton</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> servfd, clifd;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">cli_addr</span>;</span></span><br><span class="line">    <span class="keyword">char</span> buf[<span class="number">16</span>];</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;cli_addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(cli_addr));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%s\n"</span>, argv[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">    cli_addr.sin_family = AF_INET;</span><br><span class="line">    <span class="keyword">if</span>( inet_pton(AF_INET, argv[<span class="number">1</span>], &amp;cli_addr.sin_addr.s_addr) == <span class="number">-1</span>) </span><br><span class="line">        err_sys(<span class="string">"inet_pton"</span>);</span><br><span class="line">    cli_addr.sin_port = htons(<span class="number">8888</span>);</span><br><span class="line"></span><br><span class="line">    clifd = socket(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( connect(clifd, (struct sockaddr*)&amp;cli_addr, <span class="keyword">sizeof</span>(cli_addr)) == <span class="number">-1</span>)</span><br><span class="line">        err_sys(<span class="string">"connect"</span>);</span><br><span class="line"></span><br><span class="line">    read(clifd, buf, <span class="keyword">sizeof</span>(buf));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%s\b"</span>, buf);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UNPv1/" rel="tag"># UNPv1</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/27/UNPv1-Ch3-Sockets-Introdution/" rel="next" title="UNPv1-Ch3-Sockets Introdution">
+                <i class="fa fa-chevron-left"></i> UNPv1-Ch3-Sockets Introdution
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/29/TLPI-Ch5-FILEIO-FutherDetails/" rel="prev" title="TLPI-Ch5-FILEIO:FutherDetails">
+                TLPI-Ch5-FILEIO:FutherDetails <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">44</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Socket函数"><span class="nav-number">1.</span> <span class="nav-text">Socket函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#connect函数"><span class="nav-number">2.</span> <span class="nav-text">connect函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bind函数"><span class="nav-number">3.</span> <span class="nav-text">bind函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#通配地址-wildcard-address"><span class="nav-number">3.1.</span> <span class="nav-text">通配地址(wildcard address)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#测试结果"><span class="nav-number">3.1.1.</span> <span class="nav-text">测试结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#listen函数"><span class="nav-number">4.</span> <span class="nav-text">listen函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓冲队列"><span class="nav-number">4.1.</span> <span class="nav-text">缓冲队列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#accept函数"><span class="nav-number">5.</span> <span class="nav-text">accept函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#close函数"><span class="nav-number">6.</span> <span class="nav-text">close函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getsockname-amp-getpeername函数"><span class="nav-number">7.</span> <span class="nav-text">getsockname &amp; getpeername函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">8.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="什么是IO多路复用IO多路复用就是使用select、poll、epoll等函数实现对多个文件描述符的监听，即一个函数监听多个IO。 IO多路复用的应用场景 client处理多个文件描述符。 Server管理监听socket和连接socket。 Server同时处理TCP和UDP等不同协议。 Server处理多个服务。  IO模型Unix下的IO模型有5种，分别是阻塞IO、非阻塞IO、IO多路复用、">
+<meta name="keywords" content="UNPv1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNPv1-Ch6-IO多路复用">
+<meta property="og:url" content="https://root1iu.github.io/2019/11/03/UNPv1-Ch6-IO多路复用/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="什么是IO多路复用IO多路复用就是使用select、poll、epoll等函数实现对多个文件描述符的监听，即一个函数监听多个IO。 IO多路复用的应用场景 client处理多个文件描述符。 Server管理监听socket和连接socket。 Server同时处理TCP和UDP等不同协议。 Server处理多个服务。  IO模型Unix下的IO模型有5种，分别是阻塞IO、非阻塞IO、IO多路复用、">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://root1iu.github.io/2019/11/03/UNPv1-Ch6-IO多路复用/%E9%98%BB%E5%A1%9EIO%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/11/03/UNPv1-Ch6-IO多路复用/%E9%9D%9E%E9%98%BB%E5%A1%9EIO%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/11/03/UNPv1-Ch6-IO多路复用/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/11/03/UNPv1-Ch6-IO多路复用/%E4%BF%A1%E5%8F%B7%E9%A9%B1%E5%8A%A8IO.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/11/03/UNPv1-Ch6-IO多路复用/%E5%BC%82%E6%AD%A5IO.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/11/03/UNPv1-Ch6-IO多路复用/%E8%BF%9E%E7%BB%AD%E5%8F%91%E9%80%81%E6%95%B0.png">
+<meta property="og:updated_time" content="2019-11-03T11:32:30.332Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UNPv1-Ch6-IO多路复用">
+<meta name="twitter:description" content="什么是IO多路复用IO多路复用就是使用select、poll、epoll等函数实现对多个文件描述符的监听，即一个函数监听多个IO。 IO多路复用的应用场景 client处理多个文件描述符。 Server管理监听socket和连接socket。 Server同时处理TCP和UDP等不同协议。 Server处理多个服务。  IO模型Unix下的IO模型有5种，分别是阻塞IO、非阻塞IO、IO多路复用、">
+<meta name="twitter:image" content="https://root1iu.github.io/2019/11/03/UNPv1-Ch6-IO多路复用/%E9%98%BB%E5%A1%9EIO%E6%A8%A1%E5%9E%8B.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/11/03/UNPv1-Ch6-IO多路复用/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>UNPv1-Ch6-IO多路复用 | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/11/03/UNPv1-Ch6-IO多路复用/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UNPv1-Ch6-IO多路复用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-03 19:30:36 / 修改时间：19:32:30" itemprop="dateCreated datePublished" datetime="2019-11-03T19:30:36+08:00">2019-11-03</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/UNPv1/" itemprop="url" rel="index"><span itemprop="name">UNPv1</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是IO多路复用"><a href="#什么是IO多路复用" class="headerlink" title="什么是IO多路复用"></a>什么是IO多路复用</h2><p>IO多路复用就是使用<code>select</code>、<code>poll</code>、<code>epoll</code>等函数实现对多个文件描述符的监听，即一个函数监听多个IO。</p>
+<h3 id="IO多路复用的应用场景"><a href="#IO多路复用的应用场景" class="headerlink" title="IO多路复用的应用场景"></a>IO多路复用的应用场景</h3><ul>
+<li>client处理多个文件描述符。</li>
+<li>Server管理监听socket和连接socket。</li>
+<li>Server同时处理TCP和UDP等不同协议。</li>
+<li>Server处理多个服务。</li>
+</ul>
+<h2 id="IO模型"><a href="#IO模型" class="headerlink" title="IO模型"></a>IO模型</h2><p>Unix下的IO模型有5种，分别是阻塞IO、非阻塞IO、IO多路复用、信号驱动IO和异步IO。</p>
+<h3 id="阻塞IO"><a href="#阻塞IO" class="headerlink" title="阻塞IO"></a>阻塞IO</h3><p>阻塞IO就是调用IO系统调用后，直到数据被内核复制到用户空间或发生错误后，系统调用才会返回。</p>
+<p><img src="/2019/11/03/UNPv1-Ch6-IO多路复用/%E9%98%BB%E5%A1%9EIO%E6%A8%A1%E5%9E%8B.png" alt="阻塞IO模型"></p>
+<h3 id="非阻塞IO"><a href="#非阻塞IO" class="headerlink" title="非阻塞IO"></a>非阻塞IO</h3><p>非阻塞IO就是告诉内核不要挂起本线程而是直接返回，若数据没有准备好就返回错误，所以当非阻塞IO被调用且数据还没准备好时，该调用返回错误码<code>EWOULDBLOCK</code>。但因为无法确切的知道数据到来的时间，一般非阻塞IO需要轮询地查询，这会浪费很多CPU资源。</p>
+<p><img src="/2019/11/03/UNPv1-Ch6-IO多路复用/%E9%9D%9E%E9%98%BB%E5%A1%9EIO%E6%A8%A1%E5%9E%8B.png" alt=""></p>
+<h3 id="IO多路复用"><a href="#IO多路复用" class="headerlink" title="IO多路复用"></a>IO多路复用</h3><p>IO多路复用就是一个函数(本书是<code>select</code>或<code>poll</code>)监听多个文件描述符。</p>
+<p><img src="/2019/11/03/UNPv1-Ch6-IO多路复用/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.png" alt="IO多路复用"></p>
+<h3 id="信号驱动IO"><a href="#信号驱动IO" class="headerlink" title="信号驱动IO"></a>信号驱动IO</h3><p>信号驱动IO就是在文件描述符上面设置(<code>F_SETSIG</code>)，使得当IO就绪时(可读或可写)，进程会收到<code>SIGIO</code>信号，收到信号<code>SIGIO</code>即代表我们可以进行IO操作了，之后对数据进行处理，这个过程就称为信号驱动IO。</p>
+<p>信号驱动IO的一个特点就是用户不需要阻塞，在等待IO就绪的期间可以进行其他操作。</p>
+<p><img src="/2019/11/03/UNPv1-Ch6-IO多路复用/%E4%BF%A1%E5%8F%B7%E9%A9%B1%E5%8A%A8IO.png" alt="信号驱动IO"></p>
+<h3 id="异步IO"><a href="#异步IO" class="headerlink" title="异步IO"></a>异步IO</h3><p>异步IO就是告诉内核，我们要进行这个IO操作，在这个IO操作完全完成(复制到用户空间)后才通知我们。</p>
+<p><img src="/2019/11/03/UNPv1-Ch6-IO多路复用/%E5%BC%82%E6%AD%A5IO.png" alt="异步IO"></p>
+<h4 id="异步IO和信号驱动IO的区别"><a href="#异步IO和信号驱动IO的区别" class="headerlink" title="异步IO和信号驱动IO的区别"></a>异步IO和信号驱动IO的区别</h4><p>信号驱动IO是让内核在可以进行IO操作的时候通知我们，异步IO是让内核在IO操作完成(复制到用户空间)后通知我们。</p>
+<h3 id="同步IO和异步IO的区别"><a href="#同步IO和异步IO的区别" class="headerlink" title="同步IO和异步IO的区别"></a>同步IO和异步IO的区别</h3><ul>
+<li>同步IO就是实际的IO操作会阻塞到IO操作完成，也就是说除了异步IO，其他IO都是同步IO，因为他们的读取数据的系统调用<code>recvfrom</code>都是阻塞的。</li>
+<li>异步IO就是实际的IO操作不会造成阻塞，只有异步IO满足条件。</li>
+</ul>
+<h2 id="select函数"><a href="#select函数" class="headerlink" title="select函数"></a>select函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* According to POSIX.1-2001, POSIX.1-2008 */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/select.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* According to earlier standards */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">select</span><span class="params">(<span class="keyword">int</span> maxfdp1, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)</span></span>;</span><br><span class="line"><span class="comment">// positive count of ready descriptors, 0 on timeout, -1 on error</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> &#123;</span></span><br><span class="line">    <span class="keyword">long</span>    tv_sec;         <span class="comment">/* seconds */</span></span><br><span class="line">    <span class="keyword">long</span>    tv_usec;        <span class="comment">/* microseconds */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>参数<code>maxfdp1</code>的值为(轮询的最大文件描述符+1)，<code>FD_SETSIZE</code>就是<code>maxfdp1</code>的最大值(1024)</li>
+<li>参数<code>readfds</code>、<code>writefds</code>和<code>exceptfds</code>想让内核检查的文件描述符bit set</li>
+<li>参数<code>timeout</code><ul>
+<li>NULL，永远等待（可能被信号中断）。</li>
+<li><code>tv_sec</code>或<code>tv_usec</code>非0，等待指定的时间（可能被信号中断）。</li>
+<li><code>tv_sec</code>和<code>tv_usec</code>都为0，则不等待直接返回。</li>
+</ul>
+</li>
+</ul>
+<p>返回值指明了就绪的文件描述符的总数(包括不同<code>fd_set</code>的相同fd)，若返回0表示计时器到期了还没有fd就绪，错误时返回-1.</p>
+<p><strong>注意：</strong>当<code>timeout</code>的<code>tv_sec</code>超过$10^8$时，<code>select</code>会返回-1，错误为<code>EINVAL</code>。</p>
+<h3 id="三个文件描述符集"><a href="#三个文件描述符集" class="headerlink" title="三个文件描述符集"></a>三个文件描述符集</h3><p>文件描述符集用<code>fd_set</code>这个内核数据结构来表示，其中一个bit代表一个文件描述符。</p>
+<p><strong>注意：</strong><code>fd_set</code>之间可以直接用<code>=</code>来进行赋值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    <span class="comment">/* XPG4.2 requires this member name.  Otherwise avoid the name</span></span><br><span class="line"><span class="comment">       from the global namespace.  */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __USE_XOPEN</span></span><br><span class="line">    __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS];</span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __FDS_BITS(set) ((set)-&gt;fds_bits)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    __fd_mask __fds_bits[__FD_SETSIZE / __NFDBITS];</span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> __FDS_BITS(set) ((set)-&gt;__fds_bits)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  &#125; fd_set;</span><br></pre></td></tr></table></figure>
+<p><code>fd_set</code>之间的直接赋值就是结构体的直接按位复制，而<code>fd_set</code>存的是指针，所以可以使用<code>=</code>来直接赋值，赋值后的结果就是两个<code>fd_set</code>的指针指向同一块内存。</p>
+<p><code>select</code>设置三个文件描述符集，将感兴趣的文件描述符的bit设置为1，然后<code>select</code>将结果从参数中返回(<code>value-result</code>)，返回的值中bit为1的文件描述符表示就绪的文件描述符。</p>
+<p><strong>注意：</strong>每次调用<code>select</code>的时候都需要设置文件描述符集。</p>
+<h4 id="读就绪的情况"><a href="#读就绪的情况" class="headerlink" title="读就绪的情况"></a>读就绪的情况</h4><p>读就绪的低水位标记(<code>low-water mark</code>)可以通过<code>SO_RCVLOWAT</code>的socket选项来修改，TCP和UDP默认是1.当socket接收到的数据在缓冲区中的大小超过低水位标记时，<code>read</code>等函数对此socket进行操作时不会阻塞，也就是可以读了。</p>
+<ol>
+<li>在socket的接收缓冲区的数据字节数大于等于低水位标记时，是读就绪。</li>
+<li>连接的读端被关闭时，即TCP接收到FIN，此时是读就绪，<code>read</code>不会阻塞而返回0。</li>
+<li>当socket是listen socket时，已完成连接的队列中的连接数不为0时为读就绪，即<code>accept</code>可以返回不会被阻塞了。</li>
+<li>当socket error出现时，此时在socket上的<code>read</code>操作不会阻塞，而是返回-1，这种情况也是读就绪。(注意这种情况不是在异常的<code>fd_set</code>中被报告)</li>
+</ol>
+<h4 id="写就绪的情况"><a href="#写就绪的情况" class="headerlink" title="写就绪的情况"></a>写就绪的情况</h4><p>写就绪的低水位标记(<code>low-water mark</code>)可以通过<code>SO_SNDLOWAT</code>的socket选项来修改，TCP和UDP默认为2048。即在socket的发送缓冲区的剩余空间大于等于2048且满足【socket是连接的 或 socket不需要连接(UDP)】其中一个时，进行<code>write</code>操作才不会被阻塞。</p>
+<ol>
+<li>当socket的发送缓冲区的剩余空间大于等于低水位标记时，写就绪。</li>
+<li>当连接的写端被关闭时，写就绪。[疑问：如何模拟？在对端关闭进程只能模拟出<code>write</code>出错(使用多线程对连接socket进行写<code>shutdown</code>就行了。)]，会产生<code>SIGPIPE</code>，使用<code>write</code>会出现<code>EPIPE</code>。【模拟这个情况需要注意先在对端设置接收缓冲区大小，然后在本端设置发送缓冲区，然后测试需要多少才能使得<code>write</code>阻塞（本机测试为49*4096）[疑问：为什么是这个数？]，使得在<code>select</code>的时候可以被阻塞，然后再使用多线程来<code>shutdown</code>本端的<code>write</code>端】</li>
+<li>socket使用一个非阻塞的<code>connect()</code>，然后该<code>connect</code>完成连接，或者连接失败时，此时是写就绪。[疑问：如何模拟？这里在<code>connect</code>和完成连接之间使用<code>select</code>实在不好重现]</li>
+<li>当socket error出现时，此时在socket上的<code>write</code>操作不会阻塞，而是返回-1，这种情况是写就绪。(注意这种情况不是在异常的<code>fd_set</code>中被报告)</li>
+</ol>
+<h4 id="异常就绪的情况"><a href="#异常就绪的情况" class="headerlink" title="异常就绪的情况"></a>异常就绪的情况</h4><p>socket的异常就绪的情况，就是当socket有带外数据(<code>out-of-band data</code>)或socket仍然在<code>out-of-band mark</code>[疑问：什么是<code>out-of-band mark</code>]。</p>
+<h3 id="用select来做定时器"><a href="#用select来做定时器" class="headerlink" title="用select来做定时器"></a>用select来做定时器</h3><p>我们可以将三个文件描述符集设置为NULL，然后将要定时的时间设置在<code>timeout</code>参数上，这样就获得比<code>sleep</code>精度更高的定时器。</p>
+<h3 id="select的最大文件描述符数"><a href="#select的最大文件描述符数" class="headerlink" title="select的最大文件描述符数"></a>select的最大文件描述符数</h3><p><code>select</code>的最大文件描述符数就是在<code>FD_SETSIZE</code>和内核允许进程的最大文件描述符数取最小值。但当前的内核对进程的最大文件描述符数是无限制的，取决于内存和管理性限制。所以一般的最大文件描述符大小限制为<code>FD_SETSIZE</code>。</p>
+<h3 id="标准IO缓冲区和select"><a href="#标准IO缓冲区和select" class="headerlink" title="标准IO缓冲区和select"></a>标准IO缓冲区和select</h3><p>使用<code>select</code>时需要注意select不会对标准IO缓冲区中的数据敏感，标准IO函数比如<code>fgets</code>函数，该函数有标准IO缓冲区，当我们一次性读取多行数据时，<code>fgets</code>只会读取第一行，剩下的数据被放入标准IO缓冲区中。但这种情况下<code>select</code>不会触发读就绪，因为<code>select</code>不对标准IO缓冲区中的数据敏感。所以使用<code>select</code>时需要注意要使用<code>read</code>等系统调用而不是标准IO函数。</p>
+<h2 id="pselect函数"><a href="#pselect函数" class="headerlink" title="pselect函数"></a>pselect函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/select.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pselect</span><span class="params">(<span class="keyword">int</span> nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, <span class="keyword">const</span> struct timespec *timeout, <span class="keyword">const</span> <span class="keyword">sigset_t</span> *sigmask)</span></span>;</span><br><span class="line"><span class="comment">// on error, -1 is return</span></span><br></pre></td></tr></table></figure>
+<p><code>pselect</code>函数和<code>select</code>函数的区别有两个</p>
+<ul>
+<li><code>pselect</code>的计数器精度更高。</li>
+<li><code>pselect</code>有一个信号mask，当<code>pselect</code>被调用时，进程的信号mask被替换成<code>sigmask</code>，当<code>pselect</code>返回时，进程的信号mask被置为调用<code>pselect</code>之前的信号mask。</li>
+</ul>
+<h2 id="shutdown函数"><a href="#shutdown函数" class="headerlink" title="shutdown函数"></a>shutdown函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">shutdown</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> how)</span></span>;</span><br><span class="line"><span class="comment">// on error, -1 is return</span></span><br></pre></td></tr></table></figure>
+<p>对于<code>shutdown</code>函数，书上是以连续发送数据的模型来引出的</p>
+<p><img src="/2019/11/03/UNPv1-Ch6-IO多路复用/%E8%BF%9E%E7%BB%AD%E5%8F%91%E9%80%81%E6%95%B0.png" alt="连续发送数"></p>
+<p>请求是连续发送的，回应也是连续发送的。当我们把请求全部发送后，我们不能<code>close</code>这个socket，因为在这个socket上我们的请求回应还没有完全接收，所以我们需要一个半关闭的函数来执行写端关闭，留下读端，这个函数就是<code>shutdown</code>。</p>
+<h3 id="shutdown选项"><a href="#shutdown选项" class="headerlink" title="shutdown选项"></a>shutdown选项</h3><ol>
+<li><code>SHUT_RD</code>，关闭socket的读端，没有数据能够在socket上被读取且在socket的接受缓冲区的数据会被丢弃，其他后来到达的数据会被ACK并默默丢弃。</li>
+<li><code>SHUT_WR</code>，关闭socket的写端，即半关闭，在发送缓冲区的数据会被发送，之后发送一个FIN，不过还可以从socket中读取数据。</li>
+<li><code>SHUT_RDWR</code>，关闭socket的写端和读端，等价于调用<code>shutdown</code>两次。[疑问：这个选项和<code>close</code>有什么区别？[待引用:ch7.12]]</li>
+</ol>
+<h3 id="shutdown和close的区别"><a href="#shutdown和close的区别" class="headerlink" title="shutdown和close的区别"></a>shutdown和close的区别</h3><ol>
+<li><code>close</code>只会在文件描述符的引用计数为0时才真正的<code>close</code>从而发送FIN，而<code>shutdown</code>可以直接发送FIN。</li>
+<li><code>close</code>关闭读端和写端，而<code>shutdown</code>可以选择关闭其中一个或者两个都关闭。</li>
+</ol>
+<h2 id="poll函数"><a href="#poll函数" class="headerlink" title="poll函数"></a>poll函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;poll.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">poll</span><span class="params">(struct pollfd *fds, <span class="keyword">nfds_t</span> nfds, <span class="keyword">int</span> timeout)</span></span>;</span><br><span class="line"><span class="comment">// on error, -1 is return</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span>   fd;         <span class="comment">/* file descriptor */</span></span><br><span class="line">    <span class="keyword">short</span> events;     <span class="comment">/* requested events */</span></span><br><span class="line">    <span class="keyword">short</span> revents;    <span class="comment">/* returned events */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>struct pollfd</code>的<code>events</code>用来指示我们要测试的事件，<code>revents</code>用来返回描述符中发送的事件。<code>poll</code>有三种数据类型，分别为<code>normal</code>、<code>priority band</code>和<code>high-priority</code>，这些类型来源于<code>STREAMS-based</code>的实现[待引用: Figure 31.5]</p>
+<p>参数<code>timeout</code>指定了<code>poll</code>在返回前会等待的时间，单位是毫秒。其中，<code>INFTIM</code>表示永远等待，0表示马上非阻塞马上返回，&gt;0表示等待的毫秒数。</p>
+<p>当我们对<code>fds</code>中的文件描述符不再感兴趣时，我们可以将其中的成员<code>fd</code>设置为-1，这样在返回时<code>events</code>成员会被忽略，<code>revents</code>会被设置为0.</p>
+<p><code>fds</code>数组的大小可以通过<code>sysconf(_SC_OPEN_MAX)</code>来获得(1024)，这是进程能够打开的文件描述符的大小。</p>
+<p><strong>注意：</strong>书中代码测试<code>revents</code>时测试了<code>POLLERR</code>是为了测试当<code>read</code>fail时，可能是因为收到了client的RST，此时错误码为<code>ECONNRESET</code>，这时需要将<code>fds</code>对应的结构体的<code>fd</code>设置为-1，表示忽略此client即可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(client[i].revents &amp; (POLLRDNORM | POLLERR)) &#123;</span><br><span class="line">    <span class="keyword">if</span>( (ret = read(.....)) == <span class="number">-1</span>)</span><br><span class="line">     <span class="keyword">if</span>(errno == ECONNRESET) &#123;	</span><br><span class="line">        close(client[i].fd);</span><br><span class="line">        client[i].fd = <span class="number">-1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><ul>
+<li><p>6-1: 见<code>三个文件描述符集</code>一节。</p>
+</li>
+<li><p>6-2: 为什么<code>select</code>中的可写事件返回时，需要将<code>write</code>设置为非阻塞？</p>
+<p>因为若<code>write</code>设置为阻塞，我们可能在写数据时陷入阻塞，这样的话就没办法将控制流流向控制中枢(<code>select</code>)，从而造成错误。</p>
+</li>
+<li><p>6-3: <code>Figure 6-9</code>的代码的<code>if</code>改为<code>else</code>可能会导致永远无法写数据，比如不断有连接过来，<code>select</code>只能处理连接而不处理数据读取，若连接过多可能会造成超过进程的限制等问题。</p>
+</li>
+<li><p>6-4: 使用<code>setrlimit</code>来获得内核允许的文件描述符最大数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rlimit</span> <span class="title">glim</span>, <span class="title">slim</span>;</span></span><br><span class="line">    <span class="keyword">if</span>( getrlimit(RLIMIT_NOFILE, &amp;glim) == <span class="number">0</span>) &#123;</span><br><span class="line">        slim.rlim_cur = slim.rlim_max = glim.rlim_max;</span><br><span class="line">        <span class="comment">// soft limit = 1024, hard limit = 1048576</span></span><br><span class="line">        <span class="keyword">if</span>( setrlimit(RLIMIT_NOFILE, &amp;slim) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"setrlimit soft limit = %ld hard limit = %ld\n"</span>, slim.rlim_cur, slim.rlim_max);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// </span></span><br><span class="line">$ ulimit -a -H 	# 展示内核的限制，即hard limit</span><br><span class="line">$ ulimit -a		# 展示进程的限制，即soft limit</span><br></pre></td></tr></table></figure>
+<p>注意<code>soft limit &lt;= hard limit</code>，可以降低<code>hard limit</code>但不能比<code>soft limit</code>还要低。</p>
+</li>
+<li><p>6-5: <code>chargen</code>服务没法打开，但用其他程序测试，使用<code>shutdown</code>的<code>SHUT_RD</code>后，会主动发送FIN给Server。</p>
+</li>
+<li><p>6-7: <code>tcpservselect01.c</code>的第50行中的<code>read</code>先返回-1后返回0.[疑问：为什么后面会返回0?]</p>
+<p>client发送RST的方法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">linger</span> <span class="title">lger</span>;</span></span><br><span class="line">lger.l_onoff = <span class="number">1</span>;</span><br><span class="line">lger.l_linger = <span class="number">0</span>;</span><br><span class="line">setsockopt(connfd, SOL_SOCKET, SO_LINGER, &amp;lger, <span class="keyword">sizeof</span>(lger));</span><br><span class="line">close(connfd);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>6-8: 只需要调用<code>sysconf(_SC_OPEN_MAX)</code>然后<code>malloc</code>即可。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UNPv1/" rel="tag"># UNPv1</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/03/TLPI-Ch6-Processes/" rel="next" title="TLPI-Ch6-Processes">
+                <i class="fa fa-chevron-left"></i> TLPI-Ch6-Processes
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">44</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是IO多路复用"><span class="nav-number">1.</span> <span class="nav-text">什么是IO多路复用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IO多路复用的应用场景"><span class="nav-number">1.1.</span> <span class="nav-text">IO多路复用的应用场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IO模型"><span class="nav-number">2.</span> <span class="nav-text">IO模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#阻塞IO"><span class="nav-number">2.1.</span> <span class="nav-text">阻塞IO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非阻塞IO"><span class="nav-number">2.2.</span> <span class="nav-text">非阻塞IO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO多路复用"><span class="nav-number">2.3.</span> <span class="nav-text">IO多路复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信号驱动IO"><span class="nav-number">2.4.</span> <span class="nav-text">信号驱动IO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异步IO"><span class="nav-number">2.5.</span> <span class="nav-text">异步IO</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#异步IO和信号驱动IO的区别"><span class="nav-number">2.5.1.</span> <span class="nav-text">异步IO和信号驱动IO的区别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步IO和异步IO的区别"><span class="nav-number">2.6.</span> <span class="nav-text">同步IO和异步IO的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#select函数"><span class="nav-number">3.</span> <span class="nav-text">select函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#三个文件描述符集"><span class="nav-number">3.1.</span> <span class="nav-text">三个文件描述符集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#读就绪的情况"><span class="nav-number">3.1.1.</span> <span class="nav-text">读就绪的情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#写就绪的情况"><span class="nav-number">3.1.2.</span> <span class="nav-text">写就绪的情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异常就绪的情况"><span class="nav-number">3.1.3.</span> <span class="nav-text">异常就绪的情况</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用select来做定时器"><span class="nav-number">3.2.</span> <span class="nav-text">用select来做定时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#select的最大文件描述符数"><span class="nav-number">3.3.</span> <span class="nav-text">select的最大文件描述符数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标准IO缓冲区和select"><span class="nav-number">3.4.</span> <span class="nav-text">标准IO缓冲区和select</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pselect函数"><span class="nav-number">4.</span> <span class="nav-text">pselect函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shutdown函数"><span class="nav-number">5.</span> <span class="nav-text">shutdown函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#shutdown选项"><span class="nav-number">5.1.</span> <span class="nav-text">shutdown选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shutdown和close的区别"><span class="nav-number">5.2.</span> <span class="nav-text">shutdown和close的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#poll函数"><span class="nav-number">6.</span> <span class="nav-text">poll函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">7.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="3.2 socket address structure有些实现上的地址结构有一个成员为sin_len，用来指定当前地址结构的长度（本机上[POSIX实现]没有这个成员）。就算这个成员存在，我们也不需要设置它，除非我们在使用路由socket[待引用Ch18]。判断是否存在这个成员只需要编写程序操作这个成员然后通过编译结果来判断。[4.3BSD将长度加入到结构中，相应的socket函数调用就用不到长">
+<meta name="keywords" content="UNPv1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNPv1-Ch3-Sockets Introdution">
+<meta property="og:url" content="https://root1iu.github.io/2019/10/27/UNPv1-Ch3-Sockets-Introdution/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="3.2 socket address structure有些实现上的地址结构有一个成员为sin_len，用来指定当前地址结构的长度（本机上[POSIX实现]没有这个成员）。就算这个成员存在，我们也不需要设置它，除非我们在使用路由socket[待引用Ch18]。判断是否存在这个成员只需要编写程序操作这个成员然后通过编译结果来判断。[4.3BSD将长度加入到结构中，相应的socket函数调用就用不到长">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-03T11:43:14.772Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UNPv1-Ch3-Sockets Introdution">
+<meta name="twitter:description" content="3.2 socket address structure有些实现上的地址结构有一个成员为sin_len，用来指定当前地址结构的长度（本机上[POSIX实现]没有这个成员）。就算这个成员存在，我们也不需要设置它，除非我们在使用路由socket[待引用Ch18]。判断是否存在这个成员只需要编写程序操作这个成员然后通过编译结果来判断。[4.3BSD将长度加入到结构中，相应的socket函数调用就用不到长">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/10/27/UNPv1-Ch3-Sockets-Introdution/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>UNPv1-Ch3-Sockets Introdution | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/10/27/UNPv1-Ch3-Sockets-Introdution/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UNPv1-Ch3-Sockets Introdution
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-27 15:33:59" itemprop="dateCreated datePublished" datetime="2019-10-27T15:33:59+08:00">2019-10-27</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-11-03 19:43:14" itemprop="dateModified" datetime="2019-11-03T19:43:14+08:00">2019-11-03</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/UNPv1/" itemprop="url" rel="index"><span itemprop="name">UNPv1</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="3-2-socket-address-structure"><a href="#3-2-socket-address-structure" class="headerlink" title="3.2 socket address structure"></a>3.2 socket address structure</h2><p>有些实现上的地址结构有一个成员为<code>sin_len</code>，用来指定当前地址结构的长度（本机上[POSIX实现]没有这个成员）。就算这个成员存在，我们也不需要设置它，除非我们在使用路由socket[待引用Ch18]。判断是否存在这个成员只需要编写程序操作这个成员然后通过编译结果来判断。[4.3BSD将长度加入到结构中，相应的socket函数调用就用不到长度参数了]</p>
+<p><strong>注意： </strong> <strong>保存在地址结构的端口和地址都是大端表示的。</strong></p>
+<h3 id="IPv4-socket地址结构"><a href="#IPv4-socket地址结构" class="headerlink" title="IPv4 socket地址结构"></a>IPv4 socket地址结构</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// /usr/include/netinet/in.h</span></span><br><span class="line"><span class="comment">/* Internet address.  */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">uint32_t</span> <span class="keyword">in_addr_t</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    <span class="keyword">in_addr_t</span> s_addr;		<span class="comment">// normally uint32_t</span></span><br><span class="line">  &#125;;</span><br><span class="line"><span class="comment">/* Structure describing an Internet socket address.  */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    __SOCKADDR_COMMON (sin_);	<span class="comment">// sa_family_t sin_family;</span></span><br><span class="line">    <span class="keyword">in_port_t</span> sin_port;			<span class="comment">/* Port number.  */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">sin_addr</span>;</span>		<span class="comment">/* Internet address.  */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Pad to size of `struct sockaddr'.  */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> sin_zero[<span class="keyword">sizeof</span> (struct sockaddr) -</span><br><span class="line">			   __SOCKADDR_COMMON_SIZE -</span><br><span class="line">			   <span class="keyword">sizeof</span> (<span class="keyword">in_port_t</span>) -</span><br><span class="line">			   <span class="keyword">sizeof</span> (struct in_addr)];</span><br><span class="line">  &#125;;</span><br><span class="line"><span class="comment">// /usr/include/libr/sflib/common/sftypes.h</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="keyword">int</span> <span class="keyword">sa_family_t</span>;		<span class="comment">// 16-bit</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __SOCKADDR_COMMON(sa_prefix) \</span></span><br><span class="line">  <span class="keyword">sa_family_t</span> sa_prefix#<span class="meta">#family</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>在IPv4的地址结构中，<code>sin_zero</code>不需要为0，但若<code>bind</code>一个非通配(*)的IPv4地址时，这个成员必须为0，所以一般来说把这个成员置0.</p>
+<h3 id="IPv6-socket地址结构"><a href="#IPv6-socket地址结构" class="headerlink" title="IPv6 socket地址结构"></a>IPv6 socket地址结构</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Ditto, for IPv6.  */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in6</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    __SOCKADDR_COMMON (sin6_);</span><br><span class="line">    <span class="keyword">in_port_t</span> sin6_port;	<span class="comment">/* Transport layer port # */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> sin6_flowinfo;	<span class="comment">/* IPv6 flow information */</span> </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">in6_addr</span> <span class="title">sin6_addr</span>;</span>	<span class="comment">/* IPv6 address */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> sin6_scope_id;	<span class="comment">/* IPv6 scope-id */</span></span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>sin6_flowinfo</code>有两部分，低20 bits是flow label，高12 bits保留</li>
+<li><code>sin6_scope_id</code>标识具备范围的地址的范围</li>
+</ul>
+<h3 id="通用地址结构"><a href="#通用地址结构" class="headerlink" title="通用地址结构"></a>通用地址结构</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> &#123;</span></span><br><span class="line">    <span class="keyword">sa_family_t</span> sa_family;</span><br><span class="line">    <span class="keyword">char</span>        sa_data[<span class="number">14</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很明显，这个结构和IPv4和IPv6的前面部分是一致的，所以在使用socket类函数时，可以将IPv4和IPv6的地址结构的地址转换成通用地址结构的地址，然后让被调用函数去判断<code>sa_family</code>来了解是哪一个协议。</p>
+<h3 id="新型的通用地址结构"><a href="#新型的通用地址结构" class="headerlink" title="新型的通用地址结构"></a>新型的通用地址结构</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// /usr/include/x86_64-linux-gnu/bits/socket.h</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_storage</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    __SOCKADDR_COMMON (ss_);	<span class="comment">/* Address family, etc.  */</span></span><br><span class="line">    <span class="keyword">char</span> __ss_padding[_SS_PADSIZE];</span><br><span class="line">    __ss_aligntype __ss_align;	<span class="comment">/* Force desired alignment.  */</span></span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="与sockaddr的区别"><a href="#与sockaddr的区别" class="headerlink" title="与sockaddr的区别"></a>与sockaddr的区别</h3><ul>
+<li>若系统支持的socket地址结构有对齐要求，<code>sockaddr_storage</code>提供最严格的对齐要求</li>
+<li><code>sockaddr_storage</code>足够大，能够保存系统支持的所有socket地址结构</li>
+</ul>
+<h2 id="3-3-Value-Result-Arguments"><a href="#3-3-Value-Result-Arguments" class="headerlink" title="3.3 Value-Result Arguments"></a>3.3 Value-Result Arguments</h2><p>值结果参数就是将指针传入函数，然后结果通过该指针指向的内存返回，这个指针指向的内存既做值(value)也作结果(result)。</p>
+<h2 id="3-4-Byte-Ordering-Function"><a href="#3-4-Byte-Ordering-Function" class="headerlink" title="3.4 Byte Ordering Function"></a>3.4 Byte Ordering Function</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="comment">// return value in network byte order</span></span><br><span class="line"><span class="keyword">uint32_t</span> htonl(<span class="keyword">uint32_t</span> hostlong);</span><br><span class="line"><span class="keyword">uint16_t</span> htons(<span class="keyword">uint16_t</span> hostshort);</span><br><span class="line"><span class="comment">// return value in host byte order</span></span><br><span class="line"><span class="keyword">uint32_t</span> ntohl(<span class="keyword">uint32_t</span> netlong);</span><br><span class="line"><span class="keyword">uint16_t</span> ntohs(<span class="keyword">uint16_t</span> netshort);</span><br></pre></td></tr></table></figure>
+<h2 id="3-6-inet-aton-amp-inet-addr-amp-inet-ntoa"><a href="#3-6-inet-aton-amp-inet-addr-amp-inet-ntoa" class="headerlink" title="3.6 inet_aton &amp; inet_addr &amp; inet_ntoa"></a>3.6 inet_aton &amp; inet_addr &amp; inet_ntoa</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_aton</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cp, struct in_addr *inp)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">in_addr_t</span> inet_addr(<span class="keyword">const</span> <span class="keyword">char</span> *cp);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">inet_ntoa</span><span class="params">(struct in_addr in)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>这些函数提供从字符串IPv4的IP到大端二进制值的转换。</p>
+<ul>
+<li><code>inet_aton</code>提供从C字符串转换到32-bits二进制的功能，不过这个二进制存储在结构体<code>struct in_addr</code>中</li>
+<li><code>inet_ntoa</code>提供从结构体<code>struct in_addr</code>到IP字符串的转换，返回的<code>char*</code>是该函数的<code>static</code>变量，意味着该函数是<strong>不可重入的、线程不安全的</strong></li>
+<li><code>inet_addr</code>提供从字符串IP到32-bits二进制的转换，但这个函数有缺陷，基本<strong>被弃用</strong>。<ul>
+<li>当遇到非法IP时，该函数返回<code>INADDR_NONE</code>，这是一个error，但在机器中（我的机器），<code>INADDR_NONE</code>为<code>0xFFFF FFFF</code>，也就是说<code>255.255.255.255</code>在这种情况下被当成错误</li>
+<li>在有些手册中，该函数在遇到错误时返回-1而不是<code>INADDR_NONE</code>，在某些C编译器上-1和<code>in_addr_t(无符号)</code>比较时会出现问题[疑问：什么问题？]</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-7-inet-pton-amp-inet-ntop"><a href="#3-7-inet-pton-amp-inet-ntop" class="headerlink" title="3.7 inet_pton &amp; inet_ntop"></a>3.7 inet_pton &amp; inet_ntop</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// p is presentation and n is numeric</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_pton</span><span class="params">(<span class="keyword">int</span> af, <span class="keyword">const</span> <span class="keyword">char</span> *src, <span class="keyword">void</span> *addrptr)</span></span>;</span><br><span class="line"><span class="comment">// 1 is ok, 0 if src is not valid address, -1 if af is not a valid family </span></span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">inet_ntop</span><span class="params">(<span class="keyword">int</span> af, <span class="keyword">const</span> <span class="keyword">void</span> *addrptr, <span class="keyword">char</span> *strptr, <span class="keyword">socklen_t</span> size)</span></span>;</span><br><span class="line"><span class="comment">// NULL is error</span></span><br></pre></td></tr></table></figure>
+<p>当<code>af</code>指定的<code>family</code>不支持，那么两个函数都会返回<code>error</code>，且<code>errno</code>会被设置为<code>EAFNOSUPPORT</code>；</p>
+<h3 id="inet-pton"><a href="#inet-pton" class="headerlink" title="inet_pton"></a>inet_pton</h3><p>将字符串IP转换成对应IP版本的二进制结果，结果存在<code>addrptr</code>中</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_pton</span><span class="params">(<span class="keyword">int</span> fa, <span class="keyword">const</span> <span class="keyword">char</span> *strptr, <span class="keyword">void</span> *addrptr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(fa == AF_INET) &#123;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">addr</span>;</span></span><br><span class="line">        <span class="keyword">if</span>( (ret = inet_aton(strptr, &amp;addr)) == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="built_in">memcpy</span>(addrptr, &amp;addr, <span class="keyword">sizeof</span>(struct in_addr));</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125; </span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    errno = EAFNOSUPPORT;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;s</span><br></pre></td></tr></table></figure>
+<h3 id="inet-ntop"><a href="#inet-ntop" class="headerlink" title="inet_ntop"></a>inet_ntop</h3><p>将<code>addrptr</code>指向的二进制数字转换成字符串，<code>size</code>就是字符串的长度。若<code>size</code>不够存结果(包含<code>\0</code>)，那么返回<code>NULL</code>且<code>errno</code>设置为<code>ENOSPC</code>。</p>
+<p><strong>注意：</strong>返回的指针地址和<code>strptr</code>是一样的。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span>* <span class="title">inet_ntop</span><span class="params">(<span class="keyword">int</span> fa, <span class="keyword">const</span> <span class="keyword">void</span>* addrptr, <span class="keyword">char</span> *strptr, <span class="keyword">size_t</span> len)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>( fa == AF_INET) &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *addr = (<span class="keyword">const</span> <span class="keyword">char</span>* )addrptr;</span><br><span class="line">        <span class="keyword">char</span> ip[<span class="number">16</span>];</span><br><span class="line">        <span class="built_in">snprintf</span>(ip, <span class="keyword">sizeof</span>(ip), <span class="string">"%d.%d.%d.%d"</span>, addr[<span class="number">0</span>], addr[<span class="number">1</span>], addr[<span class="number">2</span>], addr[<span class="number">3</span>]);</span><br><span class="line">        <span class="comment">// 4</span></span><br><span class="line">        <span class="keyword">if</span>( <span class="built_in">strlen</span>(ip) &gt;= len ) &#123;</span><br><span class="line">            errno = ENOSPC;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">memcpy</span>(strptr, ip, len);</span><br><span class="line">        <span class="keyword">return</span> strptr;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 1</span></span><br><span class="line">    errno = EAFNOSUPPORT;   </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于需要传递地址结构体给函数，所以需要调用者了解IP类型(IPv4 or IPv6)和地址结构的格式。</p>
+<h2 id="3-8-sock-ntop和相关函数"><a href="#3-8-sock-ntop和相关函数" class="headerlink" title="3.8 sock_ntop和相关函数"></a>3.8 sock_ntop和相关函数</h2><p><code>sock_ntop</code>不需要调用者了解IP类型和地址结构，只需要将普通通用地址结构指针作为参数传递，然后根据其中的<code>sa_family</code>的类型来内部处理不同的IP类型。</p>
+<h2 id="3-9-readn-amp-writen-amp-readline函数"><a href="#3-9-readn-amp-writen-amp-readline函数" class="headerlink" title="3.9 readn &amp; writen &amp; readline函数"></a>3.9 readn &amp; writen &amp; readline函数</h2><p><code>read</code>和<code>write</code>系统调用可能会出现读取或写入返回值不同于要读取或写入的要求值，原因在于</p>
+<ul>
+<li><code>read</code>要读取的缓冲区没有数据了（比如读取管段和终端），或者<code>read</code>被信号中断了，返回值都有可能小于目标读取数</li>
+<li><code>write</code>在写入的硬盘设备被填满时或被信号中断时会导致返回值小于目标读取数。（信号中断的在写入任何数据之前，会导致<code>write fail with the error EINTR</code></li>
+</ul>
+<p>当出现<code>read</code>或<code>write</code>的数据量不够时，通常需要再次调用来获取足够的数据量。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// read 要特别注意被信号中断时没有读取任何数据时是错误，其errno是EINTR，这需要特殊处理</span></span><br><span class="line"><span class="comment">// 若被中断时已经读取部分数据则不算是错误</span></span><br><span class="line"><span class="keyword">ssize_t</span> readn(<span class="keyword">int</span> fd, <span class="keyword">void</span>* vptr, <span class="keyword">size_t</span> n) </span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">char</span> * tptr = (<span class="keyword">char</span>*)vptr;</span><br><span class="line">    <span class="keyword">size_t</span> left = n;</span><br><span class="line">    <span class="keyword">ssize_t</span> hasW;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(left &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>( (hasW = read(fd, tptr, left)) == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (errno == EINTR) &#123;</span><br><span class="line">            <span class="comment">// interrupted by a singal before any data was read</span></span><br><span class="line">                hasW = <span class="number">0</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125; </span><br><span class="line">        tptr += hasW;</span><br><span class="line">        left -= hasW;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> n - left;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// write return zero indicates nothing was written</span></span><br><span class="line"><span class="comment">// 但书中p89的writen实现中将write返回0处理为error，这是为什么[疑问?]</span></span><br><span class="line"><span class="keyword">ssize_t</span> writen(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">void</span> *vptr, <span class="keyword">size_t</span> n)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *wptr = (<span class="keyword">const</span> <span class="keyword">char</span>*) vptr;</span><br><span class="line">    <span class="keyword">size_t</span> nleft = n;</span><br><span class="line">    <span class="keyword">ssize_t</span> hasW;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>( nleft &gt; <span class="number">0</span> ) &#123;</span><br><span class="line">        <span class="keyword">if</span> ( (hasW = write(fd, wptr, nleft)) == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> ( errno == EINTR) &#123;</span><br><span class="line">                hasW = <span class="number">0</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span>  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        nleft -= hasW;</span><br><span class="line">        wptr += hasW;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> n - nleft;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>当<code>read &amp; write</code>返回-1且<code>errno</code>被置为<code>EINTR</code>时表示这两个调用在读取或写入数据之前就被信号中断了，但读取和写入数据后被信号中断不被视为error。</p>
+<p><code>readline</code>的实现就有点麻烦了，因为需要多次调用<code>read</code>来读取数据，从而判断是否读取到<code>\n</code>。但由于<code>read</code>是系统调用，频繁的上下文切换会导致函数执行效率低下，所以下一个考虑到的是带缓冲区的stdio，但stdio的缓冲区不透明，这导致无法获知读取到缓冲区的数据是否超过1行[疑问：知道是否超过一行又有什么意义呢？]。所以书中就实现了自己的带缓冲区的读取函数，这个缓冲区暴露在调用者面前，调用者可以直到缓冲区已经读取了那些数据。但由于预先读取数据到缓冲区中，所以<code>select</code>之类的函数（水平触发）没办法了解到他们等待的数据被读取到缓冲区而不被提醒。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> ssize_t <span class="title">my_read</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">char</span>* ptr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">ssize_t</span> nRead;</span><br><span class="line">    <span class="keyword">if</span>( buffLeft == <span class="number">0</span> ) &#123;</span><br><span class="line">begin:</span><br><span class="line">        <span class="keyword">if</span>( (nRead = read(fd, buff, <span class="keyword">sizeof</span>(buff))) == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (errno == EINTR) &#123;</span><br><span class="line">                nRead = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">goto</span> begin;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nRead == <span class="number">0</span>) &#123;    <span class="comment">// 没有判断读取字节数为0的情况</span></span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        buffLeft += nRead;</span><br><span class="line">        nptr = buff;</span><br><span class="line">    &#125;</span><br><span class="line">    *ptr = *nptr++;</span><br><span class="line">    <span class="comment">// 没有-1</span></span><br><span class="line">    buffLeft--;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 书中的实现是直接计算读取的字节数，书中的设计更直观一点更简洁一点</span></span><br><span class="line"><span class="keyword">ssize_t</span> readline(<span class="keyword">int</span> fd, <span class="keyword">void</span> *vptr, <span class="keyword">size_t</span> maxlen)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">ssize_t</span> nRead;</span><br><span class="line">    <span class="keyword">char</span>* cptr = (<span class="keyword">char</span>*) vptr;</span><br><span class="line">    <span class="keyword">size_t</span> nleft = maxlen;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(nleft) &#123;</span><br><span class="line">        <span class="keyword">if</span>( (nRead = my_read(fd, cptr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>( nRead == <span class="number">0</span> ) &#123; <span class="comment">// 没有判断读取到0</span></span><br><span class="line">            *cptr = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">return</span> maxlen - nleft;</span><br><span class="line">        &#125;</span><br><span class="line">        nleft -= nRead;</span><br><span class="line">        <span class="keyword">if</span> (*cptr == <span class="string">'\n'</span>) &#123;</span><br><span class="line">            cptr++;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        cptr++;</span><br><span class="line">    &#125;</span><br><span class="line">    *cptr = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> maxlen - nleft;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">ssize_t</span> readlinebuf(<span class="keyword">void</span> **vptrptr)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(buffLeft)</span><br><span class="line">        *vptrptr = nptr;</span><br><span class="line">    <span class="keyword">return</span> buffLeft;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><ol>
+<li>因为返回时可能会修改其值，所以需要传指针，用来修改底层数据</li>
+<li>void指针转char指针是为了方便指针操作</li>
+<li>这道题没能理解题意<ul>
+<li><code>inet_aton</code>不能用于IPv6但题目说在IPv6的情况下也要调用<code>inet_aton</code></li>
+<li>什么叫<code>IPv4-mapped IPv6 address</code></li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UNPv1/" rel="tag"># UNPv1</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/18/KM-27-二叉搜索树的后序遍历序列/" rel="next" title="KM-27-二叉搜索树的后序遍历序列">
+                <i class="fa fa-chevron-left"></i> KM-27-二叉搜索树的后序遍历序列
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/28/UNPv1-Ch4-ElementaryTcpSockets/" rel="prev" title="UNPv1-Ch4-ElementaryTcpSockets">
+                UNPv1-Ch4-ElementaryTcpSockets <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">44</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-socket-address-structure"><span class="nav-number">1.</span> <span class="nav-text">3.2 socket address structure</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IPv4-socket地址结构"><span class="nav-number">1.1.</span> <span class="nav-text">IPv4 socket地址结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IPv6-socket地址结构"><span class="nav-number">1.2.</span> <span class="nav-text">IPv6 socket地址结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通用地址结构"><span class="nav-number">1.3.</span> <span class="nav-text">通用地址结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新型的通用地址结构"><span class="nav-number">1.4.</span> <span class="nav-text">新型的通用地址结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#与sockaddr的区别"><span class="nav-number">1.5.</span> <span class="nav-text">与sockaddr的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-Value-Result-Arguments"><span class="nav-number">2.</span> <span class="nav-text">3.3 Value-Result Arguments</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-Byte-Ordering-Function"><span class="nav-number">3.</span> <span class="nav-text">3.4 Byte Ordering Function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-6-inet-aton-amp-inet-addr-amp-inet-ntoa"><span class="nav-number">4.</span> <span class="nav-text">3.6 inet_aton &amp; inet_addr &amp; inet_ntoa</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-7-inet-pton-amp-inet-ntop"><span class="nav-number">5.</span> <span class="nav-text">3.7 inet_pton &amp; inet_ntop</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#inet-pton"><span class="nav-number">5.1.</span> <span class="nav-text">inet_pton</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inet-ntop"><span class="nav-number">5.2.</span> <span class="nav-text">inet_ntop</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-8-sock-ntop和相关函数"><span class="nav-number">6.</span> <span class="nav-text">3.8 sock_ntop和相关函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-9-readn-amp-writen-amp-readline函数"><span class="nav-number">7.</span> <span class="nav-text">3.9 readn &amp; writen &amp; readline函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">8.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
