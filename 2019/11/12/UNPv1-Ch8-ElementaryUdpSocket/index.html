@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="recvfrom &amp;amp; sendto函数123456789#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;sys/socket.h&amp;gt;ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,                 struct sockaddr *from, socklen_t">
+<meta name="keywords" content="UNPv1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNPv1-Ch8-ElementaryUdpSocket">
+<meta property="og:url" content="https://root1iu.github.io/2019/11/12/UNPv1-Ch8-ElementaryUdpSocket/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="recvfrom &amp;amp; sendto函数123456789#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;sys/socket.h&amp;gt;ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,                 struct sockaddr *from, socklen_t">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-12T14:08:22.304Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UNPv1-Ch8-ElementaryUdpSocket">
+<meta name="twitter:description" content="recvfrom &amp;amp; sendto函数123456789#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;sys/socket.h&amp;gt;ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,                 struct sockaddr *from, socklen_t">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/11/12/UNPv1-Ch8-ElementaryUdpSocket/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>UNPv1-Ch8-ElementaryUdpSocket | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/11/12/UNPv1-Ch8-ElementaryUdpSocket/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UNPv1-Ch8-ElementaryUdpSocket
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-12 22:07:42 / 修改时间：22:08:22" itemprop="dateCreated datePublished" datetime="2019-11-12T22:07:42+08:00">2019-11-12</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/UNPv1/" itemprop="url" rel="index"><span itemprop="name">UNPv1</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="recvfrom-amp-sendto函数"><a href="#recvfrom-amp-sendto函数" class="headerlink" title="recvfrom &amp; sendto函数"></a>recvfrom &amp; sendto函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ssize_t</span> recvfrom(<span class="keyword">int</span> sockfd, <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> len, <span class="keyword">int</span> flags,</span><br><span class="line">                 struct sockaddr *from, <span class="keyword">socklen_t</span> *addrlen);</span><br><span class="line">                </span><br><span class="line"><span class="keyword">ssize_t</span> sendto(<span class="keyword">int</span> sockfd, <span class="keyword">const</span> <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> len, <span class="keyword">int</span> flags,</span><br><span class="line">               <span class="keyword">const</span> struct sockaddr *to, <span class="keyword">socklen_t</span> addrlen);</span><br><span class="line"><span class="comment">// in error, -1 is return</span></span><br></pre></td></tr></table></figure>
+<p><code>sockfd</code>、<code>buf</code>、<code>len</code>这三个参数和<code>write</code>、<code>read</code>的参数意义相同。<code>flags</code>参数的具体含义在14章会提及[待引用: Ch-14]。<code>to</code>和<code>from</code>分别是发送数据的目的地址和接收数据的源地址的地址结构体。</p>
+<h3 id="recvfrom"><a href="#recvfrom" class="headerlink" title="recvfrom"></a>recvfrom</h3><p><code>recvfrom</code>就是从UDP的接收缓冲区中读取下一个数据报。</p>
+<p>当我们对数据报的源地址信息不感兴趣时，<code>recvfrom</code>的第5-6个参数可以置为NULL，但这存在一个缺陷就是数据报可能被伪造。</p>
+<p>如果<code>recvfrom</code>接收不到数据时会陷入阻塞，可以使用定时器来避免长时间阻塞[待引用: Ch-14.2]。</p>
+<p>[疑问：书上说UDP socket中的目的地址只能通过设置IP选项<code>IP_RECVDSTADDR</code>且调用<code>recvmsg</code>才能获得，但实际测试不设置选项，调用<code>recvfrom</code>也能通过<code>recvfrom</code>返回的地址结构来获得目的地址，这里的目的地址是指<code>recvfrom</code>调用方的目的地址还是说是对端的目的地址？]</p>
+<h3 id="sendto"><a href="#sendto" class="headerlink" title="sendto"></a>sendto</h3><p>当第一次调用<code>sendto</code>时，socket还没有绑定一个本地端口时，内核会为它反而分配一个随机端口。</p>
+<hr>
+<p>这两个函数一般用于UDP，虽然可以在TCP中使用。</p>
+<p><strong>注意：</strong><code>recvfrom</code>返回0说明数据报的数据部分为空(但有20字节的IPv4头和8字节的UDP头)，和TCP不一样(TCP返回0表明对端发送了FIN)。</p>
+<h2 id="验证收到的响应"><a href="#验证收到的响应" class="headerlink" title="验证收到的响应"></a>验证收到的响应</h2><p>若我们收到数据报后不对其进行检查(检查源IP和源端口)，那么就可能出现非指定服务器发送的伪造的数据报。</p>
+<h3 id="弱端系统模型-weak-end-system-model"><a href="#弱端系统模型-weak-end-system-model" class="headerlink" title="弱端系统模型(weak end system model)"></a>弱端系统模型(weak end system model)</h3><p>大部分实现都会接收目的地址是主机IP地址中其中一个的数据报，而不管数据报是在哪个接口到达的，这种就是弱端系统模型。</p>
+<h3 id="强端系统模型-strong-end-system-model"><a href="#强端系统模型-strong-end-system-model" class="headerlink" title="强端系统模型(strong end system model)"></a>强端系统模型(strong end system model)</h3><p>强端系统模型则是只接收到达端口和目的地址一致的数据报。</p>
+<h2 id="服务器程序未运行"><a href="#服务器程序未运行" class="headerlink" title="服务器程序未运行"></a>服务器程序未运行</h2><p>对于TCP来说，服务器未运行，客户端进行写入时服务器会直接返回RST，这样客户端也可以得知服务器没有运行服务。对于UDP来说却不行，因为UDP无连接，对未运行服务的服务器发送报文，服务器会回应一个ICMP错误报文<code>port unreachable</code>，但这个ICMP错误却没办法被client进程捕获。我们称这种ICMP错误为异步错误(<code>asynchronous error</code>)，这个错误(本例中)由<code>sendto</code>造成但<code>sendto</code>却正常返回(UDP的输出操作的成功返回仅仅意味着接口的输出队列有足够的空间容纳这个报文)。</p>
+<p>异步错误(<code>asynchronous error</code>)的解决方法有将UDP socket设置为连接socket(即调用<code>connect</code>)</p>
+<p><strong>注意：</strong><del>Linux也可以返回返回ICMP的(<code>destination unreachable</code>)错误，只需要将<code>SO_BSDCOMPAT</code>选项unable。</del>[经测试使用<code>recvfrom</code>接收时不成立]</p>
+<h2 id="UDP实例"><a href="#UDP实例" class="headerlink" title="UDP实例"></a>UDP实例</h2><p>UDP socket在第一次调用<code>sendto</code>后，内核会随机分配一个端口给该socket，但每次client发送数据报时的IP却可能每次都不同。</p>
+<ul>
+<li>client绑定在socket上绑定IP但内核将数据报从另一个接口发出，此时client的数据报出口的接口和其数据报内容中的源地址不匹配(比如绑定局域网IP到socket上，但指定目标为回环地址，此时出口接口为lo而不是局域网接口，但数据报的源IP是局域网IP)</li>
+</ul>
+<h2 id="UDP的connect函数"><a href="#UDP的connect函数" class="headerlink" title="UDP的connect函数"></a>UDP的connect函数</h2><p>和TCP不同，UDP调用<code>connect</code>函数时，内核检查错误(比如明显不可达的地址)，记录对端的IP和端口，然后马上返回进程。当我们在UDP socket上调用<code>connect</code>后就意味着这个UDP socket是<code>connected socket</code>，与普通未连接的UDP socket来说，连接的socket有3点不同</p>
+<ol>
+<li>我们不需要再为输出操作指定IP和端口，我们可以使用<code>write</code>或<code>send</code>来发送数据。当然也可以使用<code>sendto</code>，但第5个参数应该为NULL，第6个参数应该为0.</li>
+<li>我们可以使用<code>read</code>、<code>recv</code>或<code>recvmsg</code>来接收数据。不过内核只会接收来自<code>connect</code>指定的IP(这个IP可能是多播或广播地址)的数据报，若数据报内容来自非指定IP，那么这个数据报会被忽略，这种策略限制了连接的UDP socket只和一个对端通信。</li>
+<li>连接的UDP socket可以接收异步错误。</li>
+</ol>
+<p>调用<code>connect</code>不会向对端发送任何数据，只是内核在本地操作时保存了对端的IP和端口而已。</p>
+<h3 id="多次调用connect函数"><a href="#多次调用connect函数" class="headerlink" title="多次调用connect函数"></a>多次调用connect函数</h3><ul>
+<li>指定一个新的IP和端口</li>
+<li>使socket断开连接，具体操作是将<code>connect</code>的第二个参数地址结构体的<code>sin_family</code>设置为<code>AF_UNSPEC</code>。</li>
+</ul>
+<h3 id="连接的UDP-socket和非连接的UDP-socket的性能区别"><a href="#连接的UDP-socket和非连接的UDP-socket的性能区别" class="headerlink" title="连接的UDP socket和非连接的UDP socket的性能区别"></a>连接的UDP socket和非连接的UDP socket的性能区别</h3><ul>
+<li>非连接的UDP socket在调用<code>sendto</code>函数时会短暂的先链接socket，然后发送数据，最后断开socket，这期间内核会多次复制地址结构体。</li>
+<li>连接的UDP socket则在发送数据后不会断开socket，这样就会节省下多次连接和断开的开销，且内核只需要复制地址结构体一次。</li>
+</ul>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><ul>
+<li>E-8.1: TCP可以直接返回4096个字节，而<code>recvfrom</code>只能获取一个数据报的内容，所以<code>recvfrom</code>会返回2048.</li>
+<li>E-8.2: 当地址结构长度不一致时会出现错误。</li>
+<li>E-8.4: Ubuntu测试失败。[待解决]</li>
+<li>E-8.5: 监听socket是否有接收缓冲区?书上答案说是可能有，但不知道怎么测试。[待测试]</li>
+<li>E-8.7: 从理论上说在client上添加<code>printf</code>会增加包间延迟，会增加服务器的收包率，在Server上添加<code>printf</code>则相反，但由于没法找到符合条件的两台主机所以没有测试。</li>
+<li>E-8.8: 数据报包含IP头(20)和UDP头(8)，加上IPv4的头部的长度限制为16 bits，所以最长为65535 - 20 - 8 = 65507.注意在一些机器上需要设置发送缓冲区和接受缓冲区的大小，可能会比65507要小。</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UNPv1/" rel="tag"># UNPv1</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/12/UNPv1-Ch7-SocketOptions/" rel="next" title="UNPv1-Ch7-SocketOptions">
+                <i class="fa fa-chevron-left"></i> UNPv1-Ch7-SocketOptions
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/12/内网穿透实例/" rel="prev" title="内网穿透实例">
+                内网穿透实例 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">49</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#recvfrom-amp-sendto函数"><span class="nav-number">1.</span> <span class="nav-text">recvfrom &amp; sendto函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#recvfrom"><span class="nav-number">1.1.</span> <span class="nav-text">recvfrom</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sendto"><span class="nav-number">1.2.</span> <span class="nav-text">sendto</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#验证收到的响应"><span class="nav-number">2.</span> <span class="nav-text">验证收到的响应</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#弱端系统模型-weak-end-system-model"><span class="nav-number">2.1.</span> <span class="nav-text">弱端系统模型(weak end system model)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#强端系统模型-strong-end-system-model"><span class="nav-number">2.2.</span> <span class="nav-text">强端系统模型(strong end system model)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务器程序未运行"><span class="nav-number">3.</span> <span class="nav-text">服务器程序未运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UDP实例"><span class="nav-number">4.</span> <span class="nav-text">UDP实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UDP的connect函数"><span class="nav-number">5.</span> <span class="nav-text">UDP的connect函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#多次调用connect函数"><span class="nav-number">5.1.</span> <span class="nav-text">多次调用connect函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#连接的UDP-socket和非连接的UDP-socket的性能区别"><span class="nav-number">5.2.</span> <span class="nav-text">连接的UDP socket和非连接的UDP socket的性能区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">6.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

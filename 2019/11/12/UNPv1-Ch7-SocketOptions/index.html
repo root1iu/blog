@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="getsockopt &amp;amp; setsockopt函数123456#include &amp;lt;sys/types.h&amp;gt;          /* See NOTES */#include &amp;lt;sys/socket.h&amp;gt;int getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen)">
+<meta name="keywords" content="UNPv1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNPv1-Ch7-SocketOptions">
+<meta property="og:url" content="https://root1iu.github.io/2019/11/12/UNPv1-Ch7-SocketOptions/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="getsockopt &amp;amp; setsockopt函数123456#include &amp;lt;sys/types.h&amp;gt;          /* See NOTES */#include &amp;lt;sys/socket.h&amp;gt;int getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen)">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-12T14:17:35.735Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UNPv1-Ch7-SocketOptions">
+<meta name="twitter:description" content="getsockopt &amp;amp; setsockopt函数123456#include &amp;lt;sys/types.h&amp;gt;          /* See NOTES */#include &amp;lt;sys/socket.h&amp;gt;int getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen)">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/11/12/UNPv1-Ch7-SocketOptions/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>UNPv1-Ch7-SocketOptions | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/11/12/UNPv1-Ch7-SocketOptions/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UNPv1-Ch7-SocketOptions
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-12 22:04:25 / 修改时间：22:17:35" itemprop="dateCreated datePublished" datetime="2019-11-12T22:04:25+08:00">2019-11-12</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/UNPv1/" itemprop="url" rel="index"><span itemprop="name">UNPv1</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="getsockopt-amp-setsockopt函数"><a href="#getsockopt-amp-setsockopt函数" class="headerlink" title="getsockopt &amp; setsockopt函数"></a>getsockopt &amp; setsockopt函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;          /* See NOTES */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getsockopt</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> level, <span class="keyword">int</span> optname, <span class="keyword">void</span> *optval, <span class="keyword">socklen_t</span> *optlen)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> level, <span class="keyword">int</span> optname, <span class="keyword">const</span> <span class="keyword">void</span> *optval, <span class="keyword">socklen_t</span> optlen)</span></span>;</span><br><span class="line"><span class="comment">// on error, -1 is return</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>sockfd</code>: 是一个打开的socket的描述符</li>
+<li><code>level</code>: 指定了如何解释选项</li>
+<li><code>optname</code>: 就是选项的名字</li>
+<li><code>optval &amp; optlen</code>: 选项的名字和长度</li>
+</ul>
+<h2 id="socket状态"><a href="#socket状态" class="headerlink" title="socket状态"></a>socket状态</h2><p>有些socket选项在不同的时间会有不同的值。</p>
+<p>有些socket选项会从listen socket上继承下来，比如有</p>
+<ul>
+<li><code>SO_DEBUG</code></li>
+<li><code>SO_DONTROUTE</code></li>
+<li><code>SO_KEEPALIVE</code></li>
+<li><code>SO_LINGER</code></li>
+<li><code>SO_OBBINLINE</code></li>
+<li><code>SO_RCVBUF</code></li>
+<li><code>SO_RCVLOWAT</code></li>
+<li><code>SO_SNDBUF</code></li>
+<li><code>SO_SNDLOWAT</code></li>
+<li><code>TCP_MAXSEG</code></li>
+<li><code>TCP_NODELAY</code></li>
+</ul>
+<p>所以为了确保连接socket的某一选项在三次握手后被设置，需要为listen socket上设置socket选项。</p>
+<h2 id="通用socket选项-SOL-SOCKET"><a href="#通用socket选项-SOL-SOCKET" class="headerlink" title="通用socket选项(SOL_SOCKET)"></a>通用socket选项(SOL_SOCKET)</h2><h3 id="SO-BROADCAST"><a href="#SO-BROADCAST" class="headerlink" title="SO_BROADCAST"></a>SO_BROADCAST</h3><p>这个选项用来使socket获得广播消息的能力。但广播只有在消息报socket上才被支持(<code>datagram socket</code>)且只能在支持广播的网络上使用。(端到端和基于连接的协议(TCP)是不能使用广播的)</p>
+<p><strong>注意：</strong>判断地址是否为广播地址不是由用户判断的，而是内核的行为。当我们未设置<code>SO_BROADCAST</code>选项但IP地址</p>
+<p>是广播地址时，会返回<code>EACCES</code>错误。</p>
+<h3 id="SO-DEBUG"><a href="#SO-DEBUG" class="headerlink" title="SO_DEBUG"></a>SO_DEBUG</h3><p>这个选项只在TCP上支持，当这个选项被设置时，内核监控TCP socket数据包上的细节信息(这些信息被保存在内核的一个循环缓冲区中)[疑问：如何测试?]。</p>
+<h3 id="SO-DONTROUE"><a href="#SO-DONTROUE" class="headerlink" title="SO_DONTROUE"></a>SO_DONTROUE</h3><p>这个选项指定出去的数据包不通过底层协议的路由机制。这个选项通常是路由守护进程(如routed &amp; gated)使用，用来略过路由表，强制数据包从特定的接口输出。</p>
+<h3 id="SO-ERROR"><a href="#SO-ERROR" class="headerlink" title="SO_ERROR"></a>SO_ERROR</h3><p>当一个socket上发生了错误，内核会将错误码设置在选项<code>SO_ERROR</code>上，这就是待处理错误(pending error)。进程也可以通过以下两种方法来马上获得错误的通知：</p>
+<ol>
+<li>进程阻塞在 <code>select</code>上，错误可以通过读就绪或写就绪来通知进程。</li>
+<li>信号驱动IO会在错误发生后产生一个<code>SIGIO</code>信号。</li>
+</ol>
+<p>进程可以通过<code>getsockopt</code>获得错误的值，之后<strong>内核会将其重新置0</strong>.如果<code>SO_ERROR</code>的值非0，调用<code>read</code>和<code>write</code>会返回-1，并将<code>errno</code>设置为<code>SO_ERROR</code>的值，且该值会在随后被内核置为0.<strong>但若仍有数据在socket的读缓冲区中，那么<code>read</code>会返回读取的数据量而不是错误。</strong>[疑问: 这样的话错误应该被如何获知？]</p>
+<p><strong>注意：</strong></p>
+<ul>
+<li>无论待处理错误在什么时候被返回，在这之后内核都会将其置为0.</li>
+<li><code>SO_ERROR</code>只能获取不能设置。</li>
+</ul>
+<h3 id="SO-KEEPALIVE"><a href="#SO-KEEPALIVE" class="headerlink" title="SO_KEEPALIVE"></a>SO_KEEPALIVE</h3><p>当一个TCP socket设置了<code>SO_KEEPALIVE</code>后，超过两小时没有数据来往，那么TCP会自动发送一个<code>keep-alive</code>探针给对端(<code>keep-alive</code>探针是一个必须回应的TCP数据包)。有三种可能场景</p>
+<ol>
+<li>对端返回一个ACK，此时表明对端还活着。</li>
+<li>对端返回一个RST，表示对端崩溃了或者重启了，那么socket的待处理错误被设置为<code>ECONNREST</code>且socket会被关闭。</li>
+<li>对端没有反应，一些TCP会再发送8个探针，每个探针间隔75秒，在11min30s后还没收到回应的话TCP就会放弃，并将待处理错误设置为<code>ETIMEDOUT</code>且关闭socket。</li>
+</ol>
+<p>若在发送探针的期间收到ICMP的错误报文，那么会将对应的错误返回并关闭socket。</p>
+<p><code>SO_KEEPALIVE</code>选项就是服务器用来避免半开连接(<code>half-open connection</code>)，半开连接指的是客户端down但服务端不知道，仍然为其保持连接的一种情况。</p>
+<h3 id="SO-LINGER"><a href="#SO-LINGER" class="headerlink" title="SO_LINGER"></a>SO_LINGER</h3><p>这个选项指定了基于连接的协议的socket的<code>close</code>函数的行为。默认情况下，<code>close</code>是马上返回(若有数据在发送缓冲区中未发送，会将缓冲区中的数据发送到对端)。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># /user/include/bits/socket.h</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">linger</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    <span class="keyword">int</span> l_onoff;		<span class="comment">/* Nonzero to linger on close.  */</span></span><br><span class="line">    <span class="keyword">int</span> l_linger;		<span class="comment">/* Time to linger.  */</span></span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+<ol>
+<li><code>l_onoff</code>为0，这个选项被关闭，<code>l_linger</code>被忽略，<code>close</code>行为和默认的一样。</li>
+<li><code>l_onoff</code>非0且<code>l_linger</code>为0，当<code>close</code>时，TCP会中止(abort)，中止的意思是TCP会丢弃发送缓冲区中的遗留数据然后发送一个RST到对端，而不是说正常的四次挥手。<strong>这种选择可以避免<code>TIME_WAIT</code>状态但新的替身socket可能会收到上一个连接的数据包</strong></li>
+<li><code>l_onoff</code>非0且<code>l_linger</code>非0，那么<code>close</code>调用后返回前，进程会阻塞直到:1) 等待<code>l_linger</code>秒 2) 所有未发送的数据都被确认。<strong>如果在发送缓冲区中的数据在计时器耗尽之前没有全部收到确认，那么<code>close</code>会返回<code>EWOULDBLOCK</code>然后剩余的数据会被丢弃。</strong></li>
+</ol>
+<p>设置<code>SO_LINGER</code>选项可以知道对端TCP是否接受了数据(包括FIN)，但无法知道对端应用是否接收到数据。要想直到对端应用是否接收到数据，可以在本端<code>shutdown</code>掉写端，然后<code>read</code>，直到<code>read</code>返回0(表示对端发送FIN)；也可以使用应用级的接受确认机制，即在数据中使用特殊的符号或协议确认。</p>
+<h3 id="SO-OOBINLINE"><a href="#SO-OOBINLINE" class="headerlink" title="SO_OOBINLINE"></a>SO_OOBINLINE</h3><p>设置这个选项后，带外数据(<code>out-of-band</code>)将会放入普通的输入队列。[待引用: Ch-24]</p>
+<h3 id="SO-RCVBUF-amp-SO-SNDBUF"><a href="#SO-RCVBUF-amp-SO-SNDBUF" class="headerlink" title="SO_RCVBUF &amp; SO_SNDBUF"></a>SO_RCVBUF &amp; SO_SNDBUF</h3><p><strong>注意：</strong>这两个选项的值是64位的(64位机器下)。</p>
+<p>TCP、UDP和SCTP都有接收缓冲区。</p>
+<ul>
+<li>TCP的接收缓冲区不会溢出，因为通过TCP的窗口机制，对端不会发送超过缓冲区余量的数据量。</li>
+<li>对于UDP来说，若UDP的数据报到达时发现缓冲区已满，那么该数据报会被丢弃(比如一个速率较快的发送者和一个速率较慢的接受者就会造成这种情况[待引用: Ch-8.13])。</li>
+</ul>
+<h4 id="SO-RCVBUF设置时机"><a href="#SO-RCVBUF设置时机" class="headerlink" title="SO_RCVBUF设置时机"></a>SO_RCVBUF设置时机</h4><p>对于client来说，<code>SO_RCVBUF</code>应该在调用<code>connect()</code>之前被设置。对于Server来说，<code>SO_RCVBUF</code>则应该在<code>listen()</code>之前设置在监听socket上。</p>
+<h4 id="socket缓冲区大小"><a href="#socket缓冲区大小" class="headerlink" title="socket缓冲区大小"></a>socket缓冲区大小</h4><p>socket的缓冲区大小应该设置&gt;=4倍的MSS值，因为TCP有一个快恢复算法，如果小于4倍MSS值，那么就存不下4个重复的确认，那么快恢复算法就没办法执行了。</p>
+<p>注意当缓冲区小于带宽大小时，会导致带宽的性能没有得到很好的利用，此时瓶颈就是缓冲区大小。</p>
+<h3 id="SO-RCVLOWAT-amp-SO-SNDLOWAT"><a href="#SO-RCVLOWAT-amp-SO-SNDLOWAT" class="headerlink" title="SO_RCVLOWAT &amp; SO_SNDLOWAT"></a>SO_RCVLOWAT &amp; SO_SNDLOWAT</h3><p>低水位标识是用来判断读就绪或写就绪的阈值。</p>
+<ul>
+<li><code>SO_RCVLOWAT</code>用来设置接收低水位标识，这个标识指明了缓冲区有多少数据量会激活读就绪，在TCP、UDP和SCTP中通常为1.</li>
+<li><code>SO_SNDLOWAT</code>用来设置发送低水位标识，这个标识指定了缓冲区有多少富余时会激活写就绪，在TCP通常为2048 bytes；在UDP中，缓冲区中富余的空间不会变，因为UDP不会保存数据报的副本，所以当UDP的发送缓冲区大小大于低水位标识时，会一直激活写就绪。</li>
+</ul>
+<h3 id="SO-RCVTIMEO-amp-SO-SNDTIMEO"><a href="#SO-RCVTIMEO-amp-SO-SNDTIMEO" class="headerlink" title="SO_RCVTIMEO &amp; SO_SNDTIMEO"></a>SO_RCVTIMEO &amp; SO_SNDTIMEO</h3><p>这两个选项可以让我们在发送和接收时设置一个计时器。这个计时器影响<code>read()</code>、<code>readv()</code>、<code>recv()</code>、<code>recvfrom()</code>、<code>recvmsg()</code>、<code>write()</code>、<code>writev()</code>、<code>send()</code>、<code>sendto()</code>、<code>sendmsg()</code>。[待引用: Ch-14.2]</p>
+<h3 id="SO-REUSEADDR-amp-SO-REUSEPORT"><a href="#SO-REUSEADDR-amp-SO-REUSEPORT" class="headerlink" title="SO_REUSEADDR &amp; SO_REUSEPORT"></a>SO_REUSEADDR &amp; SO_REUSEPORT</h3><h4 id="SO-REUSEADDR的用途"><a href="#SO-REUSEADDR的用途" class="headerlink" title="SO_REUSEADDR的用途"></a>SO_REUSEADDR的用途</h4><ol>
+<li><code>SO_REUSEADDR</code>可以在一个已经存在连接的端口上创建监听socket并<code>bind()</code>。通常情况下，当我们在服务器中<code>fork</code>一个子进程来处理连接时，父进程(监听进程)down了，那么我们没办法重启父进程来监听，使我们的服务继续运行(<code>Address already in use</code>错误)。但若我们在<code>bind()</code>之前设置<code>SO_REUSEADDR</code>，我们就可以重启我们的服务。这是<code>SO_REUSEADDR</code>最频繁的一种用途。<strong>注意父进程需要监听wildcard地址</strong></li>
+<li><code>SO_REUSEADDR</code>允许服务在一个相同的端口处运行(绑定在wildcard地址上)，只要每个实例绑定在不同的IP地址上。(相同地址相同端口的话是不能成功绑定的，要一个wildcard地址)。</li>
+<li><code>SO_REUSEADDR</code>允许单进程的不同socket绑定(不同的IP):(相同的端口)，这对于UDP来说比较重要，因为UDP通常需要通过client的请求来获知请求的目的IP。[待引用]</li>
+<li><code>SO_REUSEADDR</code>允许完全复制绑定(completely duplicate bindings)，不同的socket绑定相同的IP:PORT，只有UDP才支持。</li>
+</ol>
+<h4 id="SO-REUSEPORT"><a href="#SO-REUSEPORT" class="headerlink" title="SO_REUSEPORT"></a>SO_REUSEPORT</h4><ol>
+<li>这个选项允许完全复制式的<code>bind</code>，但只有在双方都指定<code>SO_REUSEPORT</code>时才行。</li>
+<li><code>SO_REUSEADDR</code>在IP地址绑定在多播地址上时等价与<code>SO_REUSEPORT</code>。</li>
+</ol>
+<h3 id="SO-TYPE"><a href="#SO-TYPE" class="headerlink" title="SO_TYPE"></a>SO_TYPE</h3><p>这个选项返回socket的类型，比如<code>SOCK_STREAM</code>或<code>SOCK_DGRAM</code>。</p>
+<h3 id="SO-USELOOPBACK"><a href="#SO-USELOOPBACK" class="headerlink" title="SO_USELOOPBACK"></a>SO_USELOOPBACK</h3><p>这个选项只应用在routing domain(AF_ROUTE)，默认为开启。这个选项开启时，socket会收到任何在此socket上发出的东西。</p>
+<h2 id="IPv4-socket选项"><a href="#IPv4-socket选项" class="headerlink" title="IPv4 socket选项"></a>IPv4 socket选项</h2><h3 id="IP-HDRINCL-待引用-Ch-28"><a href="#IP-HDRINCL-待引用-Ch-28" class="headerlink" title="IP_HDRINCL(待引用: Ch-28)"></a>IP_HDRINCL(待引用: Ch-28)</h3><h3 id="IP-OPTIONS-待引用-Ch-27-3"><a href="#IP-OPTIONS-待引用-Ch-27-3" class="headerlink" title="IP_OPTIONS(待引用:Ch-27.3)"></a>IP_OPTIONS(待引用:Ch-27.3)</h3><h3 id="IP-RECVDSTADDR-待引用-Ch-22-2"><a href="#IP-RECVDSTADDR-待引用-Ch-22-2" class="headerlink" title="IP_RECVDSTADDR(待引用: Ch-22.2)"></a>IP_RECVDSTADDR(待引用: Ch-22.2)</h3><h3 id="IP-RECVIF-待引用-Ch-22-2"><a href="#IP-RECVIF-待引用-Ch-22-2" class="headerlink" title="IP_RECVIF(待引用: Ch-22.2)"></a>IP_RECVIF(待引用: Ch-22.2)</h3><h3 id="IP-TOS"><a href="#IP-TOS" class="headerlink" title="IP_TOS"></a>IP_TOS</h3><h3 id="IP-TTL-待引用-Ch-28-19"><a href="#IP-TTL-待引用-Ch-28-19" class="headerlink" title="IP_TTL(待引用: Ch:28.19)"></a>IP_TTL(待引用: Ch:28.19)</h3><h2 id="ICMPv6-socket选项"><a href="#ICMPv6-socket选项" class="headerlink" title="ICMPv6 socket选项"></a>ICMPv6 socket选项</h2><h3 id="ICMP6-FILTER-待引用-Ch-28-4"><a href="#ICMP6-FILTER-待引用-Ch-28-4" class="headerlink" title="ICMP6_FILTER(待引用:Ch-28.4)"></a>ICMP6_FILTER(待引用:Ch-28.4)</h3><h2 id="IPv6-socket选项"><a href="#IPv6-socket选项" class="headerlink" title="IPv6 socket选项"></a>IPv6 socket选项</h2><p>待引用: Ch-22、Ch-27、Ch-28</p>
+<h2 id="TCP-socket选项"><a href="#TCP-socket选项" class="headerlink" title="TCP socket选项"></a>TCP socket选项</h2><h3 id="TCP-MAXSEG"><a href="#TCP-MAXSEG" class="headerlink" title="TCP_MAXSEG"></a>TCP_MAXSEG</h3><p>这个选项允许我们设置或获取TCP连接的MSS(max segment size)。该值指定了TCP发送给对端的最大数据的数量。MSS的大小通常是对端的SYN来宣布的，不过我们可以设置比这个MSS更小的MSS。我们设置更小的MSS通常是因为某些选项被使用(比如时间戳，该选项占用了12字节)。若TCP支持路径MTU探测的话，TCP发送给对端的最大数据量可能会相应的变大或变小。</p>
+<h3 id="TCP-NODELAY"><a href="#TCP-NODELAY" class="headerlink" title="TCP_NODELAY"></a>TCP_NODELAY</h3><p>这个选项取消TCP的<code>Nagle</code>算法。这个算法的目的是减少链路中的小数据包。<code>Nagle</code>算法通常和延迟ACK(<code>delayed ACK</code>)算法一起出现，这个延迟ACK的算法的意思是收到数据后不马上发送ACK，而是等一段时间和下一个数据包捎带返回。但<code>Nagle &amp; delayed ACK</code>对于某些程序来说延迟会比较大:</p>
+<ul>
+<li><code>telnet</code>，<code>telnet</code>会在输入是将输入字符一个一个发送给对端，这期间对端不会返回任何数据。</li>
+<li>一些程序的请求数据(比如400 bytes)分两次发送，第一次发送4 bytes第二次发396 bytes。这样的程序使用<code>Nagle &amp; delayed ACK</code>的话就会导致效率较低。<ul>
+<li>可以使用<code>writev</code>来代替两次数据的写入。</li>
+<li>将4 bytes和396 bytes的数据合并到一个大缓冲区中再调用一个<code>write</code>。</li>
+<li>使用<code>TCP_NODELAY</code>选项然后调用两次<code>write</code>(这种方法对网络是不利的，最好不要考虑这种方法)。</li>
+</ul>
+</li>
+</ul>
+<h2 id="fcntl函数"><a href="#fcntl函数" class="headerlink" title="fcntl函数"></a>fcntl函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fcntl</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">int</span> cmd, ... <span class="comment">/* arg */</span> )</span></span>;</span><br><span class="line"><span class="comment">// on error, -1 is return</span></span><br></pre></td></tr></table></figure>
+<p><code>fcntl</code>就是<code>file control</code>的缩写。<code>fcntl</code>在网络编程方面提供了如下功能:</p>
+<ul>
+<li>非阻塞IO</li>
+<li>信号驱动IO</li>
+<li><code>F_SETOWN</code>可以让我们设置信号<code>SIGIO</code>和<code>SIGURG</code>的接收主体(进程的进程号或进程组号)</li>
+</ul>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><ul>
+<li><p>E7-2: </p>
+<ul>
+<li><p>外部服务器连接后，我们可以在<code>tcpdump</code>中看到MSS为1460，但我们输出的MSS为1448.但在和外部服务器连接后接受缓冲区的值和MSS的值变大了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ./rcvbuf 外部服务器ip</span><br><span class="line">defaults: SO_RCVBUF = 87380, MSS = 536</span><br><span class="line">after connect: SO_RCVBUF = 372480, MSS = 1448</span><br></pre></td></tr></table></figure>
+<p>如何将代码文件从本地(局域网)上传到外网?[<a href="x">内网穿透</a>]</p>
+</li>
+<li><p>连接lo后，<code>tcpdump</code>中MSS为65495，但输出MSS为21845.连接后接收缓冲区和MSS的值都变大了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ./rcvbuf 127.0.0.1</span><br><span class="line">defaults: SO_RCVBUF = 87380, MSS = 536</span><br><span class="line">after connect: SO_RCVBUF = 1061808, MSS = 21845</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>E7-3: 客户端发送RST而不是FIN，然后<code>netstat</code>不会有<code>TIME_WAIT</code>状态。</p>
+</li>
+<li><p>E7-4: 没有竞争条件，答案中说的是第一个client在<code>bind</code>之后<code>connect</code>，第二个client进行<code>bind</code>会返回错误。但实际测试时发现只要两个都设置了<code>SO_REUSEADDR</code>之后，这种情况下是不会出错的。</p>
+</li>
+<li><p>E7-5: 将目录<code>sock/</code>下的代码<code>sockopts.c:331</code>放在头文件下面就可以编译了。但本题的实验结果和答案有出入，答案是在使用<code>-A</code>后就可以启用lo或其他本地IP的同端口程序，但本机测试是不行的（UDP是可以的但需要两边都使用<code>-A</code>选项）。[待解决]</p>
+</li>
+<li><p>E7-6: 和答案一致，UDP是可以的，但需要两个进程都是用<code>-T</code>选项。</p>
+</li>
+<li><p>E7-7: 不会有影响，<code>SO_DEBUG</code>只对TCP有影响。</p>
+</li>
+<li><p>E7-12: 时间到期后Figure5.3的<code>read</code>函数会返回-1. [疑问:client端如何重现crash?]</p>
+</li>
+<li><p>E7-13: 会阻塞在<code>fgets</code>而当计时器到期时未处理错误发生后，client不知道错误发生。</p>
+</li>
+<li><p>E7-14: 相似的，在探针发送后，对端会返回RST然后<code>select</code>会返回，<code>read</code>会返回-1.</p>
+</li>
+<li><p>E7-15: 会有2个数据包在连接中出现，因为计时器不太可能会绝对同步，所以会有一个先到期然后发送探针，对端收到后返回ACK，这回让对端重新计时。[待测试]</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UNPv1/" rel="tag"># UNPv1</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/12/TLPI-Ch8-UserAndGroups/" rel="next" title="TLPI-Ch8-UserAndGroups">
+                <i class="fa fa-chevron-left"></i> TLPI-Ch8-UserAndGroups
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/12/UNPv1-Ch8-ElementaryUdpSocket/" rel="prev" title="UNPv1-Ch8-ElementaryUdpSocket">
+                UNPv1-Ch8-ElementaryUdpSocket <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">49</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#getsockopt-amp-setsockopt函数"><span class="nav-number">1.</span> <span class="nav-text">getsockopt &amp; setsockopt函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#socket状态"><span class="nav-number">2.</span> <span class="nav-text">socket状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通用socket选项-SOL-SOCKET"><span class="nav-number">3.</span> <span class="nav-text">通用socket选项(SOL_SOCKET)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-BROADCAST"><span class="nav-number">3.1.</span> <span class="nav-text">SO_BROADCAST</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-DEBUG"><span class="nav-number">3.2.</span> <span class="nav-text">SO_DEBUG</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-DONTROUE"><span class="nav-number">3.3.</span> <span class="nav-text">SO_DONTROUE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-ERROR"><span class="nav-number">3.4.</span> <span class="nav-text">SO_ERROR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-KEEPALIVE"><span class="nav-number">3.5.</span> <span class="nav-text">SO_KEEPALIVE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-LINGER"><span class="nav-number">3.6.</span> <span class="nav-text">SO_LINGER</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-OOBINLINE"><span class="nav-number">3.7.</span> <span class="nav-text">SO_OOBINLINE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-RCVBUF-amp-SO-SNDBUF"><span class="nav-number">3.8.</span> <span class="nav-text">SO_RCVBUF &amp; SO_SNDBUF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SO-RCVBUF设置时机"><span class="nav-number">3.8.1.</span> <span class="nav-text">SO_RCVBUF设置时机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#socket缓冲区大小"><span class="nav-number">3.8.2.</span> <span class="nav-text">socket缓冲区大小</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-RCVLOWAT-amp-SO-SNDLOWAT"><span class="nav-number">3.9.</span> <span class="nav-text">SO_RCVLOWAT &amp; SO_SNDLOWAT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-RCVTIMEO-amp-SO-SNDTIMEO"><span class="nav-number">3.10.</span> <span class="nav-text">SO_RCVTIMEO &amp; SO_SNDTIMEO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-REUSEADDR-amp-SO-REUSEPORT"><span class="nav-number">3.11.</span> <span class="nav-text">SO_REUSEADDR &amp; SO_REUSEPORT</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SO-REUSEADDR的用途"><span class="nav-number">3.11.1.</span> <span class="nav-text">SO_REUSEADDR的用途</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SO-REUSEPORT"><span class="nav-number">3.11.2.</span> <span class="nav-text">SO_REUSEPORT</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-TYPE"><span class="nav-number">3.12.</span> <span class="nav-text">SO_TYPE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SO-USELOOPBACK"><span class="nav-number">3.13.</span> <span class="nav-text">SO_USELOOPBACK</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPv4-socket选项"><span class="nav-number">4.</span> <span class="nav-text">IPv4 socket选项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IP-HDRINCL-待引用-Ch-28"><span class="nav-number">4.1.</span> <span class="nav-text">IP_HDRINCL(待引用: Ch-28)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP-OPTIONS-待引用-Ch-27-3"><span class="nav-number">4.2.</span> <span class="nav-text">IP_OPTIONS(待引用:Ch-27.3)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP-RECVDSTADDR-待引用-Ch-22-2"><span class="nav-number">4.3.</span> <span class="nav-text">IP_RECVDSTADDR(待引用: Ch-22.2)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP-RECVIF-待引用-Ch-22-2"><span class="nav-number">4.4.</span> <span class="nav-text">IP_RECVIF(待引用: Ch-22.2)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP-TOS"><span class="nav-number">4.5.</span> <span class="nav-text">IP_TOS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP-TTL-待引用-Ch-28-19"><span class="nav-number">4.6.</span> <span class="nav-text">IP_TTL(待引用: Ch:28.19)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ICMPv6-socket选项"><span class="nav-number">5.</span> <span class="nav-text">ICMPv6 socket选项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ICMP6-FILTER-待引用-Ch-28-4"><span class="nav-number">5.1.</span> <span class="nav-text">ICMP6_FILTER(待引用:Ch-28.4)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPv6-socket选项"><span class="nav-number">6.</span> <span class="nav-text">IPv6 socket选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-socket选项"><span class="nav-number">7.</span> <span class="nav-text">TCP socket选项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-MAXSEG"><span class="nav-number">7.1.</span> <span class="nav-text">TCP_MAXSEG</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-NODELAY"><span class="nav-number">7.2.</span> <span class="nav-text">TCP_NODELAY</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fcntl函数"><span class="nav-number">8.</span> <span class="nav-text">fcntl函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">9.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
