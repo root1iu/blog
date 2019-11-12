@@ -117,7 +117,7 @@
 <meta property="og:site_name" content="Root1iu Home Page">
 <meta property="og:description" content="getsockopt &amp;amp; setsockopt函数123456#include &amp;lt;sys/types.h&amp;gt;          /* See NOTES */#include &amp;lt;sys/socket.h&amp;gt;int getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen)">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-12T14:17:35.735Z">
+<meta property="og:updated_time" content="2019-11-12T14:19:54.129Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UNPv1-Ch7-SocketOptions">
 <meta name="twitter:description" content="getsockopt &amp;amp; setsockopt函数123456#include &amp;lt;sys/types.h&amp;gt;          /* See NOTES */#include &amp;lt;sys/socket.h&amp;gt;int getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen)">
@@ -395,7 +395,7 @@
                 
               
 
-              <time title="创建时间：2019-11-12 22:04:25 / 修改时间：22:17:35" itemprop="dateCreated datePublished" datetime="2019-11-12T22:04:25+08:00">2019-11-12</time>
+              <time title="创建时间：2019-11-12 22:04:25 / 修改时间：22:19:54" itemprop="dateCreated datePublished" datetime="2019-11-12T22:04:25+08:00">2019-11-12</time>
             
 
             
@@ -558,7 +558,7 @@
 <ul>
 <li><p>外部服务器连接后，我们可以在<code>tcpdump</code>中看到MSS为1460，但我们输出的MSS为1448.但在和外部服务器连接后接受缓冲区的值和MSS的值变大了</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ./rcvbuf 外部服务器ip</span><br><span class="line">defaults: SO_RCVBUF = 87380, MSS = 536</span><br><span class="line">after connect: SO_RCVBUF = 372480, MSS = 1448</span><br></pre></td></tr></table></figure>
-<p>如何将代码文件从本地(局域网)上传到外网?[<a href="x">内网穿透</a>]</p>
+<p>如何将代码文件从本地(局域网)上传到外网?[<a href="https://root1iu.github.io/2019/11/12/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E5%AE%9E%E4%BE%8B/">内网穿透</a>]</p>
 </li>
 <li><p>连接lo后，<code>tcpdump</code>中MSS为65495，但输出MSS为21845.连接后接收缓冲区和MSS的值都变大了</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ./rcvbuf 127.0.0.1</span><br><span class="line">defaults: SO_RCVBUF = 87380, MSS = 536</span><br><span class="line">after connect: SO_RCVBUF = 1061808, MSS = 21845</span><br></pre></td></tr></table></figure>
