@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://root1iu.github.io/2019/11/12/UNPv1-Ch7-SocketOptions/</loc>
-    <lastmod>2019-11-12T14:19:54.129Z</lastmod>
+    <loc>https://root1iu.github.io/2019/11/23/UNPv1-Ch14-AdvancedIOFunction/</loc>
+    <lastmod>2019-11-23T15:54:16.342Z</lastmod>
+  </url>  <url>
+    <loc>https://root1iu.github.io/2019/11/23/UNPv1-Ch13-DaemonProcesses-inetd-Superserver/</loc>
+    <lastmod>2019-11-23T15:52:27.530Z</lastmod>
+  </url>  <url>
+    <loc>https://root1iu.github.io/2019/11/23/UNPv1-Ch12-IPv4%E5%92%8CIPv6%E7%9A%84%E4%BA%92%E6%93%8D%E4%BD%9C%E6%80%A7/</loc>
+    <lastmod>2019-11-23T15:50:09.222Z</lastmod>
+  </url>  <url>
+    <loc>https://root1iu.github.io/2019/11/23/UNPv1-Ch11-Name-And-Address-Conversions/</loc>
+    <lastmod>2019-11-23T15:48:19.193Z</lastmod>
   </url>  <url>
     <loc>https://root1iu.github.io/2019/11/12/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E5%AE%9E%E4%BE%8B/</loc>
-    <lastmod>2019-11-12T14:14:44.763Z</lastmod>
+    <lastmod>2019-11-12T14:21:08.798Z</lastmod>
+  </url>  <url>
+    <loc>https://root1iu.github.io/2019/11/12/UNPv1-Ch7-SocketOptions/</loc>
+    <lastmod>2019-11-12T14:19:54.129Z</lastmod>
   </url>  <url>
     <loc>https://root1iu.github.io/2019/11/12/UNPv1-Ch8-ElementaryUdpSocket/</loc>
     <lastmod>2019-11-12T14:08:22.304Z</lastmod>

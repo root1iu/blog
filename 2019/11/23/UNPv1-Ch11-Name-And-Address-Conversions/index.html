@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Domain Name System(DNS)域名系统(DNS)主要是用来映射主机名和IP地址，主机名可以是简单域名，也可以是FQDN(fully qualified domain name)，前者是主机名的简称(如 solaris)，后者是主机名的全称(如 solaris.unpbook.com)。 资源记录(resource records, RRs)AA记录将一个主机映射成一个IPv4地址(">
+<meta name="keywords" content="UNPv1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNPv1-Ch11-Name_And_Address_Conversions">
+<meta property="og:url" content="https://root1iu.github.io/2019/11/23/UNPv1-Ch11-Name-And-Address-Conversions/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="Domain Name System(DNS)域名系统(DNS)主要是用来映射主机名和IP地址，主机名可以是简单域名，也可以是FQDN(fully qualified domain name)，前者是主机名的简称(如 solaris)，后者是主机名的全称(如 solaris.unpbook.com)。 资源记录(resource records, RRs)AA记录将一个主机映射成一个IPv4地址(">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://root1iu.github.io/2019/11/23/UNPv1-Ch11-Name-And-Address-Conversions/getaddrinfo%E5%87%BD%E6%95%B0%E8%A1%8C%E4%B8%BA.png">
+<meta property="og:updated_time" content="2019-11-23T15:48:19.193Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UNPv1-Ch11-Name_And_Address_Conversions">
+<meta name="twitter:description" content="Domain Name System(DNS)域名系统(DNS)主要是用来映射主机名和IP地址，主机名可以是简单域名，也可以是FQDN(fully qualified domain name)，前者是主机名的简称(如 solaris)，后者是主机名的全称(如 solaris.unpbook.com)。 资源记录(resource records, RRs)AA记录将一个主机映射成一个IPv4地址(">
+<meta name="twitter:image" content="https://root1iu.github.io/2019/11/23/UNPv1-Ch11-Name-And-Address-Conversions/getaddrinfo%E5%87%BD%E6%95%B0%E8%A1%8C%E4%B8%BA.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/11/23/UNPv1-Ch11-Name-And-Address-Conversions/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>UNPv1-Ch11-Name_And_Address_Conversions | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/11/23/UNPv1-Ch11-Name-And-Address-Conversions/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UNPv1-Ch11-Name_And_Address_Conversions
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-23 23:45:38 / 修改时间：23:48:19" itemprop="dateCreated datePublished" datetime="2019-11-23T23:45:38+08:00">2019-11-23</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/UNPv1/" itemprop="url" rel="index"><span itemprop="name">UNPv1</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Domain-Name-System-DNS"><a href="#Domain-Name-System-DNS" class="headerlink" title="Domain Name System(DNS)"></a>Domain Name System(DNS)</h2><p>域名系统(DNS)主要是用来映射主机名和IP地址，主机名可以是简单域名，也可以是FQDN(fully qualified domain name)，前者是主机名的简称(如 solaris)，后者是主机名的全称(如 solaris.unpbook.com)。</p>
+<h3 id="资源记录-resource-records-RRs"><a href="#资源记录-resource-records-RRs" class="headerlink" title="资源记录(resource records, RRs)"></a>资源记录(resource records, RRs)</h3><h4 id="A"><a href="#A" class="headerlink" title="A"></a>A</h4><p>A记录将一个主机映射成一个IPv4地址(32 bits)。</p>
+<h4 id="AAAA"><a href="#AAAA" class="headerlink" title="AAAA"></a>AAAA</h4><p>AAAA记录将一个主机名映射成一个IPv6地址(128 bits)。</p>
+<h4 id="PTR"><a href="#PTR" class="headerlink" title="PTR"></a>PTR</h4><p>PTR(pointer records)记录将一个IP地址映射成主机名。对于IPv4的地址来说，4字节的地址被转换成4个ASCII码然后翻转(<code>1.2.3.4 -&gt; 4.3.2.1</code>)，后面跟上<code>.in-addr.arpa</code>，如<code>111.111.111.111.in-addr.arpa</code>；对于IPv6的地址来说，16字节的地址被转换成16个ASCII码，后面添上<code>.ip6.arpa</code>。</p>
+<h4 id="MX"><a href="#MX" class="headerlink" title="MX"></a>MX</h4><p>MX记录指定一个主机作为另一个主机的邮件交换器(<code>mail exchanger</code>)。</p>
+<h4 id="CNAME"><a href="#CNAME" class="headerlink" title="CNAME"></a>CNAME</h4><p>CNAME就是规范名字(<code>canonical name</code>)，通常是为某个服务指派一个规范主机名，用户只需要知道服务而不需要知道主机名。</p>
+<h3 id="解析器和名字服务器"><a href="#解析器和名字服务器" class="headerlink" title="解析器和名字服务器"></a>解析器和名字服务器</h3><p>在一些系统上，解析器代码包含在系统库中，使用其功能的应用需要将代码链接到自己的应用上。而在其他系统，解析器是一个守护进程，系统库代码可以通过RPC(<code>remote procedure call</code>)来调用其服务。</p>
+<p>解析器通常会使用UDP来发送DNS询问。如果其中的数据太大了，那么解析器会自动地转用TCP。</p>
+<h2 id="gethostbyname-函数"><a href="#gethostbyname-函数" class="headerlink" title="gethostbyname 函数"></a>gethostbyname 函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netdb.h&gt;</span></span></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> h_errno;</span><br><span class="line"></span><br><span class="line"><span class="function">struct hostent *<span class="title">gethostbyname</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br><span class="line"><span class="comment">// return null if error occurs, and h_errno holds an error number</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">hostent</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span>  *h_name;            <span class="comment">/* official (canonical) name of host */</span></span><br><span class="line">    <span class="keyword">char</span> **h_aliases;         <span class="comment">/* alias list */</span></span><br><span class="line">    <span class="keyword">int</span>    h_addrtype;        <span class="comment">/* host address type */</span></span><br><span class="line">    <span class="keyword">int</span>    h_length;          <span class="comment">/* length of address */</span></span><br><span class="line">    <span class="keyword">char</span> **h_addr_list;       <span class="comment">/* list of addresses */</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> h_addr h_addr_list[0] <span class="comment">/* for backward compatibility */</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong></p>
+<ol>
+<li>这个函数返回的内容是静态分配的，所以要注意可重入问题。</li>
+<li>另外这个函数只支持IPv4地址。<strong>这个函数最好不要使用</strong>，因为POSIX标准建议不要在新代码中使用它，而且有更好的函数<code>getaddrinfo</code>。</li>
+<li>这个函数的错误码是通过<code>h_errno</code>来返回的，这个错误码可以使用<code>hstrerror</code>来获得错误描述。</li>
+</ol>
+<h2 id="gethostbyaddr函数"><a href="#gethostbyaddr函数" class="headerlink" title="gethostbyaddr函数"></a>gethostbyaddr函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;       /* for AF_INET */</span></span></span><br><span class="line"><span class="function">struct hostent *<span class="title">gethostbyaddr</span><span class="params">(<span class="keyword">const</span> <span class="keyword">void</span> *addr, <span class="keyword">socklen_t</span> len, <span class="keyword">int</span> family)</span></span>;</span><br><span class="line"><span class="comment">// return null if error occurs, and h_errno holds an error number</span></span><br></pre></td></tr></table></figure>
+<p><code>addr</code>是一个指针，指向一个<code>in_addr</code>结构体，<code>len</code>是其长度。<code>family</code>只能是<code>AF_INET</code>。</p>
+<p>这个函数和<code>gethostbyname</code>功能一样，只不过这个函数是通过IP地址来搜索host。</p>
+<h2 id="getservbyname-amp-getservbyport函数"><a href="#getservbyname-amp-getservbyport函数" class="headerlink" title="getservbyname &amp; getservbyport函数"></a>getservbyname &amp; getservbyport函数</h2><p>这两个函数和前面两个函数类似，只不过这两个函数找的目标是<code>Server</code>，也就是在服务器某个端口上运行的某个服务，具体服务可以在<code>/etc/services</code>文件中查看。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netdb.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">struct servent *<span class="title">getservbyname</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">const</span> <span class="keyword">char</span> *proto)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">struct servent *<span class="title">getservbyport</span><span class="params">(<span class="keyword">int</span> port, <span class="keyword">const</span> <span class="keyword">char</span> *proto)</span></span>;</span><br><span class="line"><span class="comment">// return NULL if an error occurs</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">servent</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span>  *s_name;       <span class="comment">/* official service name */</span></span><br><span class="line">    <span class="keyword">char</span> **s_aliases;    <span class="comment">/* alias list */</span></span><br><span class="line">    <span class="keyword">int</span>    s_port;       <span class="comment">/* port number, network-byte order*/</span></span><br><span class="line">    <span class="keyword">char</span>  *s_proto;      <span class="comment">/* protocol to use */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>name</code>是服务名，若<code>proto</code>没有指定协议且服务支持多个协议，那么返回哪个端口就根据不同实现有不同的表现。<code>struct servent</code>结构体中最重要的是<code>s_port</code>，但要注意这个端口号是网络字节序。</p>
+<p><strong>注意：</strong>同一个端口可能使用TCP协议和UDP协议的是两种服务，比如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ grep 514 /etc/services </span><br><span class="line">shell		514/tcp		cmd		# no passwords used</span><br><span class="line">syslog		514/udp</span><br></pre></td></tr></table></figure>
+<h2 id="getaddrinfo-函数族"><a href="#getaddrinfo-函数族" class="headerlink" title="getaddrinfo 函数族"></a>getaddrinfo 函数族</h2><h3 id="getaddrinfo"><a href="#getaddrinfo" class="headerlink" title="getaddrinfo"></a>getaddrinfo</h3><p><code>getaddrinfo</code>函数简单来说就是<code>gethostbyname + getservbyname + IPv4&amp;6</code>的功能。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netdb.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getaddrinfo</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *hostname, <span class="keyword">const</span> <span class="keyword">char</span> *service,</span></span></span><br><span class="line"><span class="function"><span class="params">                <span class="keyword">const</span> struct addrinfo *hints,</span></span></span><br><span class="line"><span class="function"><span class="params">                struct addrinfo **res)</span></span>;</span><br><span class="line"><span class="comment">// return 0 if success, or nonzero error code</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">freeaddrinfo</span><span class="params">(struct addrinfo *res)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">addrinfo</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span>              ai_flags;</span><br><span class="line">    <span class="keyword">int</span>              ai_family;</span><br><span class="line">    <span class="keyword">int</span>              ai_socktype;</span><br><span class="line">    <span class="keyword">int</span>              ai_protocol;</span><br><span class="line">    <span class="keyword">socklen_t</span>        ai_addrlen;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> *<span class="title">ai_addr</span>;</span></span><br><span class="line">    <span class="keyword">char</span>            *ai_canonname;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">addrinfo</span> *<span class="title">ai_next</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>hostname</code>可以是主机名也可以是IP地址，<code>service</code>可以是服务名也可以是端口号。</p>
+<p><code>hints</code>是一个提示结构体，可以为空，此时假设<code>ai_family</code>的值为<code>AF_UNSPEC</code>，其他的可设置提示为0；也可以设置不同的调用提示，比如可以通过设置<code>ai_socktype</code>来设置使用流传输还是数据报传输，等等。具体的可设置提示如下:</p>
+<ul>
+<li><code>ai_flags</code>是一些flags提示：<ul>
+<li><code>AI_PASSIVE</code>，调用者将使用这个socket来创建一个被动开启socket(服务端)</li>
+<li><code>AI_CANONNAME</code>，告诉函数返回主机的规范名</li>
+<li><code>AI_NUMERICHOST</code>，告诉函数<code>hostname</code>是一个IP地址</li>
+<li><code>AI_NUMERICSERV</code>，告诉函数<code>service</code>是一个端口号</li>
+<li><code>AI_V4MAPPED</code>，如果设置了这个flag且<code>ai_family</code>为<code>AF_INET6</code>，那么在没有AAAA记录时返回与A记录对应的<code>IPv4-mapped IPv6</code>地址</li>
+<li><code>AI_ALL</code>，如果和<code>AI_V4MAPPED</code>一起被设置，那么在返回AAAA记录时会附加返回与A记录对应的<code>IPv4-mapped IPv6</code>地址</li>
+<li><code>AI_ADDRCONFIG</code>，只返回与设置的IP版本一致的IP地址</li>
+</ul>
+</li>
+<li><code>ai_family</code>指明了IP的版本</li>
+<li><code>ai_socktype</code>指明了socket的类型，比如<code>SOCK_STREAM</code></li>
+<li><code>ai_protocol</code>指明了协议类型</li>
+</ul>
+<p>参数<code>res</code>是<code>value-return</code>参数，是一条链，其中<code>ai_next</code>是指向下一个节点的指针。</p>
+<p><strong>注意：</strong>大部分<code>getaddrinfo</code>的实现只有在<code>ai_socktype</code>设置了之后才会接受<code>service</code>为字符串形式的端口号，若没有设置<code>ai_socktype</code>且<code>service</code>为字符串形式的端口号，那么会报错(返回错误码-1)。[注意重现时参数<code>hints</code>不能为空，需要分配内存然后设置<code>ai_socktype</code>为0]</p>
+<h4 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h4><p>TCP的客户端就是遍历<code>getaddrinfo</code>返回的地址结构，一个一个尝试连接。UDP的客户端可以通过判断连接失败(连接的UDP socket)或超时(未连接的UDP socket)来判断尝试是否成功。</p>
+<h4 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h4><p>服务端通常会设置<code>service</code>而忽略<code>hostname</code>，且会在<code>hints</code>设置<code>AI_PASSIVE</code>。这样socket会创建一个通配地址socket。之后TCP服务器就可以进行<code>socket -&gt; bind -&gt; listen</code>，UDP服务器就可以进行<code>socket -&gt; bind -&gt; recvfrom</code>。</p>
+<h3 id="gai-strerror函数"><a href="#gai-strerror函数" class="headerlink" title="gai_strerror函数"></a>gai_strerror函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netdb.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">gai_strerror</span><span class="params">(<span class="keyword">int</span> errcode)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>getaddrinfo</code>会将错误码返回，此时可以使用<code>gai_strerror</code>来将错误码转换成字符串。</p>
+<h3 id="freeaddrinfo函数"><a href="#freeaddrinfo函数" class="headerlink" title="freeaddrinfo函数"></a>freeaddrinfo函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netdb.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">freeaddrinfo</span><span class="params">(struct addrinfo *res)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>传入<code>getaddrinfo</code>函数的指针<code>res</code>的成员指针指向的内存块是<code>getaddrinfo</code>动态分配的，所以我们需要用<code>freeaddrinfo</code>来释放其中分配的内存。</p>
+<h3 id="getaddrinfo函数-IPv6"><a href="#getaddrinfo函数-IPv6" class="headerlink" title="getaddrinfo函数: IPv6"></a>getaddrinfo函数: IPv6</h3><p>IPv6要注意一点是当<code>ai_family</code>设置为<code>AF_INET</code>时，<code>getaddrinfo</code>无法接受IPv6型的地址串，相同的，当<code>ai_family</code>设置为<code>AF_INET6</code>时，<code>getaddrinfo</code>无法接受IPv4型的地址串。但<code>ai_family</code>设置为<code>AF_UNPSEC</code>时，两种都可以被<code>getaddrinfo</code>接受。</p>
+<p>图11-8是<code>getaddrinfo</code>在不同提示下的返回结果和行为。</p>
+<p><img src="/2019/11/23/UNPv1-Ch11-Name-And-Address-Conversions/getaddrinfo%E5%87%BD%E6%95%B0%E8%A1%8C%E4%B8%BA.png" alt="getaddrinfo函数行为"></p>
+<h2 id="getnameinfo函数"><a href="#getnameinfo函数" class="headerlink" title="getnameinfo函数"></a>getnameinfo函数</h2><p>这个函数是<code>getaddrinfo</code>的互补，就是给一个地址结构，返回主机名和服务名。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netdb.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getnameinfo</span><span class="params">(<span class="keyword">const</span> struct sockaddr *sa, <span class="keyword">socklen_t</span> salen,</span></span></span><br><span class="line"><span class="function"><span class="params">                <span class="keyword">char</span> *host, <span class="keyword">socklen_t</span> hostlen,</span></span></span><br><span class="line"><span class="function"><span class="params">                <span class="keyword">char</span> *serv, <span class="keyword">socklen_t</span> servlen, <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"><span class="comment">// on success, 0 is return, on error, nonzero error code is return</span></span><br></pre></td></tr></table></figure>
+<p><code>flags</code>的6种不同值的含义: </p>
+<ul>
+<li><code>NI_DGRAM</code>，当调用者想要找地址和端口对应的UDP服务时需要这个标识</li>
+<li><code>NI_NAMEREQD</code>，如果不能将地址解析为主机名，则返回错误</li>
+<li><code>NI_NOFQDN</code>，返回主机名而不是FQDN</li>
+<li><code>NI_NUMERICHOST</code>，返回host的IP地址而不是主机名</li>
+<li><code>NI_NUMERICSCOPE</code>，返回数字形式的<code>scope identifier</code>[疑问: 什么是scope identifier]</li>
+<li><code>NI_NUMERICSERV</code>，返回服务的端口号而不是服务名</li>
+</ul>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><ul>
+<li><p>E-11.1: 根据答案代码，执行后会出现一个问题，就是没办法通过IP地址反解析到主机名，有一篇<a href="https://www.cnblogs.com/wunaozai/" target="_blank" rel="noopener">博客</a>有提到这一点，可以在<code>/etc/hosts</code>文件中自己添加记录来解析，但在我的机子上也没办法自动解析到主机名。题目的原意应该是让我们理解<code>gethostbyname &amp; gethostbyaddr</code>的返回值是共用一个静态变量的，所以有重入问题。解决这个问题的方法是将返回值复制到一个动态内存空间中，或者使用它们的可重入版本(<code>gethostbyname_r &amp; gethostbyaddr_r</code>)。</p>
+</li>
+<li><p>E-11.4: 修改可以接受数字形式的端口号输入有两种方式：</p>
+<ul>
+<li>端口号转换成<code>int</code>后调用<code>getservbyport</code>，但要注意该函数的<code>port</code>参数是网络字节序的</li>
+<li>端口号转换成<code>int</code>后直接赋值给<code>struct in_sockaddr</code>的<code>sin_port</code>，这种方法需要改变<code>Figure11.4</code>的代码，将其中的<code>struct in_sockaddr</code>的设置提前，具体见(UNP课后答案)</li>
+</ul>
+</li>
+<li><p>E-11.7: 若<code>tcp_listen</code>函数没有第三个参数，要获得socket对应的地址结构的大小可以使用<code>getsockname</code>，这个函数的第三个参数可以获得地址结构体的大小。但这个函数只能获得固定长度的地址结构体的大小，对于变长地址结构体无法判断其大小。(猜测其实现是通过socket的<code>family</code>来获得对应的地址结构体大小)</p>
+</li>
+<li><p>E-11.8:  <code>getnameinfo</code>调用如下，需要注意设置<code>flags</code>为<code>NI_NUMERICHOST</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getnameinfo((const SA *)&amp;cliaddr, len, host, sizeof(host), NULL, 0, NI_NUMERICHOST)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>E-11.9: UDP服务器没办法<code>bind</code>一个已经在使用的端口，会出现<code>Address already in use</code>错误，解决办法就是设置<code>SO_REUSEADDR</code>选项。</p>
+</li>
+<li><p>E-11.11: </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXTIME 80</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TIMEOUT 0xff</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sigalrm_act</span><span class="params">(<span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"time out\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getnameinfo_timeo</span><span class="params">(<span class="keyword">const</span> struct sockaddr *sa, <span class="keyword">socklen_t</span> salen, <span class="keyword">char</span> *host, <span class="keyword">socklen_t</span> hostlen, <span class="keyword">char</span> *serv, <span class="keyword">socklen_t</span> servlen, <span class="keyword">int</span> flags, <span class="keyword">int</span> time)</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">itimerval</span> <span class="title">timer</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">sigac</span>;</span></span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( time &gt; MAXTIME) &#123;</span><br><span class="line">        <span class="keyword">return</span> getnameinfo(sa, salen, host, hostlen, serv, servlen, flags);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">memset</span>(&amp;timer, <span class="number">0</span>, <span class="keyword">sizeof</span>(timer));</span><br><span class="line">    timer.it_value.tv_usec = time;</span><br><span class="line">    setitimer(SIGALRM, &amp;timer, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    sigac.sa_handler = sigalrm_act;</span><br><span class="line">    sigaction(SIGALRM, &amp;sigac, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ( (ret = getnameinfo(sa, salen, host, hostlen, serv, servlen, flags)) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (ret == EAI_SYSTEM &amp;&amp; errno == EINTR) &#123;  <span class="comment">// time out</span></span><br><span class="line">            <span class="keyword">return</span> TIMEOUT;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UNPv1/" rel="tag"># UNPv1</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/12/内网穿透实例/" rel="next" title="内网穿透实例">
+                <i class="fa fa-chevron-left"></i> 内网穿透实例
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/23/UNPv1-Ch12-IPv4和IPv6的互操作性/" rel="prev" title="UNPv1-Ch12-IPv4和IPv6的互操作性">
+                UNPv1-Ch12-IPv4和IPv6的互操作性 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">53</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Domain-Name-System-DNS"><span class="nav-number">1.</span> <span class="nav-text">Domain Name System(DNS)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#资源记录-resource-records-RRs"><span class="nav-number">1.1.</span> <span class="nav-text">资源记录(resource records, RRs)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A"><span class="nav-number">1.1.1.</span> <span class="nav-text">A</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AAAA"><span class="nav-number">1.1.2.</span> <span class="nav-text">AAAA</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PTR"><span class="nav-number">1.1.3.</span> <span class="nav-text">PTR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MX"><span class="nav-number">1.1.4.</span> <span class="nav-text">MX</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CNAME"><span class="nav-number">1.1.5.</span> <span class="nav-text">CNAME</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析器和名字服务器"><span class="nav-number">1.2.</span> <span class="nav-text">解析器和名字服务器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gethostbyname-函数"><span class="nav-number">2.</span> <span class="nav-text">gethostbyname 函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gethostbyaddr函数"><span class="nav-number">3.</span> <span class="nav-text">gethostbyaddr函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getservbyname-amp-getservbyport函数"><span class="nav-number">4.</span> <span class="nav-text">getservbyname &amp; getservbyport函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getaddrinfo-函数族"><span class="nav-number">5.</span> <span class="nav-text">getaddrinfo 函数族</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#getaddrinfo"><span class="nav-number">5.1.</span> <span class="nav-text">getaddrinfo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端"><span class="nav-number">5.1.1.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#服务端"><span class="nav-number">5.1.2.</span> <span class="nav-text">服务端</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gai-strerror函数"><span class="nav-number">5.2.</span> <span class="nav-text">gai_strerror函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#freeaddrinfo函数"><span class="nav-number">5.3.</span> <span class="nav-text">freeaddrinfo函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#getaddrinfo函数-IPv6"><span class="nav-number">5.4.</span> <span class="nav-text">getaddrinfo函数: IPv6</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getnameinfo函数"><span class="nav-number">6.</span> <span class="nav-text">getnameinfo函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">7.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
