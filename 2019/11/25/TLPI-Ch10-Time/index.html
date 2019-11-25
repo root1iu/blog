@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="真实时间和进程时间 真实时间有两种：第一种是某个时间点，即为日历时间；第二种是流逝时间，指的是进程在某个点之后的使用时间。 进程时间是指进程使用的CPU时间总和。  日历时间在Linux中将距离标准点(UTC，格林威治标准时间)的秒数存储作为当前的日历时间。 123456789#include &amp;lt;sys/time.h&amp;gt;int gettimeofday(struct timeval *t">
+<meta name="keywords" content="TLPI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TLPI-Ch10-Time">
+<meta property="og:url" content="https://root1iu.github.io/2019/11/25/TLPI-Ch10-Time/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="真实时间和进程时间 真实时间有两种：第一种是某个时间点，即为日历时间；第二种是流逝时间，指的是进程在某个点之后的使用时间。 进程时间是指进程使用的CPU时间总和。  日历时间在Linux中将距离标准点(UTC，格林威治标准时间)的秒数存储作为当前的日历时间。 123456789#include &amp;lt;sys/time.h&amp;gt;int gettimeofday(struct timeval *t">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://root1iu.github.io/2019/11/25/TLPI-Ch10-Time/%E6%97%B6%E9%97%B4%E8%BD%AC%E6%8D%A2%E5%87%BD%E6%95%B0%E5%9B%BE.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/11/25/TLPI-Ch10-Time/%E6%97%B6%E9%97%B4%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F%E8%A1%A8.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/11/25/TLPI-Ch10-Time/%E5%9C%B0%E5%8C%BA%E6%96%87%E4%BB%B6%E5%A4%B9%E5%AD%90%E6%96%87%E4%BB%B6%E5%90%AB%E4%B9%89.png">
+<meta property="og:updated_time" content="2019-11-25T13:40:13.815Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TLPI-Ch10-Time">
+<meta name="twitter:description" content="真实时间和进程时间 真实时间有两种：第一种是某个时间点，即为日历时间；第二种是流逝时间，指的是进程在某个点之后的使用时间。 进程时间是指进程使用的CPU时间总和。  日历时间在Linux中将距离标准点(UTC，格林威治标准时间)的秒数存储作为当前的日历时间。 123456789#include &amp;lt;sys/time.h&amp;gt;int gettimeofday(struct timeval *t">
+<meta name="twitter:image" content="https://root1iu.github.io/2019/11/25/TLPI-Ch10-Time/%E6%97%B6%E9%97%B4%E8%BD%AC%E6%8D%A2%E5%87%BD%E6%95%B0%E5%9B%BE.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/11/25/TLPI-Ch10-Time/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>TLPI-Ch10-Time | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/11/25/TLPI-Ch10-Time/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TLPI-Ch10-Time
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-25 21:38:21 / 修改时间：21:40:13" itemprop="dateCreated datePublished" datetime="2019-11-25T21:38:21+08:00">2019-11-25</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/TLPI/" itemprop="url" rel="index"><span itemprop="name">TLPI</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="真实时间和进程时间"><a href="#真实时间和进程时间" class="headerlink" title="真实时间和进程时间"></a>真实时间和进程时间</h2><ul>
+<li>真实时间有两种：第一种是某个时间点，即为日历时间；第二种是流逝时间，指的是进程在某个点之后的使用时间。</li>
+<li>进程时间是指进程使用的CPU时间总和。</li>
+</ul>
+<h2 id="日历时间"><a href="#日历时间" class="headerlink" title="日历时间"></a>日历时间</h2><p>在Linux中将距离标准点(UTC，格林威治标准时间)的秒数存储作为当前的日历时间。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">gettimeofday</span><span class="params">(struct timeval *tv, struct timezone *tz)</span></span>;</span><br><span class="line"><span class="comment">// on error, -1 is returned.</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> &#123;</span></span><br><span class="line">    <span class="keyword">time_t</span>      tv_sec;     <span class="comment">/* seconds since 00:00:00, 1 Jan 1970 UTC */</span></span><br><span class="line">    <span class="keyword">suseconds_t</span> tv_usec;    <span class="comment">/* Additional microseconds */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>gettimeofday</code>函数将当前的日历时间放入<code>tv</code>的缓冲区中，参数<code>tz</code>被废弃了，应该设置为NULL。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">time_t</span> time(<span class="keyword">time_t</span> *tloc);</span><br><span class="line"><span class="comment">// on error, -1 is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>time</code>和<code>gettimeofday</code>的功能一样，返回值或者<code>tloc</code>的内容就是<code>gettimeofday</code>的<code>tv</code>的<code>tv_sec</code>的值。</p>
+<p><code>time</code>唯一能够发生错误的情况是<code>tloc</code>指针非法，当<code>tloc</code>为NULL时，<code>time</code>还可以通过返回值来获得结果。</p>
+<h2 id="时间转换函数"><a href="#时间转换函数" class="headerlink" title="时间转换函数"></a>时间转换函数</h2><p><img src="/2019/11/25/TLPI-Ch10-Time/%E6%97%B6%E9%97%B4%E8%BD%AC%E6%8D%A2%E5%87%BD%E6%95%B0%E5%9B%BE.png" alt="时间转换函数图"></p>
+<h3 id="将time-t转换成可输出的形式"><a href="#将time-t转换成可输出的形式" class="headerlink" title="将time_t转换成可输出的形式"></a>将time_t转换成可输出的形式</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">ctime</span><span class="params">(<span class="keyword">const</span> <span class="keyword">time_t</span> *timep)</span></span>;</span><br><span class="line"><span class="comment">// on error, NULL is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>ctime</code>返回的字符串是<strong>静态分配</strong>的，而且以换行符和<code>\0</code>结尾。</p>
+<h3 id="time-t和struct-tm间的相互转换"><a href="#time-t和struct-tm间的相互转换" class="headerlink" title="time_t和struct tm间的相互转换"></a>time_t和struct tm间的相互转换</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="function">struct tm *<span class="title">gmtime</span><span class="params">(<span class="keyword">const</span> <span class="keyword">time_t</span> *timep)</span></span>;</span><br><span class="line"><span class="function">struct tm *<span class="title">localtime</span><span class="params">(<span class="keyword">const</span> <span class="keyword">time_t</span> *timep)</span></span>;</span><br><span class="line"><span class="comment">// on error, NULL is returned </span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">tm</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> tm_sec;    <span class="comment">/* Seconds (0-60) */</span></span><br><span class="line">    <span class="keyword">int</span> tm_min;    <span class="comment">/* Minutes (0-59) */</span></span><br><span class="line">    <span class="keyword">int</span> tm_hour;   <span class="comment">/* Hours (0-23) */</span></span><br><span class="line">    <span class="keyword">int</span> tm_mday;   <span class="comment">/* Day of the month (1-31) */</span></span><br><span class="line">    <span class="keyword">int</span> tm_mon;    <span class="comment">/* Month (0-11) */</span></span><br><span class="line">    <span class="keyword">int</span> tm_year;   <span class="comment">/* Year - 1900 */</span></span><br><span class="line">    <span class="keyword">int</span> tm_wday;   <span class="comment">/* Day of the week (0-6, Sunday = 0) */</span></span><br><span class="line">    <span class="keyword">int</span> tm_yday;   <span class="comment">/* Day in the year (0-365, 1 Jan = 0) */</span></span><br><span class="line">    <span class="keyword">int</span> tm_isdst;  <span class="comment">/* Daylight saving time */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>gmtime</code>和<code>localtime</code>都是将<code>time_t</code>转换成<code>struct tm</code>的函数，<code>gmtime</code>将日历时间转换成<code>time_t</code>，<code>localtime</code>则是考虑了时区和夏令时，返回一个系统本地时间的<code>struct tm</code>。</p>
+<p><strong>注意：</strong><code>gmtime</code>和<code>localtime</code>都是返回静态分配的<code>struct tm</code>指针。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">time_t</span> mktime(struct tm *tm);</span><br><span class="line"><span class="comment">// on error, -1 is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>struct tm</code>的<code>tm_isdst</code>不同值有着不同的含义</p>
+<ul>
+<li>0， 表示将这个<code>struct tm</code>视为标准时间，即忽略<code>DST(daylight saving time，夏令时)</code></li>
+<li>>0，表示将这个时间视为DST</li>
+<li>\&lt;0，表示让<code>kmtime</code>自己去判断是否为DST(所以我们应该设置此值让<code>kmtime</code>自己更新)</li>
+</ul>
+<p>但对于<code>mktime</code>来说，无论<code>tm_isdst</code>初始值为多少，<code>mktime</code>都会自己判断是否为DST并在<code>tm_isdst</code>的值中反应结果。</p>
+<p><strong>注意：</strong></p>
+<ul>
+<li><code>mktime</code>并没有要求<code>tm</code>中的成员在指定的范围内，<code>mktime</code>会调整超过范围的数字(比如<code>tm_sec</code>超过60s的话会调整<code>tm_sec</code>和<code>tm_min</code>的值)。之后<code>mktime</code>会更新<code>tm_wday</code>和<code>tm_yday</code>的值，计算后返回<code>time_t</code>。</li>
+<li>可以设置<code>tm</code>的成员后调用<code>mktime</code>来进行时间算术，比如将<code>tm_sec</code>设置为-1，表示上一分钟的59秒。</li>
+</ul>
+<h3 id="struct-tm和可输出形式间的相互转换"><a href="#struct-tm和可输出形式间的相互转换" class="headerlink" title="struct tm和可输出形式间的相互转换"></a>struct tm和可输出形式间的相互转换</h3><h4 id="struct-tm-到可输出形式的转换"><a href="#struct-tm-到可输出形式的转换" class="headerlink" title="struct tm 到可输出形式的转换"></a>struct tm 到可输出形式的转换</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">asctime</span><span class="params">(<span class="keyword">const</span> struct tm *tm)</span></span>;</span><br><span class="line"><span class="comment">// on error, NULL is returned</span></span><br></pre></td></tr></table></figure>
+<p>和<code>ctime</code>类似，不过<code>asctime</code>是将<code>struct tm</code>转换成<code>char *</code>(都是以<code>\n\0</code>结尾)。与<code>ctime</code>不同的是，<code>asctime</code>不会有本地时区的影响，因为<code>tm</code>通常是已经通过<code>localtime</code>进行本地化了的结构体指针或者直接使用<code>gmtime</code>返回<code>UTC</code>时间的结构体指针。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">size_t</span> strftime(<span class="keyword">char</span> *outstr, <span class="keyword">size_t</span> maxsize, <span class="keyword">const</span> <span class="keyword">char</span> *format, <span class="keyword">const</span> struct tm *tm);</span><br><span class="line"><span class="comment">// on error, 0 is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>strftime</code>提供了精确控制的输出字符串，我们可以通过<code>format</code>指定输出什么格式，并将输出的字符串放入<code>outstr</code>中(以<code>\0</code>结尾，不包含<code>\n</code>)。<code>strftime</code>返回了字符串的长度(不包含<code>\0</code>)，如果字符串长度(包含<code>\0</code>)大于<code>maxsize</code>，那么<code>strftime</code>会返回0来表示发生了错误。</p>
+<p>附时间输出格式表</p>
+<p><img src="/2019/11/25/TLPI-Ch10-Time/%E6%97%B6%E9%97%B4%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F%E8%A1%A8.png" alt="时间输出格式表"></p>
+<h4 id="可输出形式到struct-tm的转换"><a href="#可输出形式到struct-tm的转换" class="headerlink" title="可输出形式到struct tm的转换"></a>可输出形式到struct tm的转换</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _XOPEN_SOURCE       <span class="comment">/* See feature_test_macros(7) */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strptime</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *str, <span class="keyword">const</span> <span class="keyword">char</span> *format, struct tm *tm)</span></span>;</span><br><span class="line"><span class="comment">// on error, NULL is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>strptime</code>将<code>str</code>用<code>format</code>的格式进行解析，并将解析结果放入<code>tm</code>。</p>
+<p>当成功时，<code>strptime</code>返回一个指针，指向<code>str</code>中未处理的字符。如果<code>format</code>中的格式不能被匹配，那么会返回NULL，表示发生了错误。</p>
+<p><code>glibc</code>的<code>strptime</code>实现只影响<code>tm</code>中和<code>format</code>相关的成员，而其他实现并没有强制这种行为，所以为了可移植性，我们应该确保<code>str</code>和<code>format</code>可以初始化<code>tm</code>中的所有成员。</p>
+<p><strong>注意：</strong><code>strptime</code>不会改变<code>tm</code>中的<code>tm_isdst</code>成员。</p>
+<h2 id="地区-locales"><a href="#地区-locales" class="headerlink" title="地区(locales)"></a>地区(locales)</h2><p>地区内容在<code>/usr/share/locale/</code>这个目录下，每个地区是一个文件夹</p>
+<p>地区文件夹名字格式为<code>language[_territory[.codeset]][$modifier]</code>，例如<code>de_DE.utf-8@euro</code>为德语德国用的是<code>utf-8</code>字符编码，使用欧元为货币单位。但其实不是所有的地区文件夹都有全名，若没办法精确匹配到某个地区，那么C函数库会按照下面的顺序进行依次忽略，然后进行检索</p>
+<ol>
+<li>字符编码</li>
+<li>普通化的字符编码(比如去掉<code>-8</code>的<code>utf-8</code>，变成<code>utf</code>)</li>
+<li>地区</li>
+<li>货币单位</li>
+</ol>
+<p>比如一开始要寻找<code>fr_CH.utf8</code>但找不着，就接下来寻找<code>fr_CH</code>，然后寻找<code>fr</code>。</p>
+<h3 id="地区子文件夹内容"><a href="#地区子文件夹内容" class="headerlink" title="地区子文件夹内容"></a>地区子文件夹内容</h3><p>每一个地区文件夹中都有不同的文件，不同文件内容如表10-2所示</p>
+<p><img src="/2019/11/25/TLPI-Ch10-Time/%E5%9C%B0%E5%8C%BA%E6%96%87%E4%BB%B6%E5%A4%B9%E5%AD%90%E6%96%87%E4%BB%B6%E5%90%AB%E4%B9%89.png" alt="地区文件夹子文件含义"></p>
+<p>这其中要注意<code>LC_COLLATE</code>指明了字符排序的顺序，一般为<code>C</code>，表明使用C的ascii排序。</p>
+<h3 id="为程序指定地区"><a href="#为程序指定地区" class="headerlink" title="为程序指定地区"></a>为程序指定地区</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;locale.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">setlocale</span><span class="params">(<span class="keyword">int</span> category, <span class="keyword">const</span> <span class="keyword">char</span> *locale)</span></span>;</span><br><span class="line"><span class="comment">// return pointer to a(statically allocated) string identifying the new or current locale on success. on error, NULL is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>category</code>指定了地区的某个部分(比如<code>LC_COLLATE</code>)，也可以指定<code>LC_ALL</code>来指定要修改地区的所有部分。当指定<code>LC_ALL</code>且指定<code>locale</code>为<code>&quot;&quot;</code>时，表示从环境变量中获取地区的设置。<code>locale</code>也可以设置为<code>/usr/share/locale</code>的某个子目录，比如<code>zh-CN</code>。</p>
+<p><strong>注意：</strong><code>LC_ALL</code>的修改具有最强的能力，可以覆盖其他的修改，而<code>LANG</code>具有最弱的能力，会被其他<code>LC_*</code>覆盖，而<code>LC_*</code>处在中间，可以特化<code>LANG</code>的内容，但会被<code>LC_ALL</code>覆盖。(<code>LANG</code>可以指定语言和地区，比如<code>zh-CN</code>)</p>
+<h2 id="更新系统时间"><a href="#更新系统时间" class="headerlink" title="更新系统时间"></a>更新系统时间</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">settimeofday</span><span class="params">(<span class="keyword">const</span> struct timeval *tv, <span class="keyword">const</span> struct timezone *tz)</span></span>;</span><br><span class="line"><span class="comment">// on error, -1 is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>settimeofday</code>将<code>tv</code>中的秒和微秒设置为当前系统的日历时间，类似<code>gettimeofday</code>，参数<code>tz</code>被遗弃不用，通常设置为NULL。</p>
+<h2 id="软件时钟-Jiffies"><a href="#软件时钟-Jiffies" class="headerlink" title="软件时钟(Jiffies)"></a>软件时钟(Jiffies)</h2><p>软件时钟的单位是jiffy，当软件时钟速率为100赫兹时，一个jiffy是10毫秒(100-&gt;10, 250-&gt;4, 1000-&gt;1)。</p>
+<h2 id="进程时间"><a href="#进程时间" class="headerlink" title="进程时间"></a>进程时间</h2><p>进程时间就是进程自创建以来使用的CPU时间。分为User CPU time 和 System CPU time。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/times.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">clock_t</span> times(struct tms *buf);</span><br><span class="line"><span class="comment">// on error, -1 is returned</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">tms</span> &#123;</span></span><br><span class="line">    <span class="keyword">clock_t</span> tms_utime;  <span class="comment">/* user time */</span></span><br><span class="line">    <span class="keyword">clock_t</span> tms_stime;  <span class="comment">/* system time */</span></span><br><span class="line">    <span class="keyword">clock_t</span> tms_cutime; <span class="comment">/* user time of children */</span></span><br><span class="line">    <span class="keyword">clock_t</span> tms_cstime; <span class="comment">/* system time of children */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>times</code>返回消耗的时间片的数量，并将进程时间信息放入<code>buf</code>中。我们可以通过调用<code>sysconf(_SC_CLK_TCK)</code>(一般为1000)来获得每秒时间片数量，然后用<code>times</code>的返回值除以这个数，就可以得到进程时间。</p>
+<p><strong>注意：</strong><code>times</code>的返回值是不可靠的，因为它可能会溢出，而且不同实现中对于其进程时间计算起点不同，一种可靠的计算进程时间的方法是使用<code>gettimeofday()</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">clock_t</span> clock(<span class="keyword">void</span>);</span><br><span class="line"><span class="comment">// on error, -1 is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>clock</code>返回进程使用的CPU时间，但需要除以<code>CLOCKS_PER_SEC</code>来获得实际的秒数，这个<code>CLOCKS_PER_SEC</code>一般为100,000. 这个<code>clock</code>计算的精度不受限于软件时钟的分辨率。</p>
+<p><strong>注意：</strong>在Linux下，<code>clock()</code>的返回值不包括等待子进程的CPU时间。</p>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><p>E10-1: 假设<code>clock_t</code>是32位有符号整数，那么<code>times</code>和<code>clock</code>的返回值在多少秒之后会溢出？(分别为248天和36分钟47秒)。实际情况在64位机器下，<code>clock_t</code>是64位的无符号整数，即使是精度更大的<code>clock</code>返回值，也需要58万年才会溢出。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TLPI/" rel="tag"># TLPI</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/24/TLPI-Ch9-ProcessCerdentials/" rel="next" title="TLPI-Ch9-ProcessCerdentials">
+                <i class="fa fa-chevron-left"></i> TLPI-Ch9-ProcessCerdentials
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">55</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#真实时间和进程时间"><span class="nav-number">1.</span> <span class="nav-text">真实时间和进程时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#日历时间"><span class="nav-number">2.</span> <span class="nav-text">日历时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间转换函数"><span class="nav-number">3.</span> <span class="nav-text">时间转换函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#将time-t转换成可输出的形式"><span class="nav-number">3.1.</span> <span class="nav-text">将time_t转换成可输出的形式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#time-t和struct-tm间的相互转换"><span class="nav-number">3.2.</span> <span class="nav-text">time_t和struct tm间的相互转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#struct-tm和可输出形式间的相互转换"><span class="nav-number">3.3.</span> <span class="nav-text">struct tm和可输出形式间的相互转换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#struct-tm-到可输出形式的转换"><span class="nav-number">3.3.1.</span> <span class="nav-text">struct tm 到可输出形式的转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可输出形式到struct-tm的转换"><span class="nav-number">3.3.2.</span> <span class="nav-text">可输出形式到struct tm的转换</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#地区-locales"><span class="nav-number">4.</span> <span class="nav-text">地区(locales)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#地区子文件夹内容"><span class="nav-number">4.1.</span> <span class="nav-text">地区子文件夹内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为程序指定地区"><span class="nav-number">4.2.</span> <span class="nav-text">为程序指定地区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更新系统时间"><span class="nav-number">5.</span> <span class="nav-text">更新系统时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#软件时钟-Jiffies"><span class="nav-number">6.</span> <span class="nav-text">软件时钟(Jiffies)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程时间"><span class="nav-number">7.</span> <span class="nav-text">进程时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">8.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
