@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="ioctl函数对于网络程序来说，ioctl()的一个主要作用是获取主机的接口(interface)信息，比如接口的地址、是否支持广播多播等信息。 1234#include &amp;lt;sys/ioctl.h&amp;gt;int ioctl(int fd, unsigned long request, ...);// return 0 if ok, -1 on error request分为6类，分别是soc">
+<meta name="keywords" content="UNPv1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNPv1-Ch17-ioctl操作">
+<meta property="og:url" content="https://root1iu.github.io/2019/12/06/UNPv1-Ch17-ioctl操作/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="ioctl函数对于网络程序来说，ioctl()的一个主要作用是获取主机的接口(interface)信息，比如接口的地址、是否支持广播多播等信息。 1234#include &amp;lt;sys/ioctl.h&amp;gt;int ioctl(int fd, unsigned long request, ...);// return 0 if ok, -1 on error request分为6类，分别是soc">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://root1iu.github.io/2019/12/06/UNPv1-Ch17-ioctl操作/home/root1iu/Linux/UNP/UNPv1/Ch17-ioctl%E6%93%8D%E4%BD%9C/iotcl%E7%9A%84%E8%AF%B7%E6%B1%82%E6%80%BB%E7%BB%93.png">
+<meta property="og:updated_time" content="2019-12-06T13:41:15.256Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UNPv1-Ch17-ioctl操作">
+<meta name="twitter:description" content="ioctl函数对于网络程序来说，ioctl()的一个主要作用是获取主机的接口(interface)信息，比如接口的地址、是否支持广播多播等信息。 1234#include &amp;lt;sys/ioctl.h&amp;gt;int ioctl(int fd, unsigned long request, ...);// return 0 if ok, -1 on error request分为6类，分别是soc">
+<meta name="twitter:image" content="https://root1iu.github.io/2019/12/06/UNPv1-Ch17-ioctl操作/home/root1iu/Linux/UNP/UNPv1/Ch17-ioctl%E6%93%8D%E4%BD%9C/iotcl%E7%9A%84%E8%AF%B7%E6%B1%82%E6%80%BB%E7%BB%93.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/12/06/UNPv1-Ch17-ioctl操作/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>UNPv1-Ch17-ioctl操作 | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/12/06/UNPv1-Ch17-ioctl操作/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UNPv1-Ch17-ioctl操作
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-06 21:40:41 / 修改时间：21:41:15" itemprop="dateCreated datePublished" datetime="2019-12-06T21:40:41+08:00">2019-12-06</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/UNPv1/" itemprop="url" rel="index"><span itemprop="name">UNPv1</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="ioctl函数"><a href="#ioctl函数" class="headerlink" title="ioctl函数"></a>ioctl函数</h2><p>对于网络程序来说，<code>ioctl()</code>的一个主要作用是获取主机的接口(interface)信息，比如接口的地址、是否支持广播多播等信息。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ioctl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ioctl</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">unsigned</span> <span class="keyword">long</span> request, ...)</span></span>;</span><br><span class="line"><span class="comment">// return 0 if ok, -1 on error</span></span><br></pre></td></tr></table></figure>
+<p><code>request</code>分为6类，分别是socket、file、interface、ARP cache、routing table、 STREAMS system，如图17.1所示</p>
+<p><img src="/2019/12/06/UNPv1-Ch17-ioctl操作/home/root1iu/Linux/UNP/UNPv1/Ch17-ioctl%E6%93%8D%E4%BD%9C/iotcl%E7%9A%84%E8%AF%B7%E6%B1%82%E6%80%BB%E7%BB%93.png" alt="iotcl的请求总结"></p>
+<h3 id="socket操作"><a href="#socket操作" class="headerlink" title="socket操作"></a>socket操作</h3><ul>
+<li><code>SIOCATMARK</code>: 返回值通过第三个参数返回，如果其值不为0表示socket的读指针现在位于out-of-band mark；如果其值为0则表示socket的读指针现在不在out-of-band mark处；</li>
+<li><code>SIOCGPGRP</code>: 返回值通过第三个参数返回，该值指明了接收<code>SIGIO</code>或<code>SIGURG</code>信号的进程PID或进程GPID(这个操作和<code>fcntl()</code>的<code>F_GEOWN</code>作用一致)；</li>
+<li><code>SIOCSPGRP</code>: 和<code>SIOCSPGRP</code>一样，不过这个选项是设置而不是get。</li>
+</ul>
+<h3 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h3><ul>
+<li><code>FIONBIO</code>: 返回值通过第三个参数返回，如果其值不为0表示socket的非阻塞flag是置位状态；如果其值为0表示socket的非阻塞flag是清除状态(这个操作和<code>O_NONBLOCK</code>标识作用一致)；</li>
+<li><code>FIOASYNC</code>: 返回值通过第三个参数返回，如果其值不为0表示socket接收异步IO信号(<code>SIGIO</code>)；如果其值为0表示socket不接受异步IO信号(<code>SIGIO</code>)(这个操作和文件状态标识<code>O_ASYNC</code>作用一致)；</li>
+<li><code>FIONREAD</code>: 返回值通过第三个参数返回，指明了当前socket(也可以作用于files/pipes/terminals)接收缓冲区的数据量(字节为单位)；</li>
+<li><code>FIOSETOWN</code>&amp;<code>FIOGETOWN</code>: 和<code>SIOCGPGRP</code>&amp;<code>SIGCSPGRP</code>功能一样。</li>
+</ul>
+<h3 id="接口操作"><a href="#接口操作" class="headerlink" title="接口操作"></a>接口操作</h3><p>接口操作的获得接口信息<code>SIOCGXXX</code>一般是由<code>netstat</code>发起(任何用户)，设置接口信息<code>SIOCSXXX</code>一般是由<code>ifconfig</code>发起(特权用户)。以下的接口操作的成员是指<code>struct ifreq</code>的成员: </p>
+<ul>
+<li><code>SIOCGIFADDR &amp; SIOCSIFADDR</code>: 返回或设置成员<code>ifr_addr</code>，即单播地址；</li>
+<li><code>SIOCGIFFLAGS &amp; SIOCSIFFLAGS</code>: 返回或设置成员<code>ifr_flags</code>，即接口标识(比如<code>IFF_UP</code>(接口是否激活)、<code>IFF_POINTOPOINT</code>(是否为P2P接口)、<code>IFF_BROADCAST</code>(是否支持广播)等等)；</li>
+<li><code>SIOCGIFDSTADDR &amp; SIOCSIFDSTADDR</code>: 返回或设置成员<code>ifr_dstaddr</code>，即P2P地址；</li>
+<li><code>SIOCGIFBRDADDR &amp; SIOCSIFBRDADDR</code>: 返回或设置成员<code>ifr_broadaddr</code>，即广播地址；</li>
+<li><code>SIOCGIFNETMASK &amp; SIOCSIFNETMASK</code>: 返回或设置成员<code>ifr_addr</code>中的子网掩码；</li>
+<li><code>SIOCGIFMETRIC &amp; SIOCSIFMETRIC</code>: 返回或设置成员<code>ifr_metric</code>，即接口测度。</li>
+</ul>
+<h3 id="ARP-cache操作"><a href="#ARP-cache操作" class="headerlink" title="ARP cache操作"></a>ARP cache操作</h3><p>有些系统上的ARP操作还是通过<code>ioctl()</code>函数，有些系统使用routing socket来替代<code>ioctl()</code>来访问ARP cache。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">arpreq</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> <span class="title">arp_pa</span>;</span>      <span class="comment">/* protocol address */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> <span class="title">arp_ha</span>;</span>      <span class="comment">/* hardware address */</span></span><br><span class="line">    <span class="keyword">int</span>             arp_flags;   <span class="comment">/* flags */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> <span class="title">arp_netmask</span>;</span> <span class="comment">/* netmask of protocol address */</span></span><br><span class="line">    <span class="keyword">char</span>            arp_dev[<span class="number">16</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>SIOCSARP</code>: 往ARP cache中添加新的项或修改已存在的项，<code>arp_pa</code>成员存的是IP地址；</li>
+<li><code>SIOCDARP</code>: 从ARP cache中删除项，由调用者指定IP地址；</li>
+<li><code>SIOCGARP</code>: 从ARP cache中获得项，由调用者指定IP地址，对应的物理地址由<code>arp_ha</code>成员返回且设置<code>arp_flags</code>标识。</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ul>
+<li>只有特权用户才能往ARP cache中添加或删除项；</li>
+<li><code>ioctl()</code>没办法列出ARP cache中的所有项，在很多系统上，<code>arp</code>列出cache中所有的项是通过读取内核内存(<code>/dev/kmem</code>)来获得当前的ARP cache；也可以使用<code>sysctl()</code>[待引用: Ch-18.4]。</li>
+</ul>
+<h3 id="路由表操作"><a href="#路由表操作" class="headerlink" title="路由表操作"></a>路由表操作</h3><ul>
+<li><code>SIOCADDRT</code> : 往路由表中添加路由项；</li>
+<li><code>SIOCDELRT</code> : 从路由表中删除路由项。</li>
+</ul>
+<p><strong>注意：</strong><code>ioctl()</code>没办法列出路由表中的所有项，在很多系统上，<code>netstat -r</code>列出路由表中所有的项是通过读取内核内存(<code>/dev/kmem</code>)来获得当前的路由表；也可以使用<code>sysctl()</code>[待引用: Ch-18.4]。</p>
+<h2 id="接口配置"><a href="#接口配置" class="headerlink" title="接口配置"></a>接口配置</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ifconf</span> &#123;</span>   </span><br><span class="line">    <span class="keyword">int</span>                 ifc_len; <span class="comment">/* size of buffer */</span></span><br><span class="line">    <span class="keyword">union</span> &#123;</span><br><span class="line">        <span class="keyword">char</span>           *ifc_buf; <span class="comment">/* buffer address */</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">ifreq</span>   *<span class="title">ifc_req</span>;</span> <span class="comment">/* array of structures */</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ifreq</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> ifr_name[IFNAMSIZ]; <span class="comment">/* Interface name */</span></span><br><span class="line">    <span class="keyword">union</span> &#123;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> <span class="title">ifr_addr</span>;</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> <span class="title">ifr_dstaddr</span>;</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> <span class="title">ifr_broadaddr</span>;</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> <span class="title">ifr_netmask</span>;</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> <span class="title">ifr_hwaddr</span>;</span></span><br><span class="line">        <span class="keyword">short</span>           ifr_flags;</span><br><span class="line">        <span class="keyword">int</span>             ifr_ifindex;</span><br><span class="line">        <span class="keyword">int</span>             ifr_metric;</span><br><span class="line">        <span class="keyword">int</span>             ifr_mtu;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">ifmap</span>    <span class="title">ifr_map</span>;</span></span><br><span class="line">        <span class="keyword">char</span>            ifr_slave[IFNAMSIZ];</span><br><span class="line">        <span class="keyword">char</span>            ifr_newname[IFNAMSIZ];</span><br><span class="line">        <span class="keyword">char</span>           *ifr_data;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>要从内核获得系统的所有接口配置信息，需要用<code>ioctl()</code>的<code>SIOCGIFCONF</code>选项，使用<code>struct ifconf</code>结构体作为第三个参数接收信息，在<code>struct ifconf</code>中使用<code>struct ifreq</code>来储存接口配置信息。</p>
+<p>在使用这个选项时，我们需要为<code>strcut ifconf</code>的联合体分配缓冲区并将缓冲区的长度存入<code>ifc_len</code>成员中，之后调用<code>ioctl()</code>将配置填充入联合体，并实际数据长度从<code>ifc_len</code>成员返回。</p>
+<h3 id="缓冲区大小小于实际数据长度解决方法"><a href="#缓冲区大小小于实际数据长度解决方法" class="headerlink" title="缓冲区大小小于实际数据长度解决方法"></a>缓冲区大小小于实际数据长度解决方法</h3><p><code>SIOCGIFCONF</code>的一个问题是如果缓冲区大小不够并不会返回错误，而是将结果截断至缓冲区可以容纳的大小(以<code>struct ifreq</code>大小为单位)。所以我们判断缓冲区是否足够的方法是将<code>SIOCGIFCONF</code>返回的长度存下来，之后分配更大的缓冲区，判断新的<code>SIOCGIFCONF</code>返回的长度是否变大了，变大了表示之前缓冲区的大小不足；直到前后两次<code>SIOCGIFCONF</code>返回的长度不变。(有些实现提供了<code>SIOCGIFNUM</code>来获得接口数，可以直接根据这个返回值来分配内存)</p>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><ul>
+<li>E-17.1: 返回的是<code>ifr_broadaddr</code>还是<code>ifr_dstaddr</code>都没有关系，因为这两个成员是在结构体<code>struct ifreq</code>的一个联合体成员中，所以他们所占的内存都是一样的，也就是返回值是一样的。</li>
+<li>E-17.2: 当缓冲区太小时，会重新分配缓冲区然后调用<code>ioctl()</code>，不会发生错误；设备是LO，返回的数据中有3个<code>AF_UNSPEC</code>，一个为30828的未知AF_*(应该不是地址结构)，还有一个<code>AF_INET</code>。</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UNPv1/" rel="tag"># UNPv1</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/30/UNPv1-Ch16-NonblockingIO/" rel="next" title="UNPv1-Ch16-NonblockingIO">
+                <i class="fa fa-chevron-left"></i> UNPv1-Ch16-NonblockingIO
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">59</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ioctl函数"><span class="nav-number">1.</span> <span class="nav-text">ioctl函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#socket操作"><span class="nav-number">1.1.</span> <span class="nav-text">socket操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件操作"><span class="nav-number">1.2.</span> <span class="nav-text">文件操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接口操作"><span class="nav-number">1.3.</span> <span class="nav-text">接口操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ARP-cache操作"><span class="nav-number">1.4.</span> <span class="nav-text">ARP cache操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由表操作"><span class="nav-number">1.5.</span> <span class="nav-text">路由表操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接口配置"><span class="nav-number">2.</span> <span class="nav-text">接口配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓冲区大小小于实际数据长度解决方法"><span class="nav-number">2.1.</span> <span class="nav-text">缓冲区大小小于实际数据长度解决方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">3.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

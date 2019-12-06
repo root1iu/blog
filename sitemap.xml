@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://root1iu.github.io/2019/12/06/UNPv1-Ch17-ioctl%E6%93%8D%E4%BD%9C/</loc>
+    
+    <lastmod>2019-12-06T13:41:15.256Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://root1iu.github.io/2019/11/30/UNPv1-Ch16-NonblockingIO/</loc>
     
     <lastmod>2019-11-30T13:54:48.785Z</lastmod>
