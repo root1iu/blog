@@ -109,25 +109,26 @@
 
 
 
-  <meta name="description" content="在O(1)时间删除链表结点——AcWing 28给定单向链表的一个节点指针，定义一个函数在O(1)时间删除该结点。 假设链表一定存在，并且该节点一定不是尾节点。 样例1234输入：链表 1-&amp;gt;4-&amp;gt;6-&amp;gt;8      删掉节点：第2个节点即6（头节点为第0个节点）输出：新链表 1-&amp;gt;4-&amp;gt;8 思路由于没有前驱节点，所以删除本节点node则需要借助本节点的后一个节点ne">
-<meta name="keywords" content="基础知识和算法">
+  <meta name="description" content="/proc文件系统/proc这个目录下包含了很多有关内核信息的子目录或者文件，允许进程来读取或者修改这些信息。 注意：/proc文件系统是虚拟的，这些文件和子目录不存放在磁盘中。 /proc/PID/proc/PID这个目录就是进程号为PID的进程信息存放地。具体的文件内容部分如表12-1所示  其中，进程的信息在/proc/PID/task/TID这个目录中，目录内容和PID的目录内容类似。 系">
 <meta property="og:type" content="article">
-<meta property="og:title" content="KM-21-在O(1)时间删除链表结点">
-<meta property="og:url" content="https://root1iu.github.io/2019/08/06/KM-21-在O-1-时间删除链表结点/index.html">
+<meta property="og:title" content="TLPI-Ch12-SystemAndProcessInformation">
+<meta property="og:url" content="https://root1iu.github.io/2019/12/07/TLPI-Ch12-SystemAndProcessInformation/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
-<meta property="og:description" content="在O(1)时间删除链表结点——AcWing 28给定单向链表的一个节点指针，定义一个函数在O(1)时间删除该结点。 假设链表一定存在，并且该节点一定不是尾节点。 样例1234输入：链表 1-&amp;gt;4-&amp;gt;6-&amp;gt;8      删掉节点：第2个节点即6（头节点为第0个节点）输出：新链表 1-&amp;gt;4-&amp;gt;8 思路由于没有前驱节点，所以删除本节点node则需要借助本节点的后一个节点ne">
+<meta property="og:description" content="/proc文件系统/proc这个目录下包含了很多有关内核信息的子目录或者文件，允许进程来读取或者修改这些信息。 注意：/proc文件系统是虚拟的，这些文件和子目录不存放在磁盘中。 /proc/PID/proc/PID这个目录就是进程号为PID的进程信息存放地。具体的文件内容部分如表12-1所示  其中，进程的信息在/proc/PID/task/TID这个目录中，目录内容和PID的目录内容类似。 系">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-06T13:36:58.404Z">
+<meta property="og:image" content="https://root1iu.github.io/2019/12/07/TLPI-Ch12-SystemAndProcessInformation/%E8%BF%9B%E7%A8%8B%E5%AD%90%E7%9B%AE%E5%BD%95%E7%9A%84%E6%96%87%E4%BB%B6.png">
+<meta property="og:updated_time" content="2019-12-07T13:52:50.048Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="KM-21-在O(1)时间删除链表结点">
-<meta name="twitter:description" content="在O(1)时间删除链表结点——AcWing 28给定单向链表的一个节点指针，定义一个函数在O(1)时间删除该结点。 假设链表一定存在，并且该节点一定不是尾节点。 样例1234输入：链表 1-&amp;gt;4-&amp;gt;6-&amp;gt;8      删掉节点：第2个节点即6（头节点为第0个节点）输出：新链表 1-&amp;gt;4-&amp;gt;8 思路由于没有前驱节点，所以删除本节点node则需要借助本节点的后一个节点ne">
+<meta name="twitter:title" content="TLPI-Ch12-SystemAndProcessInformation">
+<meta name="twitter:description" content="/proc文件系统/proc这个目录下包含了很多有关内核信息的子目录或者文件，允许进程来读取或者修改这些信息。 注意：/proc文件系统是虚拟的，这些文件和子目录不存放在磁盘中。 /proc/PID/proc/PID这个目录就是进程号为PID的进程信息存放地。具体的文件内容部分如表12-1所示  其中，进程的信息在/proc/PID/task/TID这个目录中，目录内容和PID的目录内容类似。 系">
+<meta name="twitter:image" content="https://root1iu.github.io/2019/12/07/TLPI-Ch12-SystemAndProcessInformation/%E8%BF%9B%E7%A8%8B%E5%AD%90%E7%9B%AE%E5%BD%95%E7%9A%84%E6%96%87%E4%BB%B6.png">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/2019/08/06/KM-21-在O-1-时间删除链表结点/">
+  <link rel="canonical" href="https://root1iu.github.io/2019/12/07/TLPI-Ch12-SystemAndProcessInformation/">
 
 
 
@@ -137,7 +138,7 @@
   };
 </script>
 
-  <title>KM-21-在O(1)时间删除链表结点 | Root1iu Home Page</title>
+  <title>TLPI-Ch12-SystemAndProcessInformation | Root1iu Home Page</title>
   
 
 
@@ -353,7 +354,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/08/06/KM-21-在O-1-时间删除链表结点/">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/12/07/TLPI-Ch12-SystemAndProcessInformation/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -370,7 +371,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">KM-21-在O(1)时间删除链表结点
+          <h1 class="post-title" itemprop="name headline">TLPI-Ch12-SystemAndProcessInformation
               
             
           </h1>
@@ -395,7 +396,7 @@
                 
               
 
-              <time title="创建时间：2019-08-06 21:30:07 / 修改时间：21:36:58" itemprop="dateCreated datePublished" datetime="2019-08-06T21:30:07+08:00">2019-08-06</time>
+              <time title="创建时间：2019-12-07 21:52:15 / 修改时间：21:52:50" itemprop="dateCreated datePublished" datetime="2019-12-07T21:52:15+08:00">2019-12-07</time>
             
 
             
@@ -405,24 +406,6 @@
             
           </span>
 
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/基础知识和算法/" itemprop="url" rel="index"><span itemprop="name">基础知识和算法</span></a></span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -451,12 +434,16 @@
       
 
       
-        <h4 id="在O-1-时间删除链表结点——AcWing-28"><a href="#在O-1-时间删除链表结点——AcWing-28" class="headerlink" title="在O(1)时间删除链表结点——AcWing 28"></a>在O(1)时间删除链表结点——AcWing 28</h4><p>给定单向链表的一个节点指针，定义一个函数在O(1)时间删除该结点。</p>
-<p>假设链表一定存在，并且该节点一定不是尾节点。</p>
-<h5 id="样例"><a href="#样例" class="headerlink" title="样例"></a>样例</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">输入：链表 1-&gt;4-&gt;6-&gt;8</span><br><span class="line">      删掉节点：第2个节点即6（头节点为第0个节点）</span><br><span class="line"></span><br><span class="line">输出：新链表 1-&gt;4-&gt;8</span><br></pre></td></tr></table></figure>
-<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>由于没有前驱节点，所以删除本节点<code>node</code>则需要借助本节点的后一个节点<code>next</code>，只需要将<code>next</code>的成员的值复制到<code>node</code>即可完成复制。</p>
-<p><strong>注意：</strong>可能需要回收<code>node</code>的内存</p>
-<h5 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deleteNode</span><span class="params">(ListNode* node)</span> </span>&#123;</span><br><span class="line">        ListNode* next = node-&gt;next;</span><br><span class="line">        node-&gt;val = next-&gt;val;</span><br><span class="line">        node-&gt;next = next-&gt;next;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">delete</span> next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//看见一种巧解</span></span><br><span class="line">*node = *(node-&gt;next);   <span class="comment">//直接按值复制</span></span><br></pre></td></tr></table></figure>
+        <h2 id="proc文件系统"><a href="#proc文件系统" class="headerlink" title="/proc文件系统"></a>/proc文件系统</h2><p><code>/proc</code>这个目录下包含了很多有关内核信息的子目录或者文件，允许进程来读取或者修改这些信息。</p>
+<p><strong>注意：</strong><code>/proc</code>文件系统是虚拟的，这些文件和子目录不存放在磁盘中。</p>
+<h3 id="proc-PID"><a href="#proc-PID" class="headerlink" title="/proc/PID"></a>/proc/PID</h3><p><code>/proc/PID</code>这个目录就是进程号为PID的进程信息存放地。具体的文件内容部分如表12-1所示</p>
+<p><img src="/2019/12/07/TLPI-Ch12-SystemAndProcessInformation/%E8%BF%9B%E7%A8%8B%E5%AD%90%E7%9B%AE%E5%BD%95%E7%9A%84%E6%96%87%E4%BB%B6.png" alt="进程子目录的文件"></p>
+<p>其中，进程的信息在<code>/proc/PID/task/TID</code>这个目录中，目录内容和PID的目录内容类似。</p>
+<h2 id="系统标识-uname"><a href="#系统标识-uname" class="headerlink" title="系统标识: uname()"></a>系统标识: uname()</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/utsname.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">uname</span><span class="params">(struct utsname *buf)</span></span>;</span><br><span class="line"><span class="comment">// on error, -1 is returned</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">utsname</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> sysname[];    <span class="comment">/* Operating system name (e.g., "Linux") */</span></span><br><span class="line">    <span class="keyword">char</span> nodename[];   <span class="comment">/* Name within "some implementation-defined network" */</span></span><br><span class="line">    <span class="keyword">char</span> release[];    <span class="comment">/* Operating system release (e.g., "2.6.28") */</span></span><br><span class="line">    <span class="keyword">char</span> version[];    <span class="comment">/* Operating system version */</span></span><br><span class="line">    <span class="keyword">char</span> machine[];    <span class="comment">/* Hardware identifier */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> _GNU_SOURCE</span></span><br><span class="line">    <span class="keyword">char</span> domainname[]; <span class="comment">/* NIS or YP domain name */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong><code>struct utsname</code>的成员长度是未定义的，通常需要使用<code>sizeof()</code>来获得其成员长度。</p>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><ul>
+<li>E-12-3: [待引用: Ch-18.5]</li>
+</ul>
 
       
     </div>
@@ -478,12 +465,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/基础知识和算法/" rel="tag"># 基础知识和算法</a>
-          
-        </div>
-      
 
       
       
@@ -493,8 +474,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/08/06/KM-20-不修改数组找出重复数字/" rel="next" title="KM-20-不修改数组找出重复数字">
-                <i class="fa fa-chevron-left"></i> KM-20-不修改数组找出重复数字
+              <a href="/2019/12/06/UNPv1-Ch17-ioctl操作/" rel="next" title="UNPv1-Ch17-ioctl操作">
+                <i class="fa fa-chevron-left"></i> UNPv1-Ch17-ioctl操作
               </a>
             
           </div>
@@ -502,10 +483,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/08/06/KM-22-删除链表中的重复节点/" rel="prev" title="KM-22-删除链表中的重复节点">
-                KM-22-删除链表中的重复节点 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -680,7 +657,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#在O-1-时间删除链表结点——AcWing-28"><span class="nav-number">1.</span> <span class="nav-text">在O(1)时间删除链表结点——AcWing 28</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#样例"><span class="nav-number">1.1.</span> <span class="nav-text">样例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#思路"><span class="nav-number">1.2.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#代码"><span class="nav-number">1.3.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#proc文件系统"><span class="nav-number">1.</span> <span class="nav-text">/proc文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#proc-PID"><span class="nav-number">1.1.</span> <span class="nav-text">/proc/PID</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统标识-uname"><span class="nav-number">2.</span> <span class="nav-text">系统标识: uname()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">3.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
             
 
           </div>

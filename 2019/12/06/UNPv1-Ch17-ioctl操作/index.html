@@ -117,12 +117,12 @@
 <meta property="og:site_name" content="Root1iu Home Page">
 <meta property="og:description" content="ioctl函数对于网络程序来说，ioctl()的一个主要作用是获取主机的接口(interface)信息，比如接口的地址、是否支持广播多播等信息。 1234#include &amp;lt;sys/ioctl.h&amp;gt;int ioctl(int fd, unsigned long request, ...);// return 0 if ok, -1 on error request分为6类，分别是soc">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://root1iu.github.io/2019/12/06/UNPv1-Ch17-ioctl操作/home/root1iu/Linux/UNP/UNPv1/Ch17-ioctl%E6%93%8D%E4%BD%9C/iotcl%E7%9A%84%E8%AF%B7%E6%B1%82%E6%80%BB%E7%BB%93.png">
-<meta property="og:updated_time" content="2019-12-06T13:41:15.256Z">
+<meta property="og:image" content="https://root1iu.github.io/2019/12/06/UNPv1-Ch17-ioctl操作/iotcl%E7%9A%84%E8%AF%B7%E6%B1%82%E6%80%BB%E7%BB%93.png">
+<meta property="og:updated_time" content="2019-12-06T13:42:56.641Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UNPv1-Ch17-ioctl操作">
 <meta name="twitter:description" content="ioctl函数对于网络程序来说，ioctl()的一个主要作用是获取主机的接口(interface)信息，比如接口的地址、是否支持广播多播等信息。 1234#include &amp;lt;sys/ioctl.h&amp;gt;int ioctl(int fd, unsigned long request, ...);// return 0 if ok, -1 on error request分为6类，分别是soc">
-<meta name="twitter:image" content="https://root1iu.github.io/2019/12/06/UNPv1-Ch17-ioctl操作/home/root1iu/Linux/UNP/UNPv1/Ch17-ioctl%E6%93%8D%E4%BD%9C/iotcl%E7%9A%84%E8%AF%B7%E6%B1%82%E6%80%BB%E7%BB%93.png">
+<meta name="twitter:image" content="https://root1iu.github.io/2019/12/06/UNPv1-Ch17-ioctl操作/iotcl%E7%9A%84%E8%AF%B7%E6%B1%82%E6%80%BB%E7%BB%93.png">
 
 
 
@@ -397,7 +397,7 @@
                 
               
 
-              <time title="创建时间：2019-12-06 21:40:41 / 修改时间：21:41:15" itemprop="dateCreated datePublished" datetime="2019-12-06T21:40:41+08:00">2019-12-06</time>
+              <time title="创建时间：2019-12-06 21:40:41 / 修改时间：21:42:56" itemprop="dateCreated datePublished" datetime="2019-12-06T21:40:41+08:00">2019-12-06</time>
             
 
             
@@ -456,7 +456,7 @@
         <h2 id="ioctl函数"><a href="#ioctl函数" class="headerlink" title="ioctl函数"></a>ioctl函数</h2><p>对于网络程序来说，<code>ioctl()</code>的一个主要作用是获取主机的接口(interface)信息，比如接口的地址、是否支持广播多播等信息。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ioctl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ioctl</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">unsigned</span> <span class="keyword">long</span> request, ...)</span></span>;</span><br><span class="line"><span class="comment">// return 0 if ok, -1 on error</span></span><br></pre></td></tr></table></figure>
 <p><code>request</code>分为6类，分别是socket、file、interface、ARP cache、routing table、 STREAMS system，如图17.1所示</p>
-<p><img src="/2019/12/06/UNPv1-Ch17-ioctl操作/home/root1iu/Linux/UNP/UNPv1/Ch17-ioctl%E6%93%8D%E4%BD%9C/iotcl%E7%9A%84%E8%AF%B7%E6%B1%82%E6%80%BB%E7%BB%93.png" alt="iotcl的请求总结"></p>
+<p><img src="/2019/12/06/UNPv1-Ch17-ioctl操作/iotcl%E7%9A%84%E8%AF%B7%E6%B1%82%E6%80%BB%E7%BB%93.png" alt="iotcl的请求总结"></p>
 <h3 id="socket操作"><a href="#socket操作" class="headerlink" title="socket操作"></a>socket操作</h3><ul>
 <li><code>SIOCATMARK</code>: 返回值通过第三个参数返回，如果其值不为0表示socket的读指针现在位于out-of-band mark；如果其值为0则表示socket的读指针现在不在out-of-band mark处；</li>
 <li><code>SIOCGPGRP</code>: 返回值通过第三个参数返回，该值指明了接收<code>SIGIO</code>或<code>SIGURG</code>信号的进程PID或进程GPID(这个操作和<code>fcntl()</code>的<code>F_GEOWN</code>作用一致)；</li>
@@ -548,6 +548,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/12/07/TLPI-Ch12-SystemAndProcessInformation/" rel="prev" title="TLPI-Ch12-SystemAndProcessInformation">
+                TLPI-Ch12-SystemAndProcessInformation <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -620,7 +624,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">59</span>
+                    <span class="site-state-item-count">60</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
