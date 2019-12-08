@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="文件IO的内核缓存: buffer cache当调用read()和write()时，内核并不会直接将数据写入磁盘，而是将数据放入kernel buffer cache(这是内核维护的缓存区)，所以我们说这些系统调用并不是磁盘同步的。当read()要读取文件中被缓存的部分内容时，会直接在内核缓存区读取而不会去磁盘读取。 这种设计是为了让read() &amp;amp; write()获得更好的性能，避免频">
+<meta name="keywords" content="TLPI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TLPI-Ch13-FileIOBuffering">
+<meta property="og:url" content="https://root1iu.github.io/2019/12/08/TLPI-Ch13-FileIOBuffering/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="文件IO的内核缓存: buffer cache当调用read()和write()时，内核并不会直接将数据写入磁盘，而是将数据放入kernel buffer cache(这是内核维护的缓存区)，所以我们说这些系统调用并不是磁盘同步的。当read()要读取文件中被缓存的部分内容时，会直接在内核缓存区读取而不会去磁盘读取。 这种设计是为了让read() &amp;amp; write()获得更好的性能，避免频">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://root1iu.github.io/2019/12/08/TLPI-Ch13-FileIOBuffering/%E7%BC%93%E5%AD%98%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+<meta property="og:updated_time" content="2019-12-08T14:21:29.788Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TLPI-Ch13-FileIOBuffering">
+<meta name="twitter:description" content="文件IO的内核缓存: buffer cache当调用read()和write()时，内核并不会直接将数据写入磁盘，而是将数据放入kernel buffer cache(这是内核维护的缓存区)，所以我们说这些系统调用并不是磁盘同步的。当read()要读取文件中被缓存的部分内容时，会直接在内核缓存区读取而不会去磁盘读取。 这种设计是为了让read() &amp;amp; write()获得更好的性能，避免频">
+<meta name="twitter:image" content="https://root1iu.github.io/2019/12/08/TLPI-Ch13-FileIOBuffering/%E7%BC%93%E5%AD%98%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/12/08/TLPI-Ch13-FileIOBuffering/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>TLPI-Ch13-FileIOBuffering | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/12/08/TLPI-Ch13-FileIOBuffering/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TLPI-Ch13-FileIOBuffering
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-08 22:19:50 / 修改时间：22:21:29" itemprop="dateCreated datePublished" datetime="2019-12-08T22:19:50+08:00">2019-12-08</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/TLPI/" itemprop="url" rel="index"><span itemprop="name">TLPI</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="/2019/12/08/TLPI-Ch13-FileIOBuffering/%E7%BC%93%E5%AD%98%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="缓存结构图"></p>
+<h2 id="文件IO的内核缓存-buffer-cache"><a href="#文件IO的内核缓存-buffer-cache" class="headerlink" title="文件IO的内核缓存: buffer cache"></a>文件IO的内核缓存: buffer cache</h2><p>当调用<code>read()</code>和<code>write()</code>时，内核并不会直接将数据写入磁盘，而是将数据放入<code>kernel buffer cache</code>(这是内核维护的缓存区)，所以我们说这些系统调用并不是磁盘同步的。当<code>read()</code>要读取文件中被缓存的部分内容时，会直接在内核缓存区读取而不会去磁盘读取。</p>
+<p>这种设计是为了让<code>read() &amp; write()</code>获得更好的性能，避免频繁的读写磁盘的操作。</p>
+<h2 id="stdio库函数的buffer"><a href="#stdio库函数的buffer" class="headerlink" title="stdio库函数的buffer"></a>stdio库函数的buffer</h2><h3 id="setvbuf"><a href="#setvbuf" class="headerlink" title="setvbuf()"></a>setvbuf()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setvbuf</span><span class="params">(FILE *stream, <span class="keyword">char</span> *buf, <span class="keyword">int</span> mode, <span class="keyword">size_t</span> size)</span></span>;</span><br><span class="line"><span class="comment">// on error, nonzore is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>setvbuf()</code>函数能够控制stdio库函数的缓存的形式。</p>
+<p><code>stream</code>指定了要修改缓存的文件流，<code>buf &amp; size</code>指定了文件流要使用的缓存，<code>buf</code>有两种情况</p>
+<ul>
+<li><code>buf</code>非空，那么这个<code>buf</code>就指定了文件流缓存区的地址，这个缓存区共有<code>size</code>字节</li>
+<li><code>buf</code>为空，那么stdio会自动为文件流<code>stream</code>分配缓存区(除非指定了不要缓存区，<code>_IONBF</code>)，在这种情况下<code>size</code>被忽略(glibc)</li>
+</ul>
+<p>参数<code>mode</code>指定了缓存区的类型，有如下不同的值</p>
+<ul>
+<li><code>_IONBF</code>，不要缓存IO，所有的stdio库函数直接调用系统调用<code>read() &amp; write()</code>，这是<code>stderr</code>的默认情况</li>
+<li><code>_IOLBF</code>，使用行缓存，这是终端设备的默认情况，遇到<code>\n</code>时刷新缓存区</li>
+<li><code>_IOFBF</code>，使用全缓存，这是磁盘文件的默认情况，直到缓存区满了才会刷新缓存区</li>
+</ul>
+<h3 id="setbuf"><a href="#setbuf" class="headerlink" title="setbuf()"></a>setbuf()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setbuf</span><span class="params">(FILE *stream, <span class="keyword">char</span> *buf)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>setbuf()</code>是在<code>setvbuf()</code>的基础上实现的，它们的关系如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setbuf(fp, buf) == setvbuf(fp, (buf != <span class="literal">NULL</span>) ? _IOFBF : _IONBF, BUFSIZE)</span><br></pre></td></tr></table></figure>
+<p>即<code>buf</code>为空意味着无缓存，否则使用大小为<code>BUFSIZE</code>的缓存<code>buf</code>(这个缓存是调用者分配的内存)</p>
+<h3 id="setbuffer"><a href="#setbuffer" class="headerlink" title="setbuffer()"></a>setbuffer()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setbuffer</span><span class="params">(FILE *stream, <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> size)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>setbuffer()</code>和<code>setbuf()</code>类似，不过可以自己指定缓存大小，它们的关系如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setbuffer(fp, buf, size) == setvbuf(fp, (buf != <span class="literal">NULL</span>) ? _IOFBF : _IONBF, size)</span><br></pre></td></tr></table></figure>
+<h3 id="fflush"><a href="#fflush" class="headerlink" title="fflush()"></a>fflush()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fflush</span><span class="params">(FILE *stream)</span></span>;</span><br><span class="line"><span class="comment">// on success 0 is returned, on error, EOF is returned</span></span><br></pre></td></tr></table></figure>
+<p>当<code>fflush()</code>应用于输出流时，其操作是强制标准输出流的数据被写入(即使用<code>write</code>写入<code>kernel buffer cache</code>)；当<code>fflush()</code>应用于输入流时，其操作是丢弃缓存的输入数据。</p>
+<p>当<code>stream</code>为NULL，<code>fflush()</code>会刷新所有stdio输出流的缓存；当流被关闭时，其缓存区会被自动刷新。</p>
+<p><strong>注意：</strong></p>
+<ul>
+<li>大部分C实现中，如果stdin和stdout绑定了终端，那么在stdin读取数据时，会隐式调用<code>fflush(stdout)</code>。但这并不是可移植的，所以在输出非以<code>\n</code>终止的数据到stdout时，需要显式地调用<code>fflush(stdout)</code>。</li>
+<li>C99对于同时用于输出和输入的流，有两项要求：第一是输出后不能立即跟着输入，必须在中间插入<code>fflush()</code>或者其他文件定位函数(<code>fseek()、fsetpos()、rewind()</code>)；第二是输入后不能立即跟着输出，必须在中间插入文件定位函数，除非遇到EOF。[疑问：第二点是为什么？]</li>
+</ul>
+<h2 id="控制文件IO的内核缓存"><a href="#控制文件IO的内核缓存" class="headerlink" title="控制文件IO的内核缓存"></a>控制文件IO的内核缓存</h2><p>内核缓存是指图13-1的<code>kernel buffer cache</code>。</p>
+<p>同步IO完成(<code>synchronized IO completion</code>)意思是IO操作只有两种可能，一种是成功写入到磁盘，一种是操作被忽略。</p>
+<p>元数据(<code>metadata</code>)是指描述文件数据的数据，比如描述文件大小的数据或者描述文件时间戳的数据。</p>
+<h3 id="同步的IO数据完整性-synchronized-IO-data-integrity-completion"><a href="#同步的IO数据完整性-synchronized-IO-data-integrity-completion" class="headerlink" title="同步的IO数据完整性(synchronized IO data integrity completion)"></a>同步的IO数据完整性(synchronized IO data integrity completion)</h3><p>同步IO数据完整性关心的是确保文件数据更新能够改变足够的信息满足下一次检索的需要。</p>
+<ul>
+<li>对于读操作，(若有未写入的数据，则将这些数据写入后再)进行读操作。</li>
+<li>对于写操作，意味着数据会被写入磁盘且所有被检索所需要的元数据会被写入(磁盘)，这里要注意并不是所有元数据都会被更新，比如文件大小(如果超过了原文件大小)这个元数据会被更新，但时间戳这个元数据不会被更新，因为后续的读操作还会改变时间戳。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fdatasync</span><span class="params">(<span class="keyword">int</span> fd)</span></span>;</span><br><span class="line"><span class="comment">// on error, -1 is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>fdatasync()</code>的功能是让<code>fd</code>所指向的文件进入同步的IO数据完整性的状态，也就是说让其在<code>kernel buffer cache</code>的数据写入到磁盘，包括那些会影响后续操作的元数据也会被写入到磁盘中。</p>
+<h3 id="同步的IO文件完整性-synchronized-IO-file-integrity-completion"><a href="#同步的IO文件完整性-synchronized-IO-file-integrity-completion" class="headerlink" title="同步的IO文件完整性(synchronized IO file integrity completion)"></a>同步的IO文件完整性(synchronized IO file integrity completion)</h3><p>同步的IO文件完整性是同步的IO数据完整性的超集，在其基础上有更高的要求——所有元数据都会被更新写入(磁盘)，不管这些元数据对于接下来的操作是否必要。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fsync</span><span class="params">(<span class="keyword">int</span> fd)</span></span>;</span><br><span class="line"><span class="comment">// on error, -1 is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>fsync()</code>的功能是让<code>fd</code>所指向的文件进入同步的IO文件完整性的状态，也就是说让其在<code>kernel buffer cache</code>的数据和所有元数据都被写入到磁盘。</p>
+<h3 id="fsync-amp-fdatasync-的区别"><a href="#fsync-amp-fdatasync-的区别" class="headerlink" title="fsync() &amp; fdatasync()的区别"></a>fsync() &amp; fdatasync()的区别</h3><p>在性能上，如果不改变文件的大小的话，<code>fdatasync()</code>只会执行一个磁盘IO操作，而<code>fsync()</code>会执行两个磁盘IO操作，因为<code>fdatasync()</code>不会将不必要的元数据写入磁盘，而<code>fsync()</code>则强制所有元数据写入磁盘。</p>
+<p>在Linux 2.2之前，<code>fdatasync()</code>是以<code>fsync()</code>实现的，所以这个版本的Linux中这两个函数没有性能差异。</p>
+<h3 id="sync"><a href="#sync" class="headerlink" title="sync()"></a>sync()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sync</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>sync()</code>会让所有内核缓存刷新到磁盘中。在Linux下，<code>sync()</code>会在所有IO操作完成，即缓存数据被传送到磁盘(至少是cache)中后，返回；但其他实现可能在这之前返回。</p>
+<p>内核中有一个永远运行的线程(<code>pdflush</code>)，它保证在固定的时间内将修改的内核缓存写入到磁盘文件中，避免磁盘和内核缓存内容不一致。</p>
+<h3 id="让所有写操作都同步-O-SYNC"><a href="#让所有写操作都同步-O-SYNC" class="headerlink" title="让所有写操作都同步: O_SYNC"></a>让所有写操作都同步: O_SYNC</h3><p>在<code>open()</code>时指定<code>O_SYNC</code>可以让所有<code>write()</code>操作都同步，即每次<code>write()</code>自动刷新文件数据和元数据(这里执行的是同步的IO文件完整性)到磁盘中(默认情况是到cache)。若取消cache(<code>命令: hdparm -W0</code>)，那么会直接写入磁盘。<code>O_SYNC</code>类似<code>fsync()</code>。</p>
+<h3 id="O-DSYNC-amp-O-RSYNC"><a href="#O-DSYNC-amp-O-RSYNC" class="headerlink" title="O_DSYNC &amp; O_RSYNC"></a>O_DSYNC &amp; O_RSYNC</h3><p><code>O_DSYNC</code>这个选项的功能和<code>fdatasync()</code>类似，都是执行同步的数据完整性，即非必要的元数据不会被写入磁盘。</p>
+<p><code>O_RSYNC</code>这个操作通常和<code>O_DSYNC</code>或<code>O_SYNC</code>结合，用来将这些写操作的标识扩展到读操作。</p>
+<ul>
+<li><code>O_RSYNC + O_DSYNC</code>，在读操作前，若有未处理的文件写操作，那么这些写操作会以<code>O_DSYNC</code>为标识完成，之后才会进行读操作。</li>
+<li><code>O_RSYNC + O_SYNC</code>，在读操作前，若有未处理的文件写操作，那么谢谢写操作会以<code>O_SYNC</code>为标识完成，之后进行读操作。</li>
+</ul>
+<p>在2.6.33内核之前，Linux没有实现<code>O_DSYNC</code>和<code>O_RSYNC</code>，<code>glibc</code>将这两个常量定义为<code>O_SYNC</code>。但要注意的是，在2.6.33内核之前，<code>O_SYNC</code>实现的语义其实是<code>O_DSYNC</code>(synchronized data IO integrity)，为了兼容，应用应该链接到仍然为<code>O_SYNC</code>提供<code>O_DSYNC</code>语义的GNU c版本。</p>
+<h2 id="给内核的IO模式提建议"><a href="#给内核的IO模式提建议" class="headerlink" title="给内核的IO模式提建议"></a>给内核的IO模式提建议</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">posix_fadvise</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">off_t</span> offset, <span class="keyword">off_t</span> len, <span class="keyword">int</span> advice)</span></span>;</span><br><span class="line"><span class="comment">// return 0 on success, or a positive error number on error</span></span><br></pre></td></tr></table></figure>
+<p><code>posix_fadvise()</code>告诉内核访问文件<code>fd</code>时采用的模式。参数<code>fd</code>指明了要改变访问模式的文件；<code>offset &amp; len</code>指明了要改变访问模式的文件数据范围(<code>len</code>为0表示从<code>offset</code>直到文件末尾)；<code>advice</code>就是文件的访问模式，有如下几个选项：</p>
+<ul>
+<li><code>POSIX_FADV_NORMAL</code>，这是默认情况，在Linux下这个选项会将文件预读窗口设置为默认大小(128 KB)</li>
+<li><code>POSIX_FADV_SEQUENTIAL</code>，进程期望从底偏移到高偏移按顺序访问文件数据，在Linux下，这个选项会将文件预读窗口设置为2倍默认值</li>
+<li><code>POSIX_FADV_RANDOM</code>，进程期望随机访问文件数据，在Linux下，这个选项会取消文件预读</li>
+<li><code>POSIX_FADV_WILLNEED</code>，进程在不久之后将会读取<code>[offset, offset + len]</code>这个范围的文件数据，内核会预读这部分数据到<code>kenrnel buffer cache</code>，之后的<code>read()</code>会直接从<code>buffer cache</code>中读取而不是从磁盘中读取。但是内核不保证数据会在<code>buffer cache</code>中保存多久，这里的数据可能会被刷新，所以说在内存压力大时，需要在调用<code>posix_fadvise()</code>后尽快调用<code>read()</code>。Linux下有替代函数(<code>readahead()</code>)提供相同的功能</li>
+<li><code>POSIX_FADV_DONTNEED</code>，进程在之后不会访问<code>[offset, offset + len]</code>这个范围的文件数据，内核可以在<code>buffer cache</code>中将这部分free。在Linux下分为两步，第一步当底层设备当前没有挤满排队的写操作时，内核会将那些修改过的数据页写入到磁盘；第二步是尝试释放这些数据页。第二步只有在第一步成功时才会成功，即设备的写队列不拥挤时才会成功，但应用没办法控制这部分内容，解决方法是在调用<code>posix_fadvise()</code>前先调用<code>sync()</code>或者<code>fdatasync()</code></li>
+<li><code>POSIX_FADV_NORUSE</code>，进程期望一次性访问<code>[offset, offset + len]</code>这个范围的文件数据且不会重用，暗示内核这部分数据在用完就可以free了，在Linux下，这个选项被忽略</li>
+</ul>
+<p><strong>注意：</strong><code>posix_fadvise()</code>只是给内核的建议，内核可能会采纳也可能不会。</p>
+<h2 id="绕过buffer-cache-直接IO"><a href="#绕过buffer-cache-直接IO" class="headerlink" title="绕过buffer cache: 直接IO"></a>绕过buffer cache: 直接IO</h2><p>直接IO就是从用户空间直接到文件或磁盘设备。要注意直接IO并不会提升IO性能，绕过的<code>buffer cache</code>有很多对IO的优化(预读之类的优化)，绕过它会失去这些优化导致性能下降。直接IO只在特殊的情况下用到，比如数据库系统有自己的IO优化策略，从而绕过<code>buffer cache</code>。</p>
+<p>我们可以在<code>open()</code>时就指定<code>O_DIRECT</code>来执行直接IO，如果系统不支持<code>O_DIRECT</code>，那么<code>open()</code>会返回<code>EINVAL</code>错误。</p>
+<h3 id="O-DIRECT操作时的限制"><a href="#O-DIRECT操作时的限制" class="headerlink" title="O_DIRECT操作时的限制"></a>O_DIRECT操作时的限制</h3><p><code>O_DIRECT</code>在操作时有一些对齐限制：</p>
+<ul>
+<li>数据buffer需要和块大小进行对齐</li>
+<li>文件和设备的偏移需要和块大小进行对齐</li>
+<li>传输的数据长度需要和块大小进行对齐</li>
+</ul>
+<p>如果违反了这些限制，那么会导致错误<code>EINVAL</code>。</p>
+<h3 id="O-DIRECT-和-O-SYNC的区别"><a href="#O-DIRECT-和-O-SYNC的区别" class="headerlink" title="O_DIRECT 和 O_SYNC的区别"></a>O_DIRECT 和 O_SYNC的区别</h3><p>[疑问: <code>O_DIRECT</code>和<code>O_SYNC</code>有没有区别？可能的区别是<code>O_SYNC</code>是到<code>buffer cache</code>再到磁盘，而<code>O_DIRECT</code>是直接到磁盘]。</p>
+<p><a href="https://stackoverflow.com/questions/5055859/how-are-the-o-sync-and-o-direct-flags-in-open2-different-alike/5390137" target="_blank" rel="noopener">stackoverflow类似问题</a>，这里面说的是<code>O_DIRECT</code>保证不会将数据从用户空间复制到内核空间(直接通过DMA(Direct memory access))，但没有保证函数调用会在数据完成传输后返回；<code>O_SYNC</code>保证调用会在数据传输到磁盘后返回，但没有保证数据有时候可能会经过<code>buffer cache</code>。所以这两个选项通常一起出现，保证DMA+数据完成传输后调用才返回。</p>
+<h2 id="库函数和系统调用"><a href="#库函数和系统调用" class="headerlink" title="库函数和系统调用"></a>库函数和系统调用</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line">       </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fileno</span><span class="params">(FILE *stream)</span></span>;</span><br><span class="line"><span class="comment">// on error, -1 is returned</span></span><br><span class="line"></span><br><span class="line"><span class="function">FILE *<span class="title">fdopen</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *mode)</span></span>;</span><br><span class="line"><span class="comment">// on error, NULL is returned</span></span><br></pre></td></tr></table></figure>
+<p><code>fileno()</code>将文件流转化成文件描述符。<code>fdopen()</code>将文件描述符转化成文件流，但这里要注意若<code>mode</code>的访问模式和文件描述符<code>fd</code>的访问模式不兼容(比如说fd是只读，而<code>mode</code>设置可读可写)，会导致<code>fdopen()</code>出现错误。</p>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><ul>
+<li><p>E-13-1: b)当加了<code>O_SYNC</code>时，100 KB的文件在buff size为1024时速度慢了大概350倍，在buff size为1时速度大概慢了4448倍(小样本低次数的测试)</p>
+</li>
+<li><p>E-13-4: 当使用命令行重定向标准输出时会出现输出倒置，但若直接使用代码重定向标准输出时，输出不会倒置，这是为什么？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代码输出是正常语序</span></span><br><span class="line"><span class="number">1.</span> </span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"if i had more time, \n"</span>);</span><br><span class="line">    write(STDOUT_FILENO, <span class="string">"I would have written you a shorter letter.\n"</span>, <span class="number">43</span>);</span><br><span class="line"><span class="number">2.</span> </span><br><span class="line">    close(STDOUT_FILENO);</span><br><span class="line"></span><br><span class="line">    fd = open(<span class="string">"t"</span>,  O_WRONLY);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"if i had more time, \n"</span>);</span><br><span class="line">    write(STDOUT_FILENO, <span class="string">"I would have written you a shorter letter.\n"</span>, <span class="number">43</span>);</span><br><span class="line"><span class="comment">//  使用命令行重定向时代码输出倒置(因为全缓冲，但是为什么上面close之后就不是全缓冲了呢？)</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"if i had more time, \n"</span>);</span><br><span class="line">    write(STDOUT_FILENO, <span class="string">"I would have written you a shorter letter.\n"</span>, <span class="number">43</span>);</span><br></pre></td></tr></table></figure>
+<p>第1部分(命令行重定向)和第2部分单独拎出来的输出都是倒置的，这是为什么？</p>
+<p>​    </p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TLPI/" rel="tag"># TLPI</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/07/TLPI-Ch12-SystemAndProcessInformation/" rel="next" title="TLPI-Ch12-SystemAndProcessInformation">
+                <i class="fa fa-chevron-left"></i> TLPI-Ch12-SystemAndProcessInformation
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">61</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#文件IO的内核缓存-buffer-cache"><span class="nav-number">1.</span> <span class="nav-text">文件IO的内核缓存: buffer cache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stdio库函数的buffer"><span class="nav-number">2.</span> <span class="nav-text">stdio库函数的buffer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#setvbuf"><span class="nav-number">2.1.</span> <span class="nav-text">setvbuf()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setbuf"><span class="nav-number">2.2.</span> <span class="nav-text">setbuf()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setbuffer"><span class="nav-number">2.3.</span> <span class="nav-text">setbuffer()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fflush"><span class="nav-number">2.4.</span> <span class="nav-text">fflush()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#控制文件IO的内核缓存"><span class="nav-number">3.</span> <span class="nav-text">控制文件IO的内核缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#同步的IO数据完整性-synchronized-IO-data-integrity-completion"><span class="nav-number">3.1.</span> <span class="nav-text">同步的IO数据完整性(synchronized IO data integrity completion)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步的IO文件完整性-synchronized-IO-file-integrity-completion"><span class="nav-number">3.2.</span> <span class="nav-text">同步的IO文件完整性(synchronized IO file integrity completion)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fsync-amp-fdatasync-的区别"><span class="nav-number">3.3.</span> <span class="nav-text">fsync() &amp; fdatasync()的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sync"><span class="nav-number">3.4.</span> <span class="nav-text">sync()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#让所有写操作都同步-O-SYNC"><span class="nav-number">3.5.</span> <span class="nav-text">让所有写操作都同步: O_SYNC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#O-DSYNC-amp-O-RSYNC"><span class="nav-number">3.6.</span> <span class="nav-text">O_DSYNC &amp; O_RSYNC</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#给内核的IO模式提建议"><span class="nav-number">4.</span> <span class="nav-text">给内核的IO模式提建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#绕过buffer-cache-直接IO"><span class="nav-number">5.</span> <span class="nav-text">绕过buffer cache: 直接IO</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#O-DIRECT操作时的限制"><span class="nav-number">5.1.</span> <span class="nav-text">O_DIRECT操作时的限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#O-DIRECT-和-O-SYNC的区别"><span class="nav-number">5.2.</span> <span class="nav-text">O_DIRECT 和 O_SYNC的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#库函数和系统调用"><span class="nav-number">6.</span> <span class="nav-text">库函数和系统调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">7.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
