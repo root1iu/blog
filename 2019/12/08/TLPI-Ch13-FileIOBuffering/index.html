@@ -118,7 +118,7 @@
 <meta property="og:description" content="文件IO的内核缓存: buffer cache当调用read()和write()时，内核并不会直接将数据写入磁盘，而是将数据放入kernel buffer cache(这是内核维护的缓存区)，所以我们说这些系统调用并不是磁盘同步的。当read()要读取文件中被缓存的部分内容时，会直接在内核缓存区读取而不会去磁盘读取。 这种设计是为了让read() &amp;amp; write()获得更好的性能，避免频">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://root1iu.github.io/2019/12/08/TLPI-Ch13-FileIOBuffering/%E7%BC%93%E5%AD%98%E7%BB%93%E6%9E%84%E5%9B%BE.png">
-<meta property="og:updated_time" content="2019-12-08T14:21:29.788Z">
+<meta property="og:updated_time" content="2019-12-08T14:30:45.162Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TLPI-Ch13-FileIOBuffering">
 <meta name="twitter:description" content="文件IO的内核缓存: buffer cache当调用read()和write()时，内核并不会直接将数据写入磁盘，而是将数据放入kernel buffer cache(这是内核维护的缓存区)，所以我们说这些系统调用并不是磁盘同步的。当read()要读取文件中被缓存的部分内容时，会直接在内核缓存区读取而不会去磁盘读取。 这种设计是为了让read() &amp;amp; write()获得更好的性能，避免频">
@@ -397,7 +397,7 @@
                 
               
 
-              <time title="创建时间：2019-12-08 22:19:50 / 修改时间：22:21:29" itemprop="dateCreated datePublished" datetime="2019-12-08T22:19:50+08:00">2019-12-08</time>
+              <time title="创建时间：2019-12-08 22:19:50 / 修改时间：22:30:45" itemprop="dateCreated datePublished" datetime="2019-12-08T22:19:50+08:00">2019-12-08</time>
             
 
             
@@ -538,7 +538,7 @@
 <li><p>E-13-1: b)当加了<code>O_SYNC</code>时，100 KB的文件在buff size为1024时速度慢了大概350倍，在buff size为1时速度大概慢了4448倍(小样本低次数的测试)</p>
 </li>
 <li><p>E-13-4: 当使用命令行重定向标准输出时会出现输出倒置，但若直接使用代码重定向标准输出时，输出不会倒置，这是为什么？</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代码输出是正常语序</span></span><br><span class="line"><span class="number">1.</span> </span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"if i had more time, \n"</span>);</span><br><span class="line">    write(STDOUT_FILENO, <span class="string">"I would have written you a shorter letter.\n"</span>, <span class="number">43</span>);</span><br><span class="line"><span class="number">2.</span> </span><br><span class="line">    close(STDOUT_FILENO);</span><br><span class="line"></span><br><span class="line">    fd = open(<span class="string">"t"</span>,  O_WRONLY);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"if i had more time, \n"</span>);</span><br><span class="line">    write(STDOUT_FILENO, <span class="string">"I would have written you a shorter letter.\n"</span>, <span class="number">43</span>);</span><br><span class="line"><span class="comment">//  使用命令行重定向时代码输出倒置(因为全缓冲，但是为什么上面close之后就不是全缓冲了呢？)</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"if i had more time, \n"</span>);</span><br><span class="line">    write(STDOUT_FILENO, <span class="string">"I would have written you a shorter letter.\n"</span>, <span class="number">43</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代码输出是正常语序</span></span><br><span class="line"><span class="number">1.</span> </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"if i had more time, \n"</span>);</span><br><span class="line">    write(STDOUT_FILENO, <span class="string">"I would have written you a shorter letter.\n"</span>, <span class="number">43</span>);</span><br><span class="line"><span class="number">2.</span> </span><br><span class="line">    close(STDOUT_FILENO);</span><br><span class="line"></span><br><span class="line">    fd = open(<span class="string">"t"</span>,  O_WRONLY);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"if i had more time, \n"</span>);</span><br><span class="line">    write(STDOUT_FILENO, <span class="string">"I would have written you a shorter letter.\n"</span>, <span class="number">43</span>);</span><br><span class="line"><span class="comment">//  使用命令行重定向时代码输出倒置(因为全缓冲，但是为什么上面close之后就不是全缓冲了呢？)</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"if i had more time, \n"</span>);</span><br><span class="line">    write(STDOUT_FILENO, <span class="string">"I would have written you a shorter letter.\n"</span>, <span class="number">43</span>);</span><br></pre></td></tr></table></figure>
 <p>第1部分(命令行重定向)和第2部分单独拎出来的输出都是倒置的，这是为什么？</p>
 <p>​    </p>
 </li>
@@ -588,6 +588,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/12/09/TLPI-Ch14-FileSystems/" rel="prev" title="TLPI-Ch14-FileSystems">
+                TLPI-Ch14-FileSystems <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -661,7 +665,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">61</span>
+                    <span class="site-state-item-count">62</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

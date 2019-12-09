@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="设备专用文件字符设备字符设备处理的数据是一个字节一个字节，比如终端和键盘就是字符设备的一种 块设备块设备就是每次处理的单位都是块(block)，块的大小取决于设备，一般是512字节 设备ID每个设备文件都有一个主ID和从ID。主ID标明了设备的一般类型，内核用来匹配合适的驱动；从ID在一般类型中唯一指定了特殊设备。 每个设备驱动都会和主设备ID进行联合，提供了设备专用文件到设备驱动的对应关系。 文">
+<meta name="keywords" content="TLPI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TLPI-Ch14-FileSystems">
+<meta property="og:url" content="https://root1iu.github.io/2019/12/09/TLPI-Ch14-FileSystems/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="设备专用文件字符设备字符设备处理的数据是一个字节一个字节，比如终端和键盘就是字符设备的一种 块设备块设备就是每次处理的单位都是块(block)，块的大小取决于设备，一般是512字节 设备ID每个设备文件都有一个主ID和从ID。主ID标明了设备的一般类型，内核用来匹配合适的驱动；从ID在一般类型中唯一指定了特殊设备。 每个设备驱动都会和主设备ID进行联合，提供了设备专用文件到设备驱动的对应关系。 文">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://root1iu.github.io/2019/12/09/TLPI-Ch14-FileSystems/home/root1iu/Linux/TLPI/Ch14-FileSystems/%E7%A3%81%E7%9B%98%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%B8%83%E5%B1%80.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/12/09/TLPI-Ch14-FileSystems/home/root1iu/Linux/TLPI/Ch14-FileSystems/i%E8%8A%82%E7%82%B9.png">
+<meta property="og:updated_time" content="2019-12-09T13:54:08.618Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TLPI-Ch14-FileSystems">
+<meta name="twitter:description" content="设备专用文件字符设备字符设备处理的数据是一个字节一个字节，比如终端和键盘就是字符设备的一种 块设备块设备就是每次处理的单位都是块(block)，块的大小取决于设备，一般是512字节 设备ID每个设备文件都有一个主ID和从ID。主ID标明了设备的一般类型，内核用来匹配合适的驱动；从ID在一般类型中唯一指定了特殊设备。 每个设备驱动都会和主设备ID进行联合，提供了设备专用文件到设备驱动的对应关系。 文">
+<meta name="twitter:image" content="https://root1iu.github.io/2019/12/09/TLPI-Ch14-FileSystems/home/root1iu/Linux/TLPI/Ch14-FileSystems/%E7%A3%81%E7%9B%98%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%B8%83%E5%B1%80.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/12/09/TLPI-Ch14-FileSystems/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>TLPI-Ch14-FileSystems | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/12/09/TLPI-Ch14-FileSystems/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TLPI-Ch14-FileSystems
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-09 21:53:19 / 修改时间：21:54:08" itemprop="dateCreated datePublished" datetime="2019-12-09T21:53:19+08:00">2019-12-09</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/TLPI/" itemprop="url" rel="index"><span itemprop="name">TLPI</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="设备专用文件"><a href="#设备专用文件" class="headerlink" title="设备专用文件"></a>设备专用文件</h2><h3 id="字符设备"><a href="#字符设备" class="headerlink" title="字符设备"></a>字符设备</h3><p>字符设备处理的数据是一个字节一个字节，比如终端和键盘就是字符设备的一种</p>
+<h3 id="块设备"><a href="#块设备" class="headerlink" title="块设备"></a>块设备</h3><p>块设备就是每次处理的单位都是块(block)，块的大小取决于设备，一般是512字节</p>
+<h3 id="设备ID"><a href="#设备ID" class="headerlink" title="设备ID"></a>设备ID</h3><p>每个设备文件都有一个主ID和从ID。主ID标明了设备的一般类型，内核用来匹配合适的驱动；从ID在一般类型中唯一指定了特殊设备。</p>
+<p>每个设备驱动都会和主设备ID进行联合，提供了设备专用文件到设备驱动的对应关系。</p>
+<h2 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h2><h3 id="文件系统结构"><a href="#文件系统结构" class="headerlink" title="文件系统结构"></a>文件系统结构</h3><p><img src="/2019/12/09/TLPI-Ch14-FileSystems/home/root1iu/Linux/TLPI/Ch14-FileSystems/%E7%A3%81%E7%9B%98%E5%92%8C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%B8%83%E5%B1%80.png" alt="磁盘和文件系统的布局"></p>
+<p>文件系统分配空间的单位是逻辑块，逻辑块通常是多个连续的物理块组成(例如4096 bytes)。</p>
+<ul>
+<li>引导块(Boot block): 引导块通常是分区的第一个物理块，对文件系统通常没什么用，一般是用于操作系统引导</li>
+<li>超级块(Super-block): 超级块包含了文件系统的一些信息<ul>
+<li>i-node表的大小</li>
+<li>逻辑块的大小</li>
+<li>文件系统包含的逻辑块</li>
+</ul>
+</li>
+<li>i-node表: 每个文件和目录都在i-node表中有唯一的入口，这个入口记录了文件的信息，比如文件类型、大小、链接数、属主、权限、时间戳、数据块的指针等</li>
+<li>数据块(Data block): 文件系统剩下的东西就是数据块了，但有些系统和图14-1的纯的一大块数据块不一样，会分成不同的块组(block groups)，块组中包含了超级块和i-node表等内容，提高检索效率。</li>
+</ul>
+<h2 id="i-nodes"><a href="#i-nodes" class="headerlink" title="i-nodes"></a>i-nodes</h2><p><img src="/2019/12/09/TLPI-Ch14-FileSystems/home/root1iu/Linux/TLPI/Ch14-FileSystems/i%E8%8A%82%E7%82%B9.png" alt="i节点"></p>
+<p>i-node的结构如图14-2所示，其中存储的信息包括：</p>
+<ul>
+<li>文件类型</li>
+<li>属主和属组(owner and group)</li>
+<li>访问权限，包括owner、group、other的三种权限</li>
+<li>时间戳，时间戳包括最近访问时间、最近修改时间、最近状态改变时间(i-node信息的改变)</li>
+<li>文件的硬链接数</li>
+<li>文件的大小(字节数)</li>
+<li>实际分配到文件的块数(512字节)，因为可能存在空洞(hole)，所以文件块数*块大小不等于文件大小</li>
+<li>指向文件数据块的指针(直接指针、一级指针、二级指针、三级指针，单单三级指针就可以存4 TB的数据)，对于hole，只需要将指针值置为0来表示不分配实际空间</li>
+</ul>
+<h2 id="虚拟文件系统"><a href="#虚拟文件系统" class="headerlink" title="虚拟文件系统"></a>虚拟文件系统</h2><p>虚拟文件系统是内核为了应对不同种类的文件系统而创建的一个抽象层，在底层处理不同的文件系统，抽象出一套接口供开发者使用。有些虚拟文件系统不支持所有操作，当在这些虚拟文件系统上执行这些操作时，会返回错误码。</p>
+<h2 id="日志文件系统"><a href="#日志文件系统" class="headerlink" title="日志文件系统"></a>日志文件系统</h2><p>像<code>ext2</code>这样的文件系统就是传统的Unix文件系统，当系统崩溃后重启时，需要启动文件系统的一致性检查来确保数据一致性，这个检查可能会花费很多时间。而日志文件系统会记录所有的元数据更新到一个日志文件中，当系统崩溃后，这些日志的记录可以被重做一遍，可以让文件系统快速回到一个一致性的状态。其代价就是在数据更新时需要更多的时间。</p>
+<h2 id="挂载和卸载文件系统"><a href="#挂载和卸载文件系统" class="headerlink" title="挂载和卸载文件系统"></a>挂载和卸载文件系统</h2><ul>
+<li>当前挂载的文件系统可以在<code>/proc/mounts</code>这个文件下获得，在每个进程的<code>/proc/PID/mounts</code>可以获得每个进程的挂载名称空间</li>
+<li>命令<code>mount &amp; umount</code>会自动维护文件<code>/etc/mtab</code>(内容和<code>/proc/mounts</code>类似，但比<code>/proc/mounts</code>详细)的状态，但是<code>mount() &amp; umount()</code>并不会更新<code>/etc/mtab</code>的信息</li>
+<li><code>/etc/fstab</code>文件由系统管理员手动维护，包括了系统中所有可用的文件系统的描述</li>
+</ul>
+<h3 id="mount"><a href="#mount" class="headerlink" title="mount()"></a>mount()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mount.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mount</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *source, <span class="keyword">const</span> <span class="keyword">char</span> *target,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">const</span> <span class="keyword">char</span> *filesystemtype, <span class="keyword">unsigned</span> <span class="keyword">long</span> mountflags,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">const</span> <span class="keyword">void</span> *data)</span></span>;</span><br><span class="line"><span class="comment">// return 0 on success, or -1 on error</span></span><br></pre></td></tr></table></figure>
+<p><code>filesystemtype</code>指明了文件系统的类型，比如<code>ext2</code>等。<code>data</code>参数指向一个信息缓冲区，这些信息的解释在不同文件系统中的解释不同，大部分文件系统中，其内容是选项。<code>mountflags</code>参数则指明了<code>mount()</code>的操作，有如下的操作：</p>
+<ul>
+<li><code>MS_BIND</code>，创建一个绑定挂载，允许目录或文件挂载到文件系统的其他地方，这样这两个挂载点的内容就可以被对方，有点像硬链接，但不同点在于绑定挂载可以跨文件系统，而且可以设置目录的绑定挂载[疑问：为什么绑定挂载可以将父目录和子目录绑定，而硬链接不能连接目录？]</li>
+<li><code>MS_DIRSYNC</code>，这个选项让文件系统下的目录的更新是同步的，类似于<code>open() with O_SYNC</code>，但只是应用于目录</li>
+<li><code>MS_MANDLOCK</code>，这个选项允许文件系统中的文件强行锁定记录[待引用: Ch-55]</li>
+<li><code>MS_MOVE</code>，自动将<code>source</code>指定的挂载点移动到<code>target</code>指定的地点。等价于卸载后重新挂载到新地点，只不过这中间没有时间差(原子操作)。当设定这个选项，其他选项和<code>data</code>都会被忽略</li>
+<li><code>MS_NOATIME</code>，这个选项会让这个文件系统不会更新访问时间，减少了磁盘的访问(更新访问时间需要访问i-node所在的磁盘)。(在<code>open()</code>中的<code>O_NOATIME</code>也有这个功能)</li>
+<li><code>MS_NODEV</code>，这个选项不允许访问这个文件系统中的块设备和字符设备，这是为了避免可移动磁盘设备访问系统的数据</li>
+<li><code>MS_NOSUID</code>，这个选项禁止文件系统中的<code>set-UID</code>和<code>set-GID</code>程序，这是为了避免用户执行可移动磁盘设备的<code>set-UID</code>和<code>set-GID</code>程序</li>
+<li><code>MS_NOEXEC</code>，这个选项禁止文件系统中的程序或脚本运行</li>
+<li><code>MS_RDONLY</code>，这个选项以只读权限挂载文件系统</li>
+<li><code>MS_REC</code>，这个选项用于和其他选项一起，递归的应用其他选项于挂载点的子树中</li>
+<li><code>MS_RELATIME</code>，当且仅当文件的访问时间戳小于或等于最近修改或最近状态改变时间戳时，才会更新最近访问时间戳。在Linux 2.6.30之后，如果最近访问时间戳超过了24小时，那么再次访问时都会修改这个时间戳</li>
+<li><code>MS_REMOUT</code>，这个选项用于修改已经挂载的文件系统的<code>mountflags</code>和<code>data</code>，用这个选项是要注意<code>target</code>要和原始挂载的<code>target</code>一致且<code>source</code>和<code>fstype</code>会被忽略</li>
+<li><code>MS_STRICTATIME</code>(在Linux2.6.30之前是默认行为)，在访问文件时总是改变其最近访问时间戳。当这个选项被设定时，<code>MS_NOATIME</code>和<code>MS_RELATIME</code>都会被忽略</li>
+<li><code>MS_SYNCHRONOUS</code>，这个选项让文件系统中的所有文件和目录在更新是都同步(类似于<code>O_SYNC</code>)</li>
+</ul>
+<h3 id="umount"><a href="#umount" class="headerlink" title="umount()"></a>umount()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mount.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">umount</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *target)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">umount2</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *target, <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"><span class="comment">// return 0 on success, or -1 on error</span></span><br></pre></td></tr></table></figure>
+<p>这里的<code>target</code>参数是挂载点而不是设备名，因为设备名可以挂载在多个挂载点，使用设备名会出现二义性。<code>umount2()</code>相比<code>umount()</code>多了<code>flags</code>参数用来更精确的控制挂载行为，包括如下<code>flags</code>：</p>
+<ul>
+<li><code>MNT_DETACH</code>，执行<code>lazy</code>卸载，也就是说在这个挂载点上做标记，不能在这种挂载点上执行新操作，等到在这个挂载点上的原有操作结束后，这个文件系统会被卸载</li>
+<li><code>MNT_EXPIRE</code>，如果挂载点不忙，那么将这个挂载点标记为到期(expired)并返回<code>EAGAIN</code>错误，如果挂载点忙则返回<code>EBUSY</code>错误；第二次调用<code>MNT_EXPIRE</code>时会卸载标记为到期(expired)的挂载点。这个选项用来周期性卸载不被访问的挂载点</li>
+<li><code>MNT_FORCE</code>，强制卸载挂载点，不管挂载点是否在忙</li>
+<li><code>UMOUNT_NOFOLLOW</code>，如果挂载点<code>target</code>是一个符号链接，那么不要解析这个<code>target</code>，避免符号链接链接到不同的地点而引起的安全问题</li>
+</ul>
+<p><strong>注意：</strong>无法卸载在忙的文件系统，对其调用<code>umount()</code>会返回错误<code>EBUSY</code>(除非指定<code>MNT_FORCE</code>)</p>
+<h2 id="高级挂载特性"><a href="#高级挂载特性" class="headerlink" title="高级挂载特性"></a>高级挂载特性</h2><h3 id="将一个文件系统挂载到多个挂载点"><a href="#将一个文件系统挂载到多个挂载点" class="headerlink" title="将一个文件系统挂载到多个挂载点"></a>将一个文件系统挂载到多个挂载点</h3><p>在Linux 2.4之后，文件系统能够挂载到多个挂载点，对其中一个挂载点的修改可以在其他挂载点处看到。</p>
+<h3 id="同一个挂载点的栈式挂载"><a href="#同一个挂载点的栈式挂载" class="headerlink" title="同一个挂载点的栈式挂载"></a>同一个挂载点的栈式挂载</h3><p>在Linux 2.4之后，Linux允许多个设备栈式挂载到某个挂载点，每次挂载都会隐藏旧的挂载设备，新的挂载设备被卸载后会，旧的挂载设备再次可见。</p>
+<h3 id="挂载点独立的挂载选项"><a href="#挂载点独立的挂载选项" class="headerlink" title="挂载点独立的挂载选项"></a>挂载点独立的挂载选项</h3><p>可以为每个挂载点指定不同的挂载选项，包括<code>MS_NOATIME</code>、<code>MS_NODEV</code>、<code>MS_NODIRATIME</code>、<code>MS_NOEXEC</code>、<code>MS_NOSUID</code>和<code>MS_RDONLY</code>等</p>
+<h3 id="递归绑定挂载"><a href="#递归绑定挂载" class="headerlink" title="递归绑定挂载"></a>递归绑定挂载</h3><p>默认情况下，绑定挂载(<code>MS_BIND</code>)目录只会挂载目录本身，不会复制子挂载点，但指定<code>MS_BIND | MS_REC</code>的递归绑定会将子挂载点也会被复制。</p>
+<h2 id="虚拟内存文件系统-tmpfs"><a href="#虚拟内存文件系统-tmpfs" class="headerlink" title="虚拟内存文件系统: tmpfs"></a>虚拟内存文件系统: tmpfs</h2><p>Linux支持驻留在内存的虚拟文件系统，他们可以执行和文件系统一样的工作，不过速度更快。虚拟内存文件系统一般用于实现共享内存和共享匿名内存映射。</p>
+<h2 id="获得文件系统的信息"><a href="#获得文件系统的信息" class="headerlink" title="获得文件系统的信息"></a>获得文件系统的信息</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/statvfs.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">statvfs</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, struct statvfs *buf)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fstatvfs</span><span class="params">(<span class="keyword">int</span> fd, struct statvfs *buf)</span></span>;</span><br><span class="line"><span class="comment">// return 0 on success, or -1 on error</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">statvfs</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span>  f_bsize;    <span class="comment">/* Filesystem block size */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span>  f_frsize;   <span class="comment">/* Fragment size */</span></span><br><span class="line">    <span class="keyword">fsblkcnt_t</span>     f_blocks;   <span class="comment">/* Size of fs in f_frsize units (in units of f_frsize) */</span></span><br><span class="line">    <span class="keyword">fsblkcnt_t</span>     f_bfree;    <span class="comment">/* Number of free blocks */</span></span><br><span class="line">    <span class="keyword">fsblkcnt_t</span>     f_bavail;   <span class="comment">/* Number of free blocks for unprivileged users */</span></span><br><span class="line">    <span class="keyword">fsfilcnt_t</span>     f_files;    <span class="comment">/* Number of inodes */</span></span><br><span class="line">    <span class="keyword">fsfilcnt_t</span>     f_ffree;    <span class="comment">/* Number of free inodes */</span></span><br><span class="line">    <span class="keyword">fsfilcnt_t</span>     f_favail;   <span class="comment">/* Number of free inodes for unprivileged users */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span>  f_fsid;     <span class="comment">/* Filesystem ID */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span>  f_flag;     <span class="comment">/* Mount flags */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span>  f_namemax;  <span class="comment">/* Maximum filename length */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在Linux下，<code>statvfs()</code>和<code>fstatvfs()</code>是通过<code>statfs()</code>和<code>fstatfs()</code>系统调用来实现的，他们直接的不同在于<code>struct statvfs</code>有<code>f_favail</code>来表示给非特权用户的i-node的数量，而<code>stuct statfs</code>则有<code>f_type</code>来表示文件系统的类型，其余都一样，除了<code>struct statfs</code>有一个padding数组。</p>
+<ul>
+<li><code>f_bsize</code>和<code>f_frsize</code>在大部分Linux文件系统中是一样的，但一些文件系统支持块碎片的概念，也就是说允许分配一个比块大小要小的存储空间。在这些系统上，<code>f_frsize</code>就是这些小存储空间的大小，<code>f_bsize</code>就是块的大小</li>
+<li><code>f_bfree</code>和<code>f_bavail</code>可能不同，它们的差值就是文件系统给超级用户预留的存储空间</li>
+<li><code>f_flag</code>就是文件系统挂载时的<code>mountflags</code>参数，只不过这个成员里的常量以<code>ST_</code>开头而不是<code>MS_</code></li>
+<li><code>f_fsid</code>就是文件系统唯一的标识</li>
+</ul>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><p>E-14-1:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>10</th>
+<th>100</th>
+<th>1000</th>
+<th>10000</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>非顺序创建</td>
+<td>0.00s, 4082.07微秒</td>
+<td>0.00s, 5594.71微秒</td>
+<td>0.02s, 4771.01微秒</td>
+<td>0.91s, 1976.69微秒</td>
+</tr>
+<tr>
+<td>顺序创建</td>
+<td>0.00s, 3024.56微秒</td>
+<td>0.00s, 5100.21微秒</td>
+<td>0.01s, 9980.09微秒</td>
+<td>0.19s, 2973.45微秒</td>
+</tr>
+</tbody>
+</table>
+<p>顺序创建+删除要比非顺序创建+顺序删除要快，可能原因是磁盘寻道时间减少，因为非顺序创建时i-node不是连续的，比如0可能在i-node为0的位置，1可能在i-node为100的位置，导致顺序删除时磁盘寻道时间增长；而顺序创建且顺序删除，i-node是按顺序来的，所以速度要快一点。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TLPI/" rel="tag"># TLPI</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/08/TLPI-Ch13-FileIOBuffering/" rel="next" title="TLPI-Ch13-FileIOBuffering">
+                <i class="fa fa-chevron-left"></i> TLPI-Ch13-FileIOBuffering
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">62</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#设备专用文件"><span class="nav-number">1.</span> <span class="nav-text">设备专用文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符设备"><span class="nav-number">1.1.</span> <span class="nav-text">字符设备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#块设备"><span class="nav-number">1.2.</span> <span class="nav-text">块设备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设备ID"><span class="nav-number">1.3.</span> <span class="nav-text">设备ID</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件系统"><span class="nav-number">2.</span> <span class="nav-text">文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件系统结构"><span class="nav-number">2.1.</span> <span class="nav-text">文件系统结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#i-nodes"><span class="nav-number">3.</span> <span class="nav-text">i-nodes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟文件系统"><span class="nav-number">4.</span> <span class="nav-text">虚拟文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#日志文件系统"><span class="nav-number">5.</span> <span class="nav-text">日志文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#挂载和卸载文件系统"><span class="nav-number">6.</span> <span class="nav-text">挂载和卸载文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mount"><span class="nav-number">6.1.</span> <span class="nav-text">mount()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#umount"><span class="nav-number">6.2.</span> <span class="nav-text">umount()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高级挂载特性"><span class="nav-number">7.</span> <span class="nav-text">高级挂载特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#将一个文件系统挂载到多个挂载点"><span class="nav-number">7.1.</span> <span class="nav-text">将一个文件系统挂载到多个挂载点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同一个挂载点的栈式挂载"><span class="nav-number">7.2.</span> <span class="nav-text">同一个挂载点的栈式挂载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#挂载点独立的挂载选项"><span class="nav-number">7.3.</span> <span class="nav-text">挂载点独立的挂载选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#递归绑定挂载"><span class="nav-number">7.4.</span> <span class="nav-text">递归绑定挂载</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟内存文件系统-tmpfs"><span class="nav-number">8.</span> <span class="nav-text">虚拟内存文件系统: tmpfs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获得文件系统的信息"><span class="nav-number">9.</span> <span class="nav-text">获得文件系统的信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">10.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
