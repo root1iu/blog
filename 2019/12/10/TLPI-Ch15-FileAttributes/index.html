@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="检索文件信息: stat()123456789101112131415161718192021222324252627282930313233#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;sys/stat.h&amp;gt;#include &amp;lt;unistd.h&amp;gt;int stat(const char *pathname, struct stat *buf);">
+<meta name="keywords" content="TLPI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TLPI-Ch15-FileAttributes">
+<meta property="og:url" content="https://root1iu.github.io/2019/12/10/TLPI-Ch15-FileAttributes/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="检索文件信息: stat()123456789101112131415161718192021222324252627282930313233#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;sys/stat.h&amp;gt;#include &amp;lt;unistd.h&amp;gt;int stat(const char *pathname, struct stat *buf);">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://root1iu.github.io/2019/12/10/TLPI-Ch15-FileAttributes/%E5%BD%B1%E5%93%8D%E6%96%87%E4%BB%B6%E6%97%B6%E9%97%B4%E6%88%B3%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/12/10/TLPI-Ch15-FileAttributes/%E6%96%87%E4%BB%B6GID%E7%BB%A7%E6%89%BF%E8%A7%84%E5%88%99.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/12/10/TLPI-Ch15-FileAttributes/%E6%9D%83%E9%99%90%E4%BD%8D%E8%A1%A8.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/12/10/TLPI-Ch15-FileAttributes/%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90.png">
+<meta property="og:image" content="https://root1iu.github.io/2019/12/10/TLPI-Ch15-FileAttributes/i-node%E6%A0%87%E8%AF%86.png">
+<meta property="og:updated_time" content="2019-12-10T13:52:52.550Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TLPI-Ch15-FileAttributes">
+<meta name="twitter:description" content="检索文件信息: stat()123456789101112131415161718192021222324252627282930313233#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;sys/stat.h&amp;gt;#include &amp;lt;unistd.h&amp;gt;int stat(const char *pathname, struct stat *buf);">
+<meta name="twitter:image" content="https://root1iu.github.io/2019/12/10/TLPI-Ch15-FileAttributes/%E5%BD%B1%E5%93%8D%E6%96%87%E4%BB%B6%E6%97%B6%E9%97%B4%E6%88%B3%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/12/10/TLPI-Ch15-FileAttributes/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>TLPI-Ch15-FileAttributes | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/12/10/TLPI-Ch15-FileAttributes/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TLPI-Ch15-FileAttributes
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-10 21:49:49 / 修改时间：21:52:52" itemprop="dateCreated datePublished" datetime="2019-12-10T21:49:49+08:00">2019-12-10</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/TLPI/" itemprop="url" rel="index"><span itemprop="name">TLPI</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="检索文件信息-stat"><a href="#检索文件信息-stat" class="headerlink" title="检索文件信息: stat()"></a>检索文件信息: stat()</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">stat</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, struct stat *buf)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fstat</span><span class="params">(<span class="keyword">int</span> fd, struct stat *buf)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lstat</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, struct stat *buf)</span></span>;</span><br><span class="line"><span class="comment">// on success, 0 is returned. On error, -1 is returned</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">	<span class="keyword">dev_t</span>     st_dev;         <span class="comment">/* ID of device containing file */</span></span><br><span class="line">	<span class="keyword">ino_t</span>     st_ino;         <span class="comment">/* inode number */</span></span><br><span class="line">	<span class="keyword">mode_t</span>    st_mode;        <span class="comment">/* protection */</span></span><br><span class="line">	<span class="keyword">nlink_t</span>   st_nlink;       <span class="comment">/* number of hard links */</span></span><br><span class="line">	<span class="keyword">uid_t</span>     st_uid;         <span class="comment">/* user ID of owner */</span></span><br><span class="line">	<span class="keyword">gid_t</span>     st_gid;         <span class="comment">/* group ID of owner */</span></span><br><span class="line">	<span class="keyword">dev_t</span>     st_rdev;        <span class="comment">/* device ID (if special file) */</span></span><br><span class="line">	<span class="keyword">off_t</span>     st_size;        <span class="comment">/* total size, in bytes */</span></span><br><span class="line">	<span class="keyword">blksize_t</span> st_blksize;     <span class="comment">/* blocksize for filesystem I/O */</span></span><br><span class="line">	<span class="keyword">blkcnt_t</span>  st_blocks;      <span class="comment">/* number of 512B blocks allocated */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Since Linux 2.6, the kernel supports nanosecond</span></span><br><span class="line"><span class="comment">	precision for the following timestamp fields.</span></span><br><span class="line"><span class="comment">	For the details before Linux 2.6, see NOTES. */</span></span><br><span class="line">	</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">st_atim</span>;</span>  <span class="comment">/* time of last access */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">st_mtim</span>;</span>  <span class="comment">/* time of last modification */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">st_ctim</span>;</span>  <span class="comment">/* time of last status change */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> st_atime st_atim.tv_sec      <span class="comment">/* Backward compatibility */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> st_mtime st_mtim.tv_sec</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> st_ctime st_ctim.tv_sec</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>stat() &amp; fstat()</code>的区别就是指定文件的方式不同，一个是用文件名，一个使用文件描述符。<code>lstat()</code>和<code>stat()</code>类似，但当<code>pathname</code>指向一个符号链接时，<code>stat()</code>会解析这个符号链接返回符号链接指向的文件的信息，但<code>lstat()</code>不会解析符号链接，而是返回符号链接的文件信息。</p>
+<h3 id="获取文件信息的权限问题"><a href="#获取文件信息的权限问题" class="headerlink" title="获取文件信息的权限问题"></a>获取文件信息的权限问题</h3><p><code>stat() &amp; lstat()</code>不需要有文件<code>pathname</code>的任何权限，但需要有其所有父目录的执行权限(搜索)。<code>fstat()</code>的参数如果是一个有效的文件描述符，那么这个调用总是会成功。</p>
+<h3 id="struct-stat的成员"><a href="#struct-stat的成员" class="headerlink" title="struct stat的成员"></a>struct stat的成员</h3><h4 id="设备ID"><a href="#设备ID" class="headerlink" title="设备ID"></a>设备ID</h4><p>设备ID的类型是<code>dev_t</code>，这个类型既包括了主ID也包括了从ID，可以使用宏<code>major()</code>和<code>minor()</code>来分别获得主ID和从ID。</p>
+<p>在结构体<code>struct stat</code>中的<code>st_dev</code>是文件归属的磁盘设备的ID；<code>st_rdev</code>是当文件是设备文件时，这个设备文件的设备ID。</p>
+<p><strong>注意：</strong>设备ID和i-node值能够唯一确定一个文件</p>
+<h4 id="文件类型"><a href="#文件类型" class="headerlink" title="文件类型"></a>文件类型</h4><p>文件类型存在<code>st_mode</code>这个成员的高4位中。文件类型<code>S_IFLNK</code>只有在<code>lstat()</code>返回的结构体中才会出现；<code>S_IFSOCK</code>和<code>S_ISSOCK()</code>需要定义<code>_BSD_SOURCE</code>这个功能测试宏后(具体看文档)，才能从\&lt;sys/stat.h>中获取它们的定义。</p>
+<h4 id="文件大小、分配的块和最佳IO块大小"><a href="#文件大小、分配的块和最佳IO块大小" class="headerlink" title="文件大小、分配的块和最佳IO块大小"></a>文件大小、分配的块和最佳IO块大小</h4><p><code>st_size</code>就是文件一共有多少个字节，对于软链接来说，文件大小就是指向的文件的路径的长度(注意要用<code>lstat()</code>来获得软链接文件的属性)。</p>
+<p><code>st_blocks</code>的值指明了分配给文件的物理块的个数(单位是512 字节)。</p>
+<p><code>st_blksize</code>这个成员指的是IO操作的最佳块大小，比如使用<code>read()</code>时会预读，这个<code>st_blksize</code>指的就是预读的字节数(一般为4096)。</p>
+<h2 id="文件时间戳"><a href="#文件时间戳" class="headerlink" title="文件时间戳"></a>文件时间戳</h2><p><code>struct stat</code>中的<code>st_atime</code>、<code>st_mtime</code>和<code>st_ctime</code>成员分别表示文件最后访问时间、文件最后修改时间、文件状态最后改变时间。表15-2展示了会影响文件时间戳的系统调用</p>
+<p><img src="/2019/12/10/TLPI-Ch15-FileAttributes/%E5%BD%B1%E5%93%8D%E6%96%87%E4%BB%B6%E6%97%B6%E9%97%B4%E6%88%B3%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8.png" alt="影响文件时间戳的系统调用"></p>
+<h3 id="使用utime-和utimes-来改变文件时间戳"><a href="#使用utime-和utimes-来改变文件时间戳" class="headerlink" title="使用utime()和utimes()来改变文件时间戳"></a>使用utime()和utimes()来改变文件时间戳</h3><p>有些程序需要改变文件时间戳，比如<code>tar</code>和<code>unzip</code>就需要在解压的时候修改文件时间戳</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;utime.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">utime</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *filename, <span class="keyword">const</span> struct utimbuf *times)</span></span>;</span><br><span class="line"><span class="comment">// return 0 on success, or -1 on error</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">utimbuf</span> &#123;</span></span><br><span class="line">    <span class="keyword">time_t</span> actime;       <span class="comment">/* access time */</span></span><br><span class="line">    <span class="keyword">time_t</span> modtime;      <span class="comment">/* modification time */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>filename</code>指明了要修改时间戳的文件名，如果文件名是软链接文件，那么这个软链接会被解析。</p>
+<p><code>times</code>有两种可能，分别是NULL和非NULL</p>
+<ul>
+<li>当<code>times</code>是NULL时，那么文件的访问时间和修改时间都会变成当前时间，这种情况下进程要么是特权进程，要么是进程的文件UID和文件的owner匹配且对文件有写权限</li>
+<li>当<code>times</code>是非NULL时，那么文件的访问时间和修改时间都会变成<code>times</code>的成员值，这种情况下进程要么是特权进程，要么进程的文件UID要和文件的UID匹配且对文件有写权限</li>
+</ul>
+<p>如果要只改变其中一个时间，需要使用<code>stat()</code>获得另一个时间，填充进<code>times</code>后再调用<code>utime()</code>来进行修改。但要注意这种方法可能会导致竞争，比如在<code>stat()</code>和<code>utime()</code>之间时间戳被其他行为改变。</p>
+<p><strong>注意：</strong>成功调用<code>utime()</code>总是会修改文件的状态改变时间戳</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">utimes</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *filename, <span class="keyword">const</span> struct timeval times[<span class="number">2</span>])</span></span>;</span><br><span class="line"><span class="comment">// return 0 on success, or -1 on error</span></span><br></pre></td></tr></table></figure>
+<p><code>utimes()</code>比<code>utime()</code>好的地方是时间精度更高了，可以使用<code>struct timeval</code>来指定时间。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">futimes</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> struct timeval tv[<span class="number">2</span>])</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lutimes</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *filename, <span class="keyword">const</span> struct timeval tv[<span class="number">2</span>])</span></span>;</span><br><span class="line"><span class="comment">// Both return 0 on success, or -1 on error</span></span><br></pre></td></tr></table></figure>
+<p><code>lutimes()</code>和<code>utimes()</code>的区别是<code>utimes()</code>会解析软链接文件，而<code>lutimes()</code>则是直接修改软链接文件的时间戳。</p>
+<h3 id="用utimensat-和futimens-来改变文件时间戳"><a href="#用utimensat-和futimens-来改变文件时间戳" class="headerlink" title="用utimensat()和futimens()来改变文件时间戳"></a>用utimensat()和futimens()来改变文件时间戳</h3><p><code>utimensat()</code>和<code>futimens()</code>和<code>utime()</code>等函数的好处在于</p>
+<ul>
+<li><code>utimensat()</code>和<code>futimens()</code>的时间精度更高，可以达到纳秒级别；</li>
+<li>可以独立的设置时间戳，不需要额外调用<code>stat()</code>来保证另一个时间戳保持原样，避免了竞争；</li>
+<li>在原接口中，如果要将其中一个时间戳改成当前时间戳，不仅要调用<code>stat()</code>，也要调用<code>gettimeofday()</code>来获得当前时间，而新接口中可以在<code>tv</code>的<code>tv_nsec</code>成员中直接指定修改。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt; /* Definition of AT_* constants */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">utimensat</span><span class="params">(<span class="keyword">int</span> dirfd, <span class="keyword">const</span> <span class="keyword">char</span> *pathname,</span></span></span><br><span class="line"><span class="function"><span class="params">              <span class="keyword">const</span> struct timespec times[<span class="number">2</span>], <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">futimens</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> struct timespec times[<span class="number">2</span>])</span></span>;</span><br><span class="line"><span class="comment">// Both return 0 on success, or -1 on error</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>dirfd</code>可以被设置成<code>AF_FDCWD</code>，此时<code>pathname</code>的含义和<code>utimes()</code>一样；也可以将<code>dirfd</code>设置成其他目录的描述符；</li>
+<li>如果<code>times</code>被设置为NULL，那么两个时间戳都会被改成当前时间；如果<code>times</code>不是NULL，那么两个时间戳被独立改变。而能够不调用<code>stat()</code>获得原时间使得某个时间戳不改变的秘密在于<code>times</code>的<code>tv_nsec</code>成员，当<code>tv_nsec</code>成员为<code>UTIME_OMIT</code>时表示这个时间戳保持原样，此时<code>tv_sec</code>成员被忽略；当<code>tv_nsec</code>成员为<code>UTIME_NOW</code>时表示这个时间戳变成当前时间；</li>
+<li><code>flags</code>参数可以是0或<code>AF_SYMLINK_NOFOLLOW</code>，后者表示不解析软链接文件(如果<code>pathname</code>是软链接文件的话)直接修改软链接文件的时间戳。</li>
+</ul>
+<h2 id="文件属主"><a href="#文件属主" class="headerlink" title="文件属主"></a>文件属主</h2><h3 id="新文件属主"><a href="#新文件属主" class="headerlink" title="新文件属主"></a>新文件属主</h3><p>新文件UID继承自进程的有效UID，GID有两种可能，一种是继承其父目录的GID(BSD的行为)，一种是继承创建进程的有效GID(System V的默认行为)。前者可以在文件系统挂载时指定<code>-o grpid</code>(或<code>-o bsdgroups</code>)属性，后者可以在文件系统挂载时指定<code>-o nogrpid</code>(或<code>-o sysvgroups</code>)属性。但是有一个情况需要注意，就是若目录的SGID是置位状态时，文件的GID继承其父目录的GID。总结情况如表15-3所示：</p>
+<p><img src="/2019/12/10/TLPI-Ch15-FileAttributes/%E6%96%87%E4%BB%B6GID%E7%BB%A7%E6%89%BF%E8%A7%84%E5%88%99.png" alt="文件GID继承规则"></p>
+<h3 id="改变文件属主"><a href="#改变文件属主" class="headerlink" title="改变文件属主"></a>改变文件属主</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">chown</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">uid_t</span> owner, <span class="keyword">gid_t</span> group)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fchown</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">uid_t</span> owner, <span class="keyword">gid_t</span> group)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lchown</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">uid_t</span> owner, <span class="keyword">gid_t</span> group)</span></span>;</span><br><span class="line"><span class="comment">// All return 0 on success, or -1 on error</span></span><br></pre></td></tr></table></figure>
+<p>这些函数中，如果只需要改变其中一个ID，可以将另一个ID的值设置为-1，表示其值不被改变。</p>
+<ul>
+<li>若进程是特权进程，那么这些函数可以改变两种ID；如果进程不是特权进程，那么这些函数只能改变那些文件的UID和进程的有效UID相匹配的文件，且只能改变这些文件的GID为其UID的其他属组的GID值(即在补充GID中选)；</li>
+<li>如果文件的UID或GID被改变了，那么其SUID和SGID标识会被清空，这是为了防止普通用户可以设置可执行文件的SUID或SGID，之后被特权用户获取时文件的权限升级后执行普通用户没办法办到的事；而对于特权用户改变UID或GID时，SUID和SGID会不会被清空的问题，目前的Linux是会清空这些标识的；</li>
+<li>如果文件的UID或GID被改变了，但组域没有执行权限标识或者改变的是目录的属主的话，SGID是不会被清空的，此时SGID有特殊用途，比如：<ul>
+<li>如果组域没有执行权限，那么SGID被用来启动强制文件锁[待引用: Ch-55.4]</li>
+<li>如果改变的是目录的属主，那么SGID被用来控制新文件的属主，即新文件的GID继承其父目录(即当前目录)的GID(这种情况可能造成文件的GID与文件属主的GID以及其补充GIDs都不一样)</li>
+</ul>
+</li>
+</ul>
+<h2 id="文件权限"><a href="#文件权限" class="headerlink" title="文件权限"></a>文件权限</h2><p>文件权限分为三部分，owner、group和other，每部分都有三位权限，分别是读权限、写权限和执行权限。权限位的常量和8进制值如表15-4所示</p>
+<p><img src="/2019/12/10/TLPI-Ch15-FileAttributes/%E6%9D%83%E9%99%90%E4%BD%8D%E8%A1%A8.png" alt="权限位表"></p>
+<h3 id="普通文件的权限"><a href="#普通文件的权限" class="headerlink" title="普通文件的权限"></a>普通文件的权限</h3><p>普通文件的权限需要注意的是脚本文件，执行脚本文件需要读权限和可执行权限。</p>
+<h3 id="目录的权限"><a href="#目录的权限" class="headerlink" title="目录的权限"></a>目录的权限</h3><p>目录的权限的用途和普通文件有所区别，具体如下</p>
+<ul>
+<li>读权限: 读权限意味着目录的内容可以被列出来，比如使用<code>ls</code>命令；如果目录没有读权限则没办法列出目录的所有文件，但如果知道目录中具体的文件名，且目录有执行权限，还是可以访问目录中的文件；</li>
+<li>写权限: 在目录里创建或删除文件的条件之一，删除文件不需要文件本身的任何权限；在目录中删除或创建文件需要写和执行权限；</li>
+<li>执行权限: 目录里的文件可以被访问，这个权限也被叫做搜索权限；访问文件时，文件的所有父目录都需要有执行权限。</li>
+</ul>
+<h3 id="权限检查算法"><a href="#权限检查算法" class="headerlink" title="权限检查算法"></a>权限检查算法</h3><p>当我们调用一个以文件名为参数的系统调用时，内核会检查文件权限。需要注意的是如果文件名有目录前缀，那么目录前缀的权限也会被检查。检查的依据是进程的有效ID和补充GID。权限检查的规则如下:</p>
+<ol>
+<li>如果进程是特权进程，那么该进程有所有权限。但要注意在Linux下：如果文件不是目录文件，那么特权进程只有在其他域(owner/group/other)上有执行权限时才能有执行权限；如果文件是目录文件，那么特权进程总是能够获得执行权限；</li>
+<li>如果有效UID和文件的UID相同，那么进程被赋予文件的owner权限；</li>
+<li>如果有效GID或进程的补充GID和文件的GID一样，那么进程被赋予文件的组域的权限；</li>
+<li>其他情况进程被赋予other权限</li>
+</ol>
+<p><strong>注意：</strong></p>
+<ul>
+<li>这些权限检查中，检查进程是否为特权进程是放在最后一步，当进程有效ID和文件的ID匹配成功后进行检查，如果权限不够才会使用进程的特权权限，这会避免不必要的设置ASU进程记账标识，该记账标识表明进程使用了特权权限[待引用: Ch-28.1]；</li>
+<li>权限检查是以owner、group、other为顺序进行的，有的时候owner的权限比group的权限少，但文件UID和进程有效UID匹配，那么就会使用文件的owner的权限。</li>
+</ul>
+<h3 id="检查文件的可访问性-access"><a href="#检查文件的可访问性-access" class="headerlink" title="检查文件的可访问性: access()"></a>检查文件的可访问性: access()</h3><p><code>access()</code>调用基于进程的真实ID检查文件的可访问性(<code>eaccess()</code>使用进程的有效ID进行检查)，比如是否可读？是否可写？是否可执行？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">access</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> mode)</span></span>;</span><br><span class="line"><span class="comment">// return 0 if all permissions are granted, otherwise -1</span></span><br></pre></td></tr></table></figure>
+<p><code>mode</code>有四种可能</p>
+<ol>
+<li><code>F_OK</code>，文件是否存在</li>
+<li><code>R_OK</code>，文件是否可读</li>
+<li><code>W_OK</code>，文件是否可写</li>
+<li><code>X_OK</code>，文件是否可执行</li>
+</ol>
+<p>如果<code>mode</code>指定的检查有一项是否定的，那么<code>access()</code>会返回-1(错误也会返回-1)，只有全部满足才会返回0.</p>
+<p><strong>注意：</strong>在使用<code>access()</code>获得文件的权限后，对文件执行操作前这段时间内，文件的权限可能发生改变，这个间隙可能会造成安全隐患。例如，当获得软链接的权限后，恶意用户改变软链接的指向，使其指向其他文件A，那么用SUID-root的权限执行时会导致执行文件A时是root权限。</p>
+<h3 id="SUID、SGID和Sticky"><a href="#SUID、SGID和Sticky" class="headerlink" title="SUID、SGID和Sticky"></a>SUID、SGID和Sticky</h3><p><img src="/2019/12/10/TLPI-Ch15-FileAttributes/%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90.png" alt="文件权限"></p>
+<p>SUID和SGID的普通用途就是用在进程执行这些文件是改变进程的有效ID：这里再次复述SGID的特殊用途: 1. 允许强制文件锁(当组域没有执行权限时) 2. 目录的新文件的GID继承自其父进程(当SGID用于目录时)</p>
+<p>Sticky位在早期的作用是在程序执行后将程序固定在交换区中，提高程序运行效率，但现在这种功能被遗弃。在现代Linux下，对于目录来说，Sticky位作用是限制删除位(restricted deletion flag)，这个标识意味着非特权进程只能在拥有目录的写权限且是文件或目录的属主时才可以unlink(<code>unlink()</code>或<code>rmdir()</code>)和重命名(<code>rename()</code>)文件(如果进程有<code>CAP_FOWNER</code>能力的话可以忽略属主的条件)。这种功能可以创建共享目录，用户可以创建和删除自己的文件但不能影响其他用户的文件(如<code>/tmp</code>)。</p>
+<p>Sticky位在other的执行位上，当other没有执行权限是，Sticky显示为T，当other有执行权限时，Sticky显示为t.</p>
+<h3 id="进程文件模式创建掩码"><a href="#进程文件模式创建掩码" class="headerlink" title="进程文件模式创建掩码"></a>进程文件模式创建掩码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">mode_t</span> umask(<span class="keyword">mode_t</span> mask);</span><br><span class="line"><span class="comment">// This  system call always succeeds and the previous value of the mask is returned.</span></span><br></pre></td></tr></table></figure>
+<p><code>umask</code>是一个八进制数，其值中1的位置表示新创建的文件权限位上不能置位的位置。</p>
+<h3 id="改变文件的权限"><a href="#改变文件的权限" class="headerlink" title="改变文件的权限"></a>改变文件的权限</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">chmod</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fchmod</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"><span class="comment">// Both return 0 on success, or -1 on error</span></span><br></pre></td></tr></table></figure>
+<p>这里要注意没有<code>&#39;lchmod()&#39;</code>，而<code>chmod()</code>应用到软链接文件上时也会解析软链接文件，将<code>mode</code>应用到其指向的文件上去，因为软链接文件的权限是0777且不能被改变，这些权限在解析软链接文件时被忽略。</p>
+<p>改变文件的权限要求进程为特权进程(带<code>CAP_FOWNER</code>)或者进程的有效UID匹配文件的属主。</p>
+<p>由于存在文件GID继承自其目录GID的情况，于是存在文件的GID不属于属主GID或者属主的补充GIDs中任何一个GID的情况，所以非特权进程调用<code>chmod() or fchmod()</code>来改变文件属性时，若文件GID不等于进程有效GID或其补充GIDs中的GID时，内核将会清除进程的SGID位，这是为了避免其他用户非法获取其他组的身份。比如，文件A属于用户B和组G，但组G和用户B没有任何关系，若此时SGID位没有清除，那么用户B就可以获得和他没有任何关系的组G的组身份。</p>
+<h2 id="i-node标识"><a href="#i-node标识" class="headerlink" title="i-node标识"></a>i-node标识</h2><p>i-node标识最开始实在ext2文件系统上支持的，所以i-node标识也叫作ext2 扩展文件属性(ext2 extended file attributes)。</p>
+<p>表15-6展示了i-node标识的概况(其中<code>chattr option</code>指明了使用<code>chattr</code>命令时改变响应属性的选项)</p>
+<p><img src="/2019/12/10/TLPI-Ch15-FileAttributes/i-node%E6%A0%87%E8%AF%86.png" alt="i-node标识"></p>
+<ul>
+<li><code>FS_APPEND_FL</code>: 文件只有在<code>O_APPEND</code>标识被设置时才能被打开，这个标识可以用于日志文件，只有特权(<code>CAP_LINUX_IMMUTABLE</code>)进程才能设置这个标识</li>
+<li><code>FS_COMPR_FL</code>: 将文件以压缩的格式放入磁盘中，这意味着节省空间但不能随机访存(有软件包针对ext2和ext3提供了这个标识的支持)</li>
+<li><code>FS_DIRSYNC_FL</code>(只能应用于目录): 让目录同步更新(<code>open()</code>、<code>link()</code>、<code>unlink()</code>或<code>mkdir()</code>)</li>
+<li><code>FS_IMMUTABLE_FL</code>: 让文件变得不可改变，即文件数据不能被改变(特权进程都不能改变)，这个标识只有特权(<code>CAP_LINUX_IMMUTABLE</code>)进程可以设置</li>
+<li><code>FS_JOURNAL_DATA_FL</code>: 开启数据日志功能，只在ext3和ext4等提供日志功能的文件系统上才有</li>
+<li><code>FS_NOATIME_FL</code>: 当文件被访问时不改变文件的访问时间</li>
+<li><code>FS_NODUMP_FL</code>: 使用<code>dump</code>来备份时不要包含这个文件(<code>dump</code>用来备份ext2/3/4文件系统)</li>
+<li><code>FS_NOTAIL_FL</code>: 关闭尾部打包功能，只在<code>Reiserfs</code>文件系统中支持</li>
+<li><code>FS_SECRM_FL</code>: 安全删除文件，即多次重写擦除痕迹</li>
+<li><code>FS_SYNC_FL</code>: 让文件同步更新(类似于<code>O_SYNC</code>标识)</li>
+<li><code>FS_TOPDIR_FL</code>: 将Orlov 块分配策略应用在目录上，即让相关的文件放的近一点，减少磁盘搜索时间，这个标识只能用于ext族文件系统</li>
+<li><code>FS_UNRM_FL</code>: 让文件能够在删除后恢复(该标识没实现)</li>
+</ul>
+<p>要注意目录的i-node标识会继承给目录的子文件和子目录，除了以下的情况:</p>
+<ul>
+<li><code>FS_DIRSYNC_FL</code>标识只能引用于目录，且只能被其子目录继承</li>
+<li><code>FS_IMMUTABLE_FL</code>标识应用于目录时，这个目录不能创建文件，因为为目录无法添加新的入口(entry)</li>
+</ul>
+<h3 id="修改i-node标识"><a href="#修改i-node标识" class="headerlink" title="修改i-node标识"></a>修改i-node标识</h3><p>可以使用<code>ioctl()</code>的<code>FS_IOC_GETFLAGS</code>和<code>FS_IOC_SETFLAGS</code>选项来检索和修改i-node标识。</p>
+<p><strong>注意：</strong>只有在进程有效UID和文件UID匹配或进程是特权进程(<code>CAP_FOWNER</code>)时才能修改文件属性</p>
+<h2 id="Exercises"><a href="#Exercises" class="headerlink" title="Exercises"></a>Exercises</h2><ul>
+<li>E-15.2: 因为<code>stat()</code>只会检索i-node的内容，不会改变文件时间戳(访问文件内容时间戳、修改文件内容时间戳、状态改变时间戳)</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TLPI/" rel="tag"># TLPI</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/09/TLPI-Ch14-FileSystems/" rel="next" title="TLPI-Ch14-FileSystems">
+                <i class="fa fa-chevron-left"></i> TLPI-Ch14-FileSystems
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">63</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#检索文件信息-stat"><span class="nav-number">1.</span> <span class="nav-text">检索文件信息: stat()</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#获取文件信息的权限问题"><span class="nav-number">1.1.</span> <span class="nav-text">获取文件信息的权限问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#struct-stat的成员"><span class="nav-number">1.2.</span> <span class="nav-text">struct stat的成员</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#设备ID"><span class="nav-number">1.2.1.</span> <span class="nav-text">设备ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件类型"><span class="nav-number">1.2.2.</span> <span class="nav-text">文件类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件大小、分配的块和最佳IO块大小"><span class="nav-number">1.2.3.</span> <span class="nav-text">文件大小、分配的块和最佳IO块大小</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件时间戳"><span class="nav-number">2.</span> <span class="nav-text">文件时间戳</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用utime-和utimes-来改变文件时间戳"><span class="nav-number">2.1.</span> <span class="nav-text">使用utime()和utimes()来改变文件时间戳</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用utimensat-和futimens-来改变文件时间戳"><span class="nav-number">2.2.</span> <span class="nav-text">用utimensat()和futimens()来改变文件时间戳</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件属主"><span class="nav-number">3.</span> <span class="nav-text">文件属主</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#新文件属主"><span class="nav-number">3.1.</span> <span class="nav-text">新文件属主</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#改变文件属主"><span class="nav-number">3.2.</span> <span class="nav-text">改变文件属主</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件权限"><span class="nav-number">4.</span> <span class="nav-text">文件权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#普通文件的权限"><span class="nav-number">4.1.</span> <span class="nav-text">普通文件的权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#目录的权限"><span class="nav-number">4.2.</span> <span class="nav-text">目录的权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#权限检查算法"><span class="nav-number">4.3.</span> <span class="nav-text">权限检查算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检查文件的可访问性-access"><span class="nav-number">4.4.</span> <span class="nav-text">检查文件的可访问性: access()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SUID、SGID和Sticky"><span class="nav-number">4.5.</span> <span class="nav-text">SUID、SGID和Sticky</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程文件模式创建掩码"><span class="nav-number">4.6.</span> <span class="nav-text">进程文件模式创建掩码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#改变文件的权限"><span class="nav-number">4.7.</span> <span class="nav-text">改变文件的权限</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#i-node标识"><span class="nav-number">5.</span> <span class="nav-text">i-node标识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#修改i-node标识"><span class="nav-number">5.1.</span> <span class="nav-text">修改i-node标识</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercises"><span class="nav-number">6.</span> <span class="nav-text">Exercises</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
