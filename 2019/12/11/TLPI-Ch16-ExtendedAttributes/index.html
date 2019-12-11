@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="87c6d33c07c851d9">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="扩展属性一般是用来实现访问控制列表和文件能力(file capabilities)，还有比如记录文件版本、文件符号集等等。 扩展属性(EA)的名称空间扩展属性的名字格式为namespace.name，namespace将EA分成几个更能不同的类别，name是EA在namespace中的凭证。 namespace有四个值，分别为  user: 这个namespace的内容可以在权限检查的制约下由非特">
+<meta name="keywords" content="TLPI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TLPI-Ch16-ExtendedAttributes">
+<meta property="og:url" content="https://root1iu.github.io/2019/12/11/TLPI-Ch16-ExtendedAttributes/index.html">
+<meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="扩展属性一般是用来实现访问控制列表和文件能力(file capabilities)，还有比如记录文件版本、文件符号集等等。 扩展属性(EA)的名称空间扩展属性的名字格式为namespace.name，namespace将EA分成几个更能不同的类别，name是EA在namespace中的凭证。 namespace有四个值，分别为  user: 这个namespace的内容可以在权限检查的制约下由非特">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-11T14:08:30.193Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TLPI-Ch16-ExtendedAttributes">
+<meta name="twitter:description" content="扩展属性一般是用来实现访问控制列表和文件能力(file capabilities)，还有比如记录文件版本、文件符号集等等。 扩展属性(EA)的名称空间扩展属性的名字格式为namespace.name，namespace将EA分成几个更能不同的类别，name是EA在namespace中的凭证。 namespace有四个值，分别为  user: 这个namespace的内容可以在权限检查的制约下由非特">
+
+
+
+
+
+
+  <link rel="canonical" href="https://root1iu.github.io/2019/12/11/TLPI-Ch16-ExtendedAttributes/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>TLPI-Ch16-ExtendedAttributes | Root1iu Home Page</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Root1iu Home Page</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/12/11/TLPI-Ch16-ExtendedAttributes/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TLPI-Ch16-ExtendedAttributes
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-11 22:08:00 / 修改时间：22:08:30" itemprop="dateCreated datePublished" datetime="2019-12-11T22:08:00+08:00">2019-12-11</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/TLPI/" itemprop="url" rel="index"><span itemprop="name">TLPI</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>扩展属性一般是用来实现访问控制列表和文件能力(file capabilities)，还有比如记录文件版本、文件符号集等等。</p>
+<h2 id="扩展属性-EA-的名称空间"><a href="#扩展属性-EA-的名称空间" class="headerlink" title="扩展属性(EA)的名称空间"></a>扩展属性(EA)的名称空间</h2><p>扩展属性的名字格式为<code>namespace.name</code>，<code>namespace</code>将EA分成几个更能不同的类别，<code>name</code>是EA在<code>namespace</code>中的凭证。</p>
+<p><code>namespace</code>有四个值，分别为</p>
+<ul>
+<li><p><code>user</code>: 这个<code>namespace</code>的内容可以在权限检查的制约下由非特权进程操作，要使用<code>user</code>这个扩展属性，挂载时需要注意指定<code>user_xattr</code>属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mount -o user_xattr device directory</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>trusted</code>: 要操纵<code>trusted</code>的扩展属性，进程需要有<code>CAP_SYS_ADMIN</code>的特权；</p>
+</li>
+<li><p><code>system</code>: 这个扩展属性由内核来将某些对象和文件关联起来，目前唯一支持的对象是访问控制列表(access control list, acl)，这里内核只有允许部分<code>name</code>；</p>
+</li>
+<li><p><code>security</code>: 这个扩展属性用来为操作系统安全模块保存文件安全标签。</p>
+</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ul>
+<li>不同<code>namespace</code>中的相同名字的扩展属性是独立的</li>
+<li>扩展属性的值可以是空串，值为空的扩展属性和未定义的扩展属性不是一个东西</li>
+</ul>
+<h2 id="扩展属性实现细节"><a href="#扩展属性实现细节" class="headerlink" title="扩展属性实现细节"></a>扩展属性实现细节</h2><h3 id="user扩展属性的限制"><a href="#user扩展属性的限制" class="headerlink" title="user扩展属性的限制"></a>user扩展属性的限制</h3><ul>
+<li>只能在普通文件和目录上使用<code>user</code>扩展属性；</li>
+<li>用户无法在软链接文件上添加<code>user</code>属性，因为软链接文件是全权限，意味着任何用户都可以来添加<code>user</code>扩展属性，于是索性在软链接上直接去掉这个属性；</li>
+<li>对于设备文件、socket、和FIFO文件，其权限控制的是对其底层对象的IO操作，修改这些权限来创建<code>user</code>扩展权限和它们的权限控制矛盾；[疑问: 不是很理解]</li>
+<li>非特权进程没办法修改带有sticky标识位的目录的<code>user</code>扩展属性(虽然具有写的权限)。</li>
+</ul>
+<h3 id="扩展属性实现的限制"><a href="#扩展属性实现的限制" class="headerlink" title="扩展属性实现的限制"></a>扩展属性实现的限制</h3><ul>
+<li>在ext系的磁盘上，<code>names</code>和其值的总共大小不能超过一个逻辑块大小</li>
+</ul>
+<h2 id="操作扩展属性的系统调用"><a href="#操作扩展属性的系统调用" class="headerlink" title="操作扩展属性的系统调用"></a>操作扩展属性的系统调用</h2><h3 id="创建和修改扩展属性"><a href="#创建和修改扩展属性" class="headerlink" title="创建和修改扩展属性"></a>创建和修改扩展属性</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;attr/xattr.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setxattr</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *name,</span></span></span><br><span class="line"><span class="function"><span class="params">              <span class="keyword">const</span> <span class="keyword">void</span> *value, <span class="keyword">size_t</span> size, <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lsetxattr</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *name,</span></span></span><br><span class="line"><span class="function"><span class="params">               <span class="keyword">const</span> <span class="keyword">void</span> *value, <span class="keyword">size_t</span> size, <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fsetxattr</span> <span class="params">(<span class="keyword">int</span> filedes, <span class="keyword">const</span> <span class="keyword">char</span> *name,</span></span></span><br><span class="line"><span class="function"><span class="params">               <span class="keyword">const</span> <span class="keyword">void</span> *value, <span class="keyword">size_t</span> size, <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"><span class="comment">// return 0 on success, -1 on error</span></span><br></pre></td></tr></table></figure>
+<p><code>l</code>这个前缀和大部分系统调用一致，只是不解析软链接文件。</p>
+<p><code>flags</code>共有2种</p>
+<ul>
+<li><code>XATTR_CREATE</code>，创建新的EA，当<code>name</code>已经存在时返回错误；</li>
+<li><code>XATTR_REPALCE</code>，替换EA，当<code>name</code>不存在时返回错误。</li>
+</ul>
+<h3 id="检索扩展属性的值"><a href="#检索扩展属性的值" class="headerlink" title="检索扩展属性的值"></a>检索扩展属性的值</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;attr/xattr.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ssize_t</span> getxattr (<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *name,</span><br><span class="line">                  <span class="keyword">void</span> *value, <span class="keyword">size_t</span> size);</span><br><span class="line"><span class="keyword">ssize_t</span> lgetxattr (<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *name,</span><br><span class="line">                   <span class="keyword">void</span> *value, <span class="keyword">size_t</span> size);</span><br><span class="line"><span class="keyword">ssize_t</span> fgetxattr (<span class="keyword">int</span> filedes, <span class="keyword">const</span> <span class="keyword">char</span> *name,</span><br><span class="line">                   <span class="keyword">void</span> *value, <span class="keyword">size_t</span> size);</span><br><span class="line"><span class="comment">// return size of EA value on success, or -1 on error</span></span><br></pre></td></tr></table></figure>
+<p>如果文件没有指定<code>name</code>的扩展属性，这些调用会返回错误<code>ENODATA</code>；如果<code>size</code>太小了，那么这些调用会返回错误<code>ERANGE</code>；如果<code>size</code>为0，那么<code>value</code>会被忽略，但这些调用会返回属性值的长度。</p>
+<h3 id="检索所有扩展属性名"><a href="#检索所有扩展属性名" class="headerlink" title="检索所有扩展属性名"></a>检索所有扩展属性名</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;attr/xattr.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ssize_t</span> listxattr (<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">char</span> *<span class="built_in">list</span>, <span class="keyword">size_t</span> size);</span><br><span class="line"><span class="keyword">ssize_t</span> llistxattr (<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">char</span> *<span class="built_in">list</span>, <span class="keyword">size_t</span> size);</span><br><span class="line"><span class="keyword">ssize_t</span> flistxattr (<span class="keyword">int</span> filedes, <span class="keyword">char</span> *<span class="built_in">list</span>, <span class="keyword">size_t</span> size);</span><br><span class="line"><span class="comment">// return number of bytes copied into list on success, or -1 on error</span></span><br></pre></td></tr></table></figure>
+<p>扩展属性名从<code>list</code>中返回，每个名字以<code>\0</code>结尾；可以将<code>size</code>设置为0，用来获得所有扩展属性名的长度。</p>
+<p><strong>注意：</strong></p>
+<ul>
+<li>检索所有扩展属性名只需要保证文件可访问(其所有目录有可执行权限)，而不需要文件的本身的任何权限。</li>
+<li>检索所有扩展属性名和检索扩展属性名的值可以组合一起使用，但要注意即使进程获得了扩展属性名，却不一定有权限可以获得该属性的值。</li>
+</ul>
+<h3 id="删除扩展属性"><a href="#删除扩展属性" class="headerlink" title="删除扩展属性"></a>删除扩展属性</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;attr/xattr.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">removexattr</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lremovexattr</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fremovexattr</span> <span class="params">(<span class="keyword">int</span> filedes, <span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br><span class="line"><span class="comment">// return 0 on success, or -1 on error</span></span><br></pre></td></tr></table></figure>
+<p>如果指定为<code>name</code>的扩展属性不存在，那么会返回错误<code>ENODATA</code>。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TLPI/" rel="tag"># TLPI</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/10/TLPI-Ch15-FileAttributes/" rel="next" title="TLPI-Ch15-FileAttributes">
+                <i class="fa fa-chevron-left"></i> TLPI-Ch15-FileAttributes
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">64</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展属性-EA-的名称空间"><span class="nav-number">1.</span> <span class="nav-text">扩展属性(EA)的名称空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展属性实现细节"><span class="nav-number">2.</span> <span class="nav-text">扩展属性实现细节</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#user扩展属性的限制"><span class="nav-number">2.1.</span> <span class="nav-text">user扩展属性的限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展属性实现的限制"><span class="nav-number">2.2.</span> <span class="nav-text">扩展属性实现的限制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#操作扩展属性的系统调用"><span class="nav-number">3.</span> <span class="nav-text">操作扩展属性的系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建和修改扩展属性"><span class="nav-number">3.1.</span> <span class="nav-text">创建和修改扩展属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检索扩展属性的值"><span class="nav-number">3.2.</span> <span class="nav-text">检索扩展属性的值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检索所有扩展属性名"><span class="nav-number">3.3.</span> <span class="nav-text">检索所有扩展属性名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除扩展属性"><span class="nav-number">3.4.</span> <span class="nav-text">删除扩展属性</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
