@@ -109,20 +109,25 @@
 
 
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Root1iu Home Page">
-<meta property="og:url" content="https://root1iu.github.io/categories/《Linux内核情景分析》读书笔记/index.html">
+  <meta name="description" content="路由socket概述在路由域中唯一支持的一种socket是原始socket，在路由socket上支持的操作包括如下：  进程能够通过写入路由socket来向内核发送消息，比如路由表的添加和删除(需要特权)； 进程能够通过读取路由socket来从内核接收消息，比如内核通过这种方法来通知进程ICMP重定位报文的到来、进程向外部路由进程请求路由解析(需要特权)； 进程能够使用sysctl()函数来列出所">
+<meta name="keywords" content="UNPv1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNPv1-Ch18-路由socket">
+<meta property="og:url" content="https://root1iu.github.io/2019/12/12/UNPv1-Ch18-路由socket/index.html">
 <meta property="og:site_name" content="Root1iu Home Page">
+<meta property="og:description" content="路由socket概述在路由域中唯一支持的一种socket是原始socket，在路由socket上支持的操作包括如下：  进程能够通过写入路由socket来向内核发送消息，比如路由表的添加和删除(需要特权)； 进程能够通过读取路由socket来从内核接收消息，比如内核通过这种方法来通知进程ICMP重定位报文的到来、进程向外部路由进程请求路由解析(需要特权)； 进程能够使用sysctl()函数来列出所">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-12T14:57:23.531Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Root1iu Home Page">
+<meta name="twitter:title" content="UNPv1-Ch18-路由socket">
+<meta name="twitter:description" content="路由socket概述在路由域中唯一支持的一种socket是原始socket，在路由socket上支持的操作包括如下：  进程能够通过写入路由socket来向内核发送消息，比如路由表的添加和删除(需要特权)； 进程能够通过读取路由socket来从内核接收消息，比如内核通过这种方法来通知进程ICMP重定位报文的到来、进程向外部路由进程请求路由解析(需要特权)； 进程能够使用sysctl()函数来列出所">
 
 
 
 
 
 
-  <link rel="canonical" href="https://root1iu.github.io/categories/《Linux内核情景分析》读书笔记/">
+  <link rel="canonical" href="https://root1iu.github.io/2019/12/12/UNPv1-Ch18-路由socket/">
 
 
 
@@ -132,7 +137,7 @@
   };
 </script>
 
-  <title>分类: 《Linux内核情景分析》读书笔记 | Root1iu Home Page</title>
+  <title>UNPv1-Ch18-路由socket | Root1iu Home Page</title>
   
 
 
@@ -181,7 +186,7 @@
     
   
 
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left ">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -269,7 +274,7 @@
         
         
           
-          <li class="menu-item menu-item-categories menu-item-active">
+          <li class="menu-item menu-item-categories">
 
     
     
@@ -308,28 +313,6 @@
   
     
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
-
   
 
   
@@ -354,187 +337,208 @@
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block category">
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>《Linux内核情景分析》读书笔记<small>分类</small>
-        </h1>
-      </div>
-
-      
-        
+  
 
   <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://root1iu.github.io/2019/12/12/UNPv1-Ch18-路由socket/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Root1iu Home Page">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/12/09/fork-、vfork-和clone/" itemprop="url">
-              
-                <span itemprop="name">fork()、vfork()和clone()</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">UNPv1-Ch18-路由socket
+              
+            
+          </h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-12-09T18:07:55+08:00" content="2018-12-09">
-          12-09
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
 
-    </header>
-  </article>
+            
+            
+            
 
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-12 22:56:35 / 修改时间：22:57:23" itemprop="dateCreated datePublished" datetime="2019-12-12T22:56:35+08:00">2019-12-12</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/UNPv1/" itemprop="url" rel="index"><span itemprop="name">UNPv1</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/12/09/4-1进程和进程的创建、执行与消亡/" itemprop="url">
-              
-                <span itemprop="name">4-1进程和进程的创建、执行与消亡</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-12-09T18:02:29+08:00" content="2018-12-09">
-          12-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
 
       
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/12/01/2-3-几个重要的数据结构和函数/" itemprop="url">
-              
-                <span itemprop="name">2.3 几个重要的数据结构和函数</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-12-01T17:03:48+08:00" content="2018-12-01">
-          12-01
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/12/01/2-2-Linux地址映射全过程/" itemprop="url">
-              
-                <span itemprop="name">2.2 Linux地址映射权过程</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-12-01T16:22:20+08:00" content="2018-12-01">
-          12-01
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/12/01/2-1-Linux内存管理的基本框架/" itemprop="url">
-              
-                <span itemprop="name">2.1 Linux内存管理的基本框架</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-12-01T16:15:07+08:00" content="2018-12-01">
-          12-01
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/12/01/1-预备知识/" itemprop="url">
-              
-                <span itemprop="name">1. 预备知识</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-12-01T15:52:54+08:00" content="2018-12-01">
-          12-01
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+        <h2 id="路由socket概述"><a href="#路由socket概述" class="headerlink" title="路由socket概述"></a>路由socket概述</h2><p>在路由域中唯一支持的一种socket是原始socket，在路由socket上支持的操作包括如下：</p>
+<ol>
+<li>进程能够通过写入路由socket来向内核发送消息，比如路由表的添加和删除(需要特权)；</li>
+<li>进程能够通过读取路由socket来从内核接收消息，比如内核通过这种方法来通知进程ICMP重定位报文的到来、进程向外部路由进程请求路由解析(需要特权)；</li>
+<li>进程能够使用<code>sysctl()</code>函数来列出所有配置了的接口或路由表内容(普通进程就可以实现)。</li>
+</ol>
+<h2 id="sysctl操作"><a href="#sysctl操作" class="headerlink" title="sysctl操作"></a>sysctl操作</h2><p><code>sysctl()</code>在Linux支持不是很友好，尽量不要使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">NOTES</span><br><span class="line">       Glibc does not provide a wrapper for this system call;  call  it  using</span><br><span class="line">       syscall(2).   Or  rather...  don&apos;t call it: use of this system call has</span><br><span class="line">       long been discouraged, and it is so unloved that it is likely to disap‐</span><br><span class="line">       pear in a future kernel version.  Since Linux 2.6.24, uses of this sys‐</span><br><span class="line">       tem call result in warnings in the kernel log.   Remove  it  from  your</span><br><span class="line">       programs now; use the /proc/sys interface instead.</span><br><span class="line"></span><br><span class="line">       This  system  call  is available only if the kernel was configured with</span><br><span class="line">       the CONFIG_SYSCTL_SYSCALL option.</span><br></pre></td></tr></table></figure>
+<p>这里总结一下<code>sysctl()</code>的主要用途</p>
+<ul>
+<li>列出接口</li>
+<li>列出路由表</li>
+<li>列出ARP cache</li>
+</ul>
+<p>这些功能<code>ioctl()</code>也可以做，所以在Linux尽量使用<code>ioctl()</code>。</p>
 
       
     </div>
 
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UNPv1/" rel="tag"># UNPv1</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/11/TLPI-Ch16-ExtendedAttributes/" rel="next" title="TLPI-Ch16-ExtendedAttributes">
+                <i class="fa fa-chevron-left"></i> TLPI-Ch16-ExtendedAttributes
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+  </div>
 
 
           </div>
           
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
 
         </div>
         
@@ -555,8 +559,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -662,6 +675,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#路由socket概述"><span class="nav-number">1.</span> <span class="nav-text">路由socket概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sysctl操作"><span class="nav-number">2.</span> <span class="nav-text">sysctl操作</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -790,17 +819,21 @@
   
 
   
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
 
 
 
   
 
 
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
 
   
 
@@ -812,6 +845,32 @@
 
 
 
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0cbf4bd7647fcf51ba80',
+          clientSecret: '8c5b90c722bd01af0b1b59de1fb752fef976c6ed',
+          repo: 'root1iu.github.io',
+          owner: 'root1iu',
+          admin: ['root1iu'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
   
 
