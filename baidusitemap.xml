@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://root1iu.github.io/2019/12/09/TLPI-Ch14-FileSystems/</loc>
+    <lastmod>2020-01-01T13:22:54.608Z</lastmod>
+  </url>  <url>
     <loc>https://root1iu.github.io/2019/12/12/UNPv1-Ch18-%E8%B7%AF%E7%94%B1socket/</loc>
     <lastmod>2019-12-12T14:57:23.531Z</lastmod>
   </url>  <url>
@@ -9,9 +12,6 @@
   </url>  <url>
     <loc>https://root1iu.github.io/2019/12/10/TLPI-Ch15-FileAttributes/</loc>
     <lastmod>2019-12-10T13:52:52.550Z</lastmod>
-  </url>  <url>
-    <loc>https://root1iu.github.io/2019/12/09/TLPI-Ch14-FileSystems/</loc>
-    <lastmod>2019-12-09T13:54:08.618Z</lastmod>
   </url>  <url>
     <loc>https://root1iu.github.io/2019/12/08/TLPI-Ch13-FileIOBuffering/</loc>
     <lastmod>2019-12-08T14:30:45.162Z</lastmod>
